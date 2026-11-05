@@ -102,6 +102,23 @@ class TestRC002Title(unittest.TestCase):
         self.assertIn("entspricht nicht dem Muster", out)
 
 
+    def test_header_variants_like_openspec(self):
+        # «### requirement:» und «###Requirement:» sind für OpenSpec Anforderungen
+        code, out = run(FIX / "header-variants")
+        self.assertEqual(code, 1)
+        self.assertIn("2 Anforderung(en)", out)
+        self.assertIn("spec.md:3: RC-002", out)
+        self.assertIn("spec.md:4: RC-001", out)
+        self.assertIn("spec.md:10: RC-002", out)
+
+    def test_section_without_recognised_requirement_is_hinted(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            f = Path(tmp) / "spec.md"
+            f.write_text("## ADDED Requirements\n\n#### Requirement: Falsche Ebene (X-1, Must)\nText\n", encoding="utf-8")
+            code, out = run(f)
+            self.assertIn("ohne erkannte Anforderung", out)
+
+
 class TestRC003And007Duplicates(unittest.TestCase):
     def test_same_id_two_priorities_accepted(self):
         code, out = run(FIX / "valid")
@@ -151,6 +168,17 @@ class TestRC004Reprioritisation(unittest.TestCase):
         code, out = run(FIX / "renamed-to-invalid")
         self.assertEqual(code, 1)
         self.assertIn("spec.md:4: RC-002: Priorität fehlt", out)
+
+    def test_renamed_with_star_bullet_is_checked(self):
+        # OpenSpec akzeptiert -, *, + oder kein Aufzählungszeichen vor FROM/TO
+        code, out = run(FIX / "renamed-bullets" / "openspec" / "changes" / "star-bad")
+        self.assertEqual(code, 1)
+        self.assertIn("spec.md:4: RC-002", out)
+
+    def test_renamed_without_bullet_plus_modified_is_accepted(self):
+        code, out = run(FIX / "renamed-bullets" / "openspec" / "changes" / "nobullet-ok")
+        self.assertEqual(code, 0, out)
+        self.assertIn("2 Anforderung(en)", out)
 
     def test_modified_with_changed_priority_is_violation(self):
         code, out = run(FIX / "reprio" / "openspec" / "changes" / "modified-bad")

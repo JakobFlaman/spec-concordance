@@ -30,10 +30,13 @@ DEFAULT_ID_PATTERN = r"[A-Z][A-Z0-9]*(-[A-Z0-9]+)*-[0-9]+"
 PRIORITIES = ("Must", "Should", "Could")
 DOC_HINT = "siehe docs/de/process-model.md, Abschnitt «Anforderungen in OpenSpec»"
 
+# Erkennungsmuster wie im OpenSpec-Parser (1.16: requirement-blocks.js, spec-structure.js),
+# damit das Skript dieselben Anforderungen sieht wie OpenSpec.
 SECTION_RE = re.compile(r"^##\s+(.*?)\s*$")
-REQ_RE = re.compile(r"^###\s+Requirement:\s*(.*?)\s*$")
-SCENARIO_RE = re.compile(r"^####\s+Scenario:")
-RENAMED_TO_RE = re.compile(r"^\s*-\s*TO:\s*`?###\s+Requirement:\s*(.*?)`?\s*$")
+REQ_RE = re.compile(r"^###\s*Requirement:\s*(.+?)\s*$", re.IGNORECASE)
+SCENARIO_RE = re.compile(r"^####\s+Scenario:", re.IGNORECASE)
+RENAMED_TO_RE = re.compile(r"^\s*[-*+]?\s*TO:\s*`?###\s*Requirement:\s*(.+?)`?\s*$", re.IGNORECASE)
+CLOSING_HASHES_RE = re.compile(r"[ \t]+#+$")
 TITLE_FULL_RE = re.compile(r"^(?P<name>.*\S)\s+\((?P<id>[^,()]+),\s*(?P<prio>[^,()]+)\)$")
 TITLE_ID_ONLY_RE = re.compile(r"^(?P<name>.*\S)\s+\((?P<id>[^,()]+)\)$")
 KEYWORD_RE = re.compile(r"\b(SHOULD|MAY)\b")
@@ -57,8 +60,13 @@ class Violation:
         return f"{self.path}:{self.line}: {self.rule}: {self.message} – «{self.title}» – {DOC_HINT}"
 
 
+def normalize(title: str) -> str:
+    return CLOSING_HASHES_RE.sub("", title.strip()).strip()
+
+
 def parse_title(title: str) -> tuple[str, str | None, str | None]:
     """Return (name, id, priority); id/priority None if absent."""
+    title = normalize(title)
     m = TITLE_FULL_RE.match(title)
     if m:
         return m.group("name"), m.group("id").strip(), m.group("prio").strip()
@@ -132,7 +140,7 @@ def requirement_titles(path: Path) -> list[str]:
             continue
         m = REQ_RE.match(line)
         if m:
-            titles.append(m.group(1))
+            titles.append(normalize(m.group(1)))
     return titles
 
 
@@ -151,7 +159,7 @@ def renamed_targets(lines: list[str]) -> set[str]:
         if section == "renamed requirements":
             tm = RENAMED_TO_RE.match(raw)
             if tm:
-                targets.add(tm.group(1))
+                targets.add(normalize(tm.group(1)))
     return targets
 
 
@@ -166,21 +174,25 @@ def check_file(path: Path, id_re: re.Pattern) -> tuple[list[Violation], int]:
     base_titles: list[str] | None = None
     renamed_to = renamed_targets(lines)
     skip = fenced_lines(lines)
+    section_counts: dict[str, list[int]] = {}  # Abschnitt -> [Zeile, erkannte Anforderungen]
 
     for no, raw in enumerate(lines, start=1):
         if no - 1 in skip:
             continue
         sm = SECTION_RE.match(raw)
         if sm and not raw.startswith("###"):
-            section = sm.group(1).strip().lower()
+            section = re.sub(r"\s+", " ", sm.group(1).strip().lower())
             in_text = False
+            if section in CHECKED or section == "renamed requirements":
+                section_counts.setdefault(section, [no, 0])
             continue
 
         if section == "renamed requirements":
             tm = RENAMED_TO_RE.match(raw)
             if tm:
                 count += 1
-                violations += check_title(path, no, tm.group(1), id_re)
+                section_counts[section][1] += 1
+                violations += check_title(path, no, normalize(tm.group(1)), id_re)
             continue
 
         if section not in CHECKED:
@@ -188,8 +200,9 @@ def check_file(path: Path, id_re: re.Pattern) -> tuple[list[Violation], int]:
 
         rm = REQ_RE.match(raw)
         if rm:
-            title = rm.group(1)
+            title = normalize(rm.group(1))
             count += 1
+            section_counts[section][1] += 1
             current = (no, title)
             in_text = True
             violations += check_title(path, no, title, id_re)
@@ -225,6 +238,9 @@ def check_file(path: Path, id_re: re.Pattern) -> tuple[list[Violation], int]:
                 violations.append(Violation(path, no, "RC-001",
                     f"Schlüsselwort {km.group(1)} im Anforderungstext – SHALL verwenden, Priorität steht im Titel", current[1]))
 
+    for sec, (line, n) in section_counts.items():
+        if n == 0:
+            print(f"Hinweis: {path}:{line}: Abschnitt «{sec}» ohne erkannte Anforderung – Kopfzeilen prüfen", file=sys.stderr)
     return violations, count
 
 

@@ -47,3 +47,8 @@ Version: Änderungen werden unter [Unreleased] gesammelt; `plugin.json` wird bei
 - [x] 7.1 G7: Archiv-Ausschluss an `openspec/changes/archive/` gebunden; Fixtures und Tests für `changes/archive` ausserhalb von `openspec/` und für eine Capability namens «changes»
 - [x] 7.2 G7: `design.md` präzisiert – TO-Titel unter RENAMED werden auf RC-002 geprüft; Test
 - [x] 7.3 Beobachtung: Datei nicht UTF-8 → Exit 2 mit Meldung statt Abbruch; Test
+
+## 8. Nach Qualitäts-Gate (Lauf 5 nicht bestanden)
+
+- [x] 8.1 G7: Kopfzeilen- und RENAMED-Erkennung an den OpenSpec-Parser angeglichen (Gross-/Kleinschreibung, Leerraum, Aufzählungszeichen, abschliessende #); Fixtures und Tests
+- [x] 8.2 Sicherheitsnetz: Hinweis bei Anforderungsabschnitt ohne erkannte Anforderung; Test; design.md nachgeführt
