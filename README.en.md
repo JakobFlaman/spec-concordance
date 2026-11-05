@@ -62,7 +62,7 @@ Then in Claude Code:
 
 ## Status
 
-Early stage (0.1). Pilot project: PDF viewer & editor. See [CHANGELOG](CHANGELOG.md).
+Early stage (0.1). See [CHANGELOG](CHANGELOG.md).
 
 ## Languages
 

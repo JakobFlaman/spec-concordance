@@ -62,7 +62,7 @@ Danach in Claude Code:
 
 ## Status
 
-Frühes Stadium (0.1). Pilotprojekt: PDF-Viewer & -Editor. Siehe [CHANGELOG](CHANGELOG.md).
+Frühes Stadium (0.1). Siehe [CHANGELOG](CHANGELOG.md).
 
 ## Sprachen
 
