@@ -43,7 +43,7 @@ Der Anforderungstext jeder Anforderung SHALL das Schlüsselwort SHALL verwenden 
 - **THEN** meldet die Prüfung RC-001
 
 #### Scenario: Unsicherer Codeblock
-- **GIVEN** eine Spec-Datei mit einem Codeblock, in dem `SHOULD` steht und dessen Zaun eingerückt ist (z. B. unter einem Listenpunkt) oder dem eine Zeile mit `<` oder `[` am Anfang vorausgeht
+- **GIVEN** eine Spec-Datei mit einem Codeblock, in dem `SHOULD` steht und dessen Zaun eingerückt ist (z. B. unter einem Listenpunkt), dem ein eingerückter Zaun vorausgeht oder eine Zeile mit `<` oder `[` am Anfang
 - **WHEN** `scripts/check-conventions.py` ausgeführt wird
 - **THEN** meldet die Prüfung RC-001 auf der Zeile des Zauns, weil OpenSpec den Block ausblendet und CommonMark ihn womöglich als Text liest
 

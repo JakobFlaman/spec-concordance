@@ -15,7 +15,7 @@ function visible(tokens) { // dargestellter Text ausserhalb von Inline-Code, ink
 }
 rl.on('line', line => {
   const c = JSON.parse(line); n++;
-  const v = visible(md.parse(c.t, {})).replace(/[\u00ad\u200b-\u200d\u2060\ufeff]/g, '').replace(/«[^»\n]*»|“[^”\n]*”|„[^“”\n]*[“”]/g, ' ');
+  const v = visible(md.parse(c.t, {})).replace(/[\p{Cf}\u034f\u115f\u1160\u3164\uffa0]/gu, '').replace(/«[^»\n]*»|“[^”\n]*”|„[^“”\n]*[“”]/g, ' ');
   if (/(?<![A-Za-z0-9])(SHOULD|MAY)(?![A-Za-z0-9])/.test(v) && !c.flag) {
     silent++; if (silent <= 10) console.log('STILLER DURCHLASS:', JSON.stringify(c.t));
   }

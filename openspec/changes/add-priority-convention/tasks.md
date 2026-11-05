@@ -118,3 +118,9 @@ Version: Änderungen werden unter [Unreleased] gesammelt; `plugin.json` wird bei
 - [x] 19.1 G7 / RC-001: Codeblöcke positiv festgelegt – sicher nur mit Öffner in Spalte 1 und ohne frühere Zeile mit `<` oder `[`; ersetzt die Prüfung eingerückter Zäune aus 17.2; Szenario «Unsicherer Codeblock» (ersetzt «Eingerückter Codezaun»); Testprojekte `fence-in-list`, `fence-in-html`
 - [x] 19.2 Vergleichstest auf Blockebene `tests/fuzz/rc001_blocks.py` (ganze Spec-Dateien, Skript mit OpenSpec-CLI) mit Gegenprobe
 - [x] 19.3 Beobachtung: Anführungszeichen in Inline-Code in `design.md` geklärt
+
+## 20. Nach Qualitäts-Gate (Lauf 17 nicht bestanden)
+
+- [x] 20.1 G7 / RC-001: Codeblock nur sicher, wenn auch alle früheren Zäune (Öffner und Schliesser) in Spalte 1 stehen; falsche Aussage zum Schliesser in `design.md` korrigiert; Testprojekt `fence-desync`
+- [x] 20.2 Beobachtung: unsichtbare Zeichen der ganzen Unicode-Kategorie Cf und Füllzeichen zwischen den Buchstaben zugelassen; Testprojekt `invisible-keyword`
+- [x] 20.3 Vergleichstests: Bausteine für versetzte Zäune (Blockebene) und weitere unsichtbare Zeichen (Inline); Gegenproben mit dem Stand aus Lauf 17 finden Durchlässe

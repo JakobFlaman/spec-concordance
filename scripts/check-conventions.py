@@ -30,6 +30,7 @@ import re
 import shutil
 import subprocess
 import sys
+import unicodedata
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -50,9 +51,11 @@ KEYWORD_RE = re.compile(r"(?<![^\W_])(SHOULD|MAY)(?![^\W_])")
 BACKTICK_RUN_RE = re.compile(r"`+")
 UNSAFE_CHARS_RE = re.compile(r"[\\<\[|]")   # siehe strip_mentions; | wegen GFM-Tabellen
 # Für die Suche in der Darstellung: Markup, das ein Wort zerteilen kann, ist zwischen den Buchstaben
-# erlaubt (Hervorhebung, HTML-Tags, Link-Syntax, Backslash, unsichtbare Zeichen) – nichts wird
+# erlaubt (Hervorhebung, HTML-Tags, Link-Syntax, Backslash, unsichtbare Zeichen der Unicode-Kategorie Cf und Füllzeichen) – nichts wird
 # entfernt, damit keine Wörter verschmelzen und Wortgrenzen erhalten bleiben.
-_NOISE = r"(?:<[^>\n]*>|\]\([^)\n]*\)|[*_~\\\[\]\u00ad\u200b-\u200d\u2060\ufeff])*"
+_INVISIBLE = "".join(chr(c) for c in range(0x110000)
+                     if unicodedata.category(chr(c)) == "Cf" or c in (0x034F, 0x115F, 0x1160, 0x3164, 0xFFA0))
+_NOISE = r"(?:<[^>\n]*>|\]\([^)\n]*\)|[*_~\\\[\]" + re.escape(_INVISIBLE) + "])*"
 SPLIT_KEYWORD_RE = re.compile(r"(?<![^\W_])(" + "|".join(_NOISE.join(w) for w in ("SHOULD", "MAY")) + r")(?![^\W_])")
 ESCAPE_PAIR_RE = re.compile(r"\\([!-/:-@\[-`{-~])")
 # Zitate nur innerhalb einer Zeile; gerade Anführungszeichen zählen nicht (auch Zollzeichen)
@@ -390,21 +393,28 @@ def check_hidden_fences(path: Path, lines: list[str], owner) -> list[Violation]:
     """OpenSpec blendet jeden Codeblock aus (Zaun bei beliebigem Einzug, in jedem Umfeld). Sicher
     ist das nur, wenn CommonMark ihn ebenfalls als Codeblock liest – positiv festgelegt:
     - der Öffner steht ohne Einzug in Spalte 1: dann beendet er jede Liste und jedes Blockzitat
-      und ist nie Fortsetzung eines Absatzes, und
+      und ist nie Fortsetzung eines Absatzes,
+    - alle früheren Zäune der Datei (Öffner und Schliesser) stehen ebenfalls in Spalte 1: sonst
+      kann CommonMark einen früheren Block später schliessen als OpenSpec, und beide sind versetzt, und
     - keine frühere Zeile der Datei (auch in Codeblöcken) beginnt mit < oder [: sonst könnte ein
       HTML-Block oder ein mehrzeiliger Link-Titel den Zaun umschliessen.
-    Den Schliesser erkennt CommonMark nie später als OpenSpec, der ausgeblendete Bereich ist also
-    höchstens kleiner. Steht in einem unsicheren Codeblock SHOULD/MAY, wird gemeldet."""
+    Unter diesen Bedingungen öffnen und schliessen OpenSpec und CommonMark an denselben Zeilen.
+    Steht in einem unsicheren Codeblock SHOULD/MAY, wird gemeldet."""
     out: list[Violation] = []
     blocks = fence_blocks(lines)
+    in_sync = True          # alle bisherigen Zäune (Öffner und Schliesser) in Spalte 1
     for a, b in blocks:
         # auch Zeilen in früheren Codeblöcken zählen: OpenSpec und CommonMark könnten sie verschieden lesen
         risky_before = any(re.match(r"\s*[<\[]", lines[k]) for k in range(a))
-        safe = not lines[a][:1].isspace() and not risky_before
+        opener_ok = not lines[a][:1].isspace()
+        safe = in_sync and opener_ok and not risky_before
+        closer_ok = b >= len(lines) or not lines[b][:1].isspace()
+        in_sync = in_sync and opener_ok and closer_ok
         if safe or not find_keyword("\n".join(lines[a + 1:b])):
             continue
-        reason = ("eingerückt (Liste, Einzug)" if lines[a][:1].isspace()
-                  else "nach HTML oder Link-Syntax")
+        reason = ("eingerückt (Liste, Einzug)" if not opener_ok
+                  else "nach HTML oder Link-Syntax" if risky_before
+                  else "nach einem eingerückten Zaun")
         out.append(Violation(path, a + 1, "RC-001",
                              f"Codeblock {reason}: OpenSpec blendet ihn aus, CommonMark liest ihn womöglich als Text, "
                              "und darin steht SHOULD/MAY – Zaun ohne Einzug und ausserhalb von HTML setzen",

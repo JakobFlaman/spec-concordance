@@ -162,6 +162,17 @@ class TestRC001Keyword(CliTestCase):
         self.assertEqual(code, 1)
         self.assertIn("spec.md:10: RC-001: Codeblock nach HTML", out)
 
+    def test_fence_after_desynchronised_fence_is_violation(self):
+        # Gate-Lauf 17: eingerückter Zaun im Listenpunkt, Schliesser in Spalte 1 – Parser versetzt
+        code, out = project("fence-desync")
+        self.assertEqual(code, 1)
+        self.assertIn("spec.md:17: RC-001: Codeblock nach einem eingerückten Zaun", out)
+
+    def test_keyword_split_by_invisible_format_character_is_violation(self):
+        code, out = project("invisible-keyword")
+        self.assertEqual(code, 1)
+        self.assertIn("spec.md:7: RC-001", out)
+
     def test_escaped_backticks_do_not_hide_keyword(self):
         code, out = project("code-span-escaped")
         self.assertEqual(code, 1)

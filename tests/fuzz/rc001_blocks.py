@@ -18,7 +18,8 @@ SCRIPT = Path(__file__).resolve().parents[2] / "scripts" / "check-conventions.py
 S = Path(sys.argv[1]); seed = int(sys.argv[2]); N = int(sys.argv[3]); random.seed(seed)
 BLOCKS=["Das System SHALL a.", "- Punkt", "  - Unterpunkt", "1. Nummer", "> Zitat", "<div>", "</div>", "<!--", "-->",
         "```", "~~~", "  ```", "   ```", "    ```", "```text", "", "Text SHOULD hier.", "Es MAY auch.", "    eingerückt SHOULD",
-        "[x]: /u \"Titel", "\"", "| a | b |", "|---|---|", "<script>", "</script>", "    ~~~", "- ```", "> ```", "SHALL b"]
+        "[x]: /u \"Titel", "\"", "| a | b |", "|---|---|", "<script>", "</script>", "    ~~~", "- ```", "> ```", "SHALL b",
+        "- Format:\n  ```json\n  {}\n```", "```\nText SHOULD hier.\n```", "    ```\nx\n```", "\t```", "  ~~~\n~~~"]
 proj=S/"p"; cases=[]
 for n in range(N):
     body=[random.choice(BLOCKS) for _ in range(random.randint(2,9))]
