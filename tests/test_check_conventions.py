@@ -117,6 +117,29 @@ class TestRC001Keyword(CliTestCase):
         self.assertEqual(code, 1)
         self.assertIn("spec.md:7: RC-001", out)
 
+    def test_keyword_from_character_reference_is_violation(self):
+        # Gate-Lauf 14: &#83;HOULD wird als SHOULD dargestellt
+        code, out = project("entity-keyword")
+        self.assertEqual(code, 1)
+        self.assertIn("spec.md:7: RC-001", out)
+
+    def test_keyword_split_by_emphasis_is_violation(self):
+        code, out = project("split-keyword")
+        self.assertEqual(code, 1)
+        self.assertIn("spec.md:7: RC-001", out)
+
+    def test_table_pipe_makes_code_boundaries_unsafe(self):
+        code, out = project("table-pipe")
+        self.assertEqual(code, 1)
+        self.assertIn("spec.md:7: RC-001", out)
+
+    def test_indented_fence_hiding_keyword_is_violation(self):
+        # OpenSpec blendet nach einem Zaun mit 4+ Leerzeichen Einzug aus, CommonMark nicht
+        code, out = project("indented-fence")
+        self.assertEqual(code, 1)
+        self.assertIn("spec.md:9: RC-001: Codezaun", out)
+        self.assertIn("Eingerückter Zaun (RC-045, Must)", out)
+
     def test_escaped_backticks_do_not_hide_keyword(self):
         code, out = project("code-span-escaped")
         self.assertEqual(code, 1)

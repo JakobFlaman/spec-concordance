@@ -99,3 +99,11 @@ Version: Änderungen werden unter [Unreleased] gesammelt; `plugin.json` wird bei
 - [x] 16.1 G7 / RC-001: Erwähnungen positiv festgelegt – nur in Texten ohne `\`, `<`, `[` und mit vollständig zeilenweise gepaarten Backtick-Läufen; ersetzt die Aufzählung mehrdeutiger Fälle aus 15.1
 - [x] 16.2 Vergleichstest gegen CommonMark (markdown-it) in `tests/fuzz/`; dabei gefunden und behoben: `_SHOULD_` wurde nicht erkannt (Wortgrenze), ausgeblendeter Code liess Wörter verschmelzen
 - [x] 16.3 Szenarien «Unsichere Code-Grenzen» (ersetzt «Mehrdeutige Code-Grenzen», «Maskierte Backticks») und «Kein stiller Durchlass gegenüber CommonMark»; Testprojekte `code-span-shift`, `html-attribute`, `emphasis-keyword`, `code-span-glued`; alle Gegenbeispiele aus Lauf 11–13 nachgeprüft
+
+## 17. Nach Qualitäts-Gate (Lauf 14 nicht bestanden)
+
+- [x] 17.1 G7 / RC-001: Schlüsselwort auch in der Darstellung suchen – Zeichenreferenzen auflösen (nach paarweiser Auswertung der Backslash-Maskierung), Markup zwischen den Buchstaben zulassen statt entfernen
+- [x] 17.2 G7 / RC-001: Codezaun mit 4+ Leerzeichen Einzug, nach dem SHOULD/MAY steht, als RC-001 melden
+- [x] 17.3 Beobachtungen: `|` als unsicheres Zeichen (GFM-Tabellen); Grenzen (Homoglyphen, RECOMMENDED/OPTIONAL) in `design.md` festgehalten
+- [x] 17.4 Vergleichstest: gezielter Baustein für zerteilte Schlüsselwörter und Zeichenreferenzen; Orakel fügt Inline-Text ohne Trenner zusammen; Gegenprobe mit alter Erkennung findet Durchlässe
+- [x] 17.5 Szenarien «Schlüsselwort erst in der Darstellung», «Eingerückter Codezaun»; Testprojekte `entity-keyword`, `split-keyword`, `table-pipe`, `indented-fence`; alle Gegenbeispiele aus Lauf 11–14 nachgeprüft

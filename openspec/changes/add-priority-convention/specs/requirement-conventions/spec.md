@@ -5,7 +5,7 @@ Einheitliche Form von Anforderungen in OpenSpec-Spezifikationen von Projekten na
 ## ADDED Requirements
 
 ### Requirement: SHALL unabhängig von der Priorität (RC-001, Must)
-Der Anforderungstext jeder Anforderung SHALL das Schlüsselwort SHALL verwenden und kein anderes RFC-2119-Schlüsselwort für Empfehlung oder Option (`SHOULD`, `MAY`). Als Anforderungstext gilt der Text, den OpenSpec der Anforderung zuordnet (ohne Szenarien und ohne Codeblöcke); als Schlüsselwort gilt das grossgeschriebene ganze Wort, auch in `_SHOULD_`. Inline-Code und Zitate («…», “…”, „…“) sind nur bei sicheren Grenzen eine Erwähnung; sonst wird gemeldet.
+Der Anforderungstext jeder Anforderung SHALL das Schlüsselwort SHALL verwenden und kein anderes RFC-2119-Schlüsselwort für Empfehlung oder Option (`SHOULD`, `MAY`). Als Anforderungstext gilt der Text, den OpenSpec der Anforderung zuordnet (ohne Szenarien und ohne Codeblöcke); als Schlüsselwort gilt das grossgeschriebene ganze Wort, wie es dargestellt wird. Inline-Code und Zitate («…», “…”, „…“) sind nur bei sicheren Grenzen eine Erwähnung; sonst wird gemeldet.
 
 #### Scenario: Should-Anforderung validiert
 - **GIVEN** eine Anforderung mit Priorität Should, formuliert mit SHALL und Priorität im Titel
@@ -31,6 +31,16 @@ Der Anforderungstext jeder Anforderung SHALL das Schlüsselwort SHALL verwenden 
 - **GIVEN** eine Anforderung, deren Text einen Backslash, `<` oder `[` enthält oder einen Backtick-Lauf ohne Gegenstück auf derselben Zeile, und die `SHOULD` ausserhalb von «…» enthält
 - **WHEN** `scripts/check-conventions.py` ausgeführt wird
 - **THEN** meldet die Prüfung RC-001, auch wenn `SHOULD` nach CommonMark in Code stünde
+
+#### Scenario: Schlüsselwort erst in der Darstellung
+- **GIVEN** eine Anforderung, in der `SHOULD` erst bei der Darstellung entsteht, etwa aus einer Zeichenreferenz (`&#83;HOULD`) oder durch Hervorhebung, HTML oder unsichtbare Zeichen zerteilt (`SH*OUL*D`)
+- **WHEN** `scripts/check-conventions.py` ausgeführt wird
+- **THEN** meldet die Prüfung RC-001
+
+#### Scenario: Eingerückter Codezaun
+- **GIVEN** eine Spec-Datei mit einem Codezaun, der 4 oder mehr Leerzeichen eingerückt ist und nach dem bis zum Schliesser `SHOULD` steht
+- **WHEN** `scripts/check-conventions.py` ausgeführt wird
+- **THEN** meldet die Prüfung RC-001 auf der Zeile des Zauns, weil OpenSpec den Text ausblendet und CommonMark nicht
 
 #### Scenario: Gerade Anführungszeichen
 - **GIVEN** eine Anforderung, in der `SHOULD` zwischen geraden Anführungszeichen steht, etwa als Zollzeichen

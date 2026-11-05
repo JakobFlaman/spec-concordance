@@ -23,6 +23,7 @@ Copyright (c) 2026 Jakob Flaman · SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 import argparse
+import html
 import json
 import os
 import re
@@ -47,7 +48,15 @@ TITLE_ID_ONLY_RE = re.compile(r"^(?P<name>.*\S)\s+\((?P<id>[^,()]+)\)$")
 # Ganzes Wort; Unterstrich zählt nicht als Wortzeichen (_SHOULD_ ist Hervorhebung)
 KEYWORD_RE = re.compile(r"(?<![^\W_])(SHOULD|MAY)(?![^\W_])")
 BACKTICK_RUN_RE = re.compile(r"`+")
-UNSAFE_CHARS_RE = re.compile(r"[\\<\[]")   # siehe strip_mentions
+UNSAFE_CHARS_RE = re.compile(r"[\\<\[|]")   # siehe strip_mentions; | wegen GFM-Tabellen
+# Für die Suche in der Darstellung: Markup, das ein Wort zerteilen kann, ist zwischen den Buchstaben
+# erlaubt (Hervorhebung, HTML-Tags, Link-Syntax, Backslash, unsichtbare Zeichen) – nichts wird
+# entfernt, damit keine Wörter verschmelzen und Wortgrenzen erhalten bleiben.
+_NOISE = r"(?:<[^>\n]*>|\]\([^)\n]*\)|[*_~\\\[\]\u00ad\u200b-\u200d\u2060\ufeff])*"
+SPLIT_KEYWORD_RE = re.compile(r"(?<![^\W_])(" + "|".join(_NOISE.join(w) for w in ("SHOULD", "MAY")) + r")(?![^\W_])")
+ESCAPE_PAIR_RE = re.compile(r"\\([!-/:-@\[-`{-~])")
+# Codezaun mit 4+ Leerzeichen (oder Tab) Einzug: OpenSpec blendet aus, CommonMark nicht
+INDENTED_FENCE_RE = re.compile(r"^(?: {4,}|[ ]*\t)\s*(?P<fence>`{3,}|~{3,})")
 # Zitate nur innerhalb einer Zeile; gerade Anführungszeichen zählen nicht (auch Zollzeichen)
 QUOTE_RE = re.compile(r"«[^»\n]*»|“[^”\n]*”|„[^“”\n]*[“”]")
 
@@ -339,8 +348,45 @@ def strip_mentions(text: str) -> str:
     return "\n".join(QUOTE_RE.sub(" ", rest) for rest, _ in lines)
 
 
+def find_keyword(text: str) -> re.Match | None:
+    """Schlüsselwort ausserhalb von Erwähnungen suchen – im Quelltext und in einer Näherung der
+    Darstellung (Zeichenreferenzen aufgelöst; Hervorhebung, HTML-Tags, Link-Syntax und unsichtbare
+    Zeichen zwischen den Buchstaben zugelassen), damit z. B. &#83;HOULD oder SH*OUL*D nicht durchgehen."""
+    rest = strip_mentions(text)
+    # Backslash-Maskierung paarweise wie CommonMark (ASCII-Satzzeichen): \\& ist keine Zeichenreferenz
+    rendered = html.unescape(ESCAPE_PAIR_RE.sub(lambda m: "\\&amp;" if m.group(1) == "&" else m.group(0), rest))
+    return KEYWORD_RE.search(rest) or SPLIT_KEYWORD_RE.search(rendered)
+
+
+def check_indented_fences(path: Path, lines: list[str], owner) -> list[Violation]:
+    """OpenSpec erkennt Zäune bei beliebigem Einzug und blendet den folgenden Text aus; nach
+    CommonMark ist ein Zaun mit 4+ Leerzeichen Einzug normaler Text. Steht im ausgeblendeten
+    Bereich ein Schlüsselwort, wird gemeldet."""
+    out: list[Violation] = []
+    i = 0
+    while i < len(lines):
+        m = INDENTED_FENCE_RE.match(lines[i])
+        if not m:
+            i += 1
+            continue
+        fence = m.group("fence")
+        j = i + 1
+        while j < len(lines):
+            c = FENCE_CLOSE_RE.match(lines[j])
+            if c and c.group("fence")[0] == fence[0] and len(c.group("fence")) >= len(fence):
+                break
+            j += 1
+        if find_keyword("\n".join(lines[i + 1:j])):
+            out.append(Violation(path, i + 1, "RC-001",
+                                 "Codezaun mit 4 oder mehr Leerzeichen Einzug: OpenSpec blendet den Text aus, "
+                                 "CommonMark nicht, und darin steht SHOULD/MAY – Einzug auf höchstens 3 Leerzeichen setzen",
+                                 owner(i + 1)))
+        i = j + 1
+    return out
+
+
 def check_text(path: Path, line: int, title: str, text: str) -> list[Violation]:
-    m = KEYWORD_RE.search(strip_mentions(text))
+    m = find_keyword(text)
     if m:
         return [Violation(path, line, "RC-001",
                           f"Schlüsselwort {m.group(1)} im Anforderungstext – SHALL verwenden, Priorität steht im Titel"
@@ -378,6 +424,15 @@ def check_spec_file(sf: SpecFile, id_re: re.Pattern, base_names: list[str]) -> l
                     out.append(Violation(sf.path, line, "RC-004",
                                          f"Nur die Priorität weicht von «{bt}» ab – Umpriorisierung als RENAMED mit FROM/TO erfassen", e.name))
                     break
+    try:
+        lines = sf.path.read_text(encoding="utf-8-sig", errors="replace").splitlines()
+    except OSError:
+        lines = []
+    starts = sorted((ln, e.name) for ln, _, e in located if ln > 0)
+    def owner(ln: int) -> str:
+        before = [name for start, name in starts if start <= ln]
+        return before[-1] if before else "–"
+    out += check_indented_fences(sf.path, lines, owner)
     return out
 
 

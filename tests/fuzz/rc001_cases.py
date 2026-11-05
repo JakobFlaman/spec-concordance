@@ -20,17 +20,35 @@ spec.loader.exec_module(mod)
 
 ATOMS = ["`", "``", "`", "\\", "<", ">", "[", "]", "(", ")", '"', "«", "»", "“", "”", "„", " ", "a",
          " x ", "SHOULD", "\n", "http://a.b/", '<span title="', '">', "</span>", "]: /u ", "](u ",
-         "&#96;", "*", "_", "    ", "> ", "- "]
+         "&#96;", "*", "_", "    ", "> ", "- ", "SH", "OULD", "&#83;", "&#x4F;", "&amp;", "|", "~~",
+         "\u200b", "\u00ad", "**", "MAY", "M", "AY"]
+
+
+NOISE = ["*", "**", "_", "~~", "&#83;", "&#x4F;", "&amp;", "\u200b", "\u00ad", "<b>", "</b>", "[", "]", "](u)", "`", "\\"]
+ENTITY = {"S": "&#83;", "H": "&#72;", "O": "&#x4F;", "U": "&#85;", "L": "&#76;", "D": "&#68;", "M": "&#77;", "A": "&#65;", "Y": "&#89;"}
+
+
+def split_keyword() -> str:
+    """Schlüsselwort, an zufälliger Stelle durch Markup zerteilt oder teilweise als Zeichenreferenz."""
+    word = random.choice(["SHOULD", "MAY"])
+    if random.random() < 0.5:
+        k = random.randrange(len(word))
+        return word[:k] + ENTITY[word[k]] + word[k + 1:]
+    k = random.randint(1, len(word) - 1)
+    noise = "".join(random.choice(NOISE) for _ in range(random.randint(1, 2)))
+    m = random.randint(k, len(word) - 1) if random.random() < 0.5 else k
+    return word[:k] + noise + word[k:m] + noise[::-1] + word[m:]
 
 
 def main() -> None:
     random.seed(int(sys.argv[1]))
     for _ in range(int(sys.argv[2])):
-        text = "SHALL " + "".join(random.choice(ATOMS) for _ in range(random.randint(3, 14)))
+        atoms = ATOMS + [split_keyword()] * 3
+        text = "SHALL " + "".join(random.choice(atoms) for _ in range(random.randint(3, 14)))
         if "SHOULD" not in text:
             text += " SHOULD"
         text = "\n".join(line for line in text.split("\n") if line.strip())   # OpenSpec: keine Leerzeilen
-        flagged = bool(mod.KEYWORD_RE.search(mod.strip_mentions(text)))
+        flagged = bool(mod.find_keyword(text))
         print(json.dumps({"t": text, "flag": flagged}, ensure_ascii=False))
 
 
