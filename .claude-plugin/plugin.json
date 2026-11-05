@@ -1,0 +1,10 @@
+{
+  "name": "spec-concordance",
+  "version": "0.1.0",
+  "description": "Vorgehensmodell für spezifikationsgetriebene KI-Entwicklung: Phasen, Council-Rollen, Qualitäts-Gates und Vorlagen auf Basis von OpenSpec.",
+  "author": {
+    "name": "Jakob Flaman"
+  },
+  "license": "MIT",
+  "keywords": ["spec-driven-development", "openspec", "quality-gates", "council-review", "process-model"]
+}

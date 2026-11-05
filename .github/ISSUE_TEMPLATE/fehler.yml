@@ -1,0 +1,48 @@
+name: Fehler melden / Report a bug
+description: Etwas funktioniert nicht wie spezifiziert. / Something does not work as specified.
+labels: ["bug", "triage"]
+body:
+  - type: textarea
+    id: beschreibung
+    attributes:
+      label: Was ist passiert? / What happened?
+    validations:
+      required: true
+  - type: textarea
+    id: erwartet
+    attributes:
+      label: Was hast du erwartet? / What did you expect?
+    validations:
+      required: true
+  - type: textarea
+    id: schritte
+    attributes:
+      label: Schritte zum Nachstellen / Steps to reproduce
+      placeholder: "1. …\n2. …\n3. …"
+    validations:
+      required: true
+  - type: dropdown
+    id: schweregrad
+    attributes:
+      label: Einschätzung Schweregrad / Severity estimate
+      options:
+        - kritisch / critical – Datenverlust, Sicherheit, kein Arbeiten möglich
+        - hoch / high – Kernfunktion gestört
+        - mittel / medium – Umgehung möglich
+        - niedrig / low – Schönheitsfehler
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version
+  - type: textarea
+    id: umgebung
+    attributes:
+      label: Umgebung / Environment
+      placeholder: Betriebssystem, Claude-Code-Version, OpenSpec-Version
+  - type: textarea
+    id: anhang
+    attributes:
+      label: Logs, Meldepaket, Screenshots
+      description: Bitte keine Passwörter, Schlüssel oder Personendaten. / No passwords, keys or personal data.
