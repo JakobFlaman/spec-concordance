@@ -16,11 +16,16 @@ Neue Fähigkeit `requirement-conventions` (ADDED):
 - Die MoSCoW-Priorität steht im Titel der Anforderung, zusammen mit einer stabilen Anforderungs-ID: `### Requirement: <Titel> (<ID>, <Must|Should|Could>)`.
 - Eine Quellanforderung mit gemischter Priorität («Must / Should») wird in zwei Anforderungen getrennt.
 - `project-init` trägt die Regel beim Projektstart in `openspec/config.yaml` ein, damit OpenSpec-Agenten sie kennen.
-- Eine automatische Prüfung (`scripts/check-conventions.py`) meldet Anforderungen ohne ID/Priorität im Titel oder mit SHOULD/MAY.
+- Eine Umpriorisierung erfolgt als RENAMED-Delta.
+- Eine automatische Prüfung (`scripts/check-conventions.py`) meldet Verstösse; sie läuft in der CI des Plugins.
+
+Nach dem Council-Review überarbeitet (Entscheidungsliste D1–D16 in `council-review.md`); Schnittstelle und Begründung in `design.md`.
 
 ## Out of Scope
 
 - Won't-Anforderungen werden nicht als OpenSpec-Requirement geführt, sondern in der Roadmap (Artefakt 10) unter «Bewusst abgelehnt» bzw. «Später».
+- Bereitstellung der Prüfung für die CI von Projekten – eigener Folge-Change (W1 im Council-Review).
+- Nachführung der Titel im Pilotprojekt pdf-concordance – eigener Change dort.
 - Keine Änderung an OpenSpec selbst.
 - Übrige Pilot-Erkenntnisse P2–P10 – je eigener Change.
 

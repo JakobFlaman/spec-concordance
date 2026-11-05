@@ -1,24 +1,33 @@
 ## Purpose
 
-Einheitliche Form von Anforderungen in OpenSpec-Spezifikationen von Projekten nach spec-concordance, damit sie OpenSpec-konform validieren und ihre MoSCoW-Priorität sowie ihre Herkunft erhalten bleiben.
+Einheitliche Form von Anforderungen in OpenSpec-Spezifikationen von Projekten nach spec-concordance, damit sie OpenSpec-konform validieren und ihre MoSCoW-Priorität sowie ihre Herkunft erhalten bleiben. Gilt für funktionale und nicht-funktionale Anforderungen gleichermassen.
 
 ## ADDED Requirements
 
 ### Requirement: SHALL unabhängig von der Priorität (RC-001, Must)
-Jede Anforderung in einer OpenSpec-Spezifikation SHALL mit dem Schlüsselwort SHALL formuliert sein; SHOULD und MAY werden in Anforderungstexten nicht verwendet.
+Der Anforderungstext jeder Anforderung SHALL das Schlüsselwort SHALL verwenden und kein anderes RFC-2119-Schlüsselwort für Empfehlung oder Option (`SHOULD`, `MAY`). Als Anforderungstext gilt der Text zwischen der Zeile `### Requirement:` und dem ersten `#### Scenario:`; als Schlüsselwort gilt nur das grossgeschriebene ganze Wort ausserhalb von Inline-Code (Backticks) und Zitaten («…», "…").
 
 #### Scenario: Should-Anforderung validiert
 - **GIVEN** eine Anforderung mit Priorität Should, formuliert mit SHALL und Priorität im Titel
 - **WHEN** `openspec validate <change> --strict` ausgeführt wird
 - **THEN** meldet OpenSpec weder Fehler noch Warnung zu dieser Anforderung
 
-#### Scenario: SHOULD im Anforderungstext
-- **GIVEN** eine Anforderung, deren Text «SHOULD» oder «MAY» als Schlüsselwort enthält
+#### Scenario: Empfehlungs-Schlüsselwort im Anforderungstext
+- **GIVEN** eine Anforderung, deren Anforderungstext das grossgeschriebene Wort `SHOULD` ausserhalb von Code und Zitat enthält
 - **WHEN** `scripts/check-conventions.py` ausgeführt wird
-- **THEN** meldet die Prüfung die Anforderung mit Datei und Titel und endet mit Exitcode ungleich 0
+- **THEN** meldet die Prüfung RC-001 mit Datei, Zeile und Titel und endet mit Exitcode 1
+
+#### Scenario: Erwähnung ist kein Verstoss
+- **GIVEN** eine Anforderung, die `SHOULD` nur in Backticks oder in «…» erwähnt, oder ein Szenario, das das Wort enthält
+- **WHEN** `scripts/check-conventions.py` ausgeführt wird
+- **THEN** wird die Anforderung akzeptiert
+
+#### Scenario: Plugin besteht die eigene Prüfung
+- **WHEN** `scripts/check-conventions.py openspec/specs openspec/changes` im Plugin-Repository ausgeführt wird
+- **THEN** endet die Prüfung mit Exitcode 0
 
 ### Requirement: ID und Priorität im Titel (RC-002, Must)
-Der Titel jeder Anforderung SHALL die Form `<Titel> (<ID>, <Priorität>)` haben, wobei die Priorität `Must`, `Should` oder `Could` ist und die ID der stabilen Kennung in der Anforderungsquelle des Projekts entspricht.
+Der Titel jeder Anforderung SHALL die Form `<Titel> (<ID>, <Priorität>)` haben. Die Priorität ist `Must`, `Should` oder `Could`; Won't-Anforderungen werden nicht in OpenSpec geführt, sondern in der Roadmap. Die ID entspricht dem Formatmuster `[A-Z][A-Z0-9]*(-[A-Z0-9]+)*-[0-9]+` (überschreibbar); dass sie der Kennung in der Anforderungsquelle entspricht, prüft das Council, nicht das Skript.
 
 #### Scenario: Korrekter Titel
 - **GIVEN** der Titel «Darstellungsmodi (LA-F-110, Should)»
@@ -28,33 +37,69 @@ Der Titel jeder Anforderung SHALL die Form `<Titel> (<ID>, <Priorität>)` haben,
 #### Scenario: Fehlende Priorität
 - **GIVEN** der Titel «Seitenleiste (LA-F-104)»
 - **WHEN** `scripts/check-conventions.py` ausgeführt wird
-- **THEN** meldet die Prüfung «Priorität fehlt» mit Datei und Titel und endet mit Exitcode ungleich 0
+- **THEN** meldet die Prüfung RC-002 «Priorität fehlt» mit Datei, Zeile und Titel und endet mit Exitcode 1
 
 #### Scenario: Unbekannte Priorität
 - **GIVEN** der Titel «Export (LA-F-308, Wichtig)»
 - **WHEN** `scripts/check-conventions.py` ausgeführt wird
-- **THEN** meldet die Prüfung «Priorität muss Must, Should oder Could sein»
+- **THEN** meldet die Prüfung RC-002 «Priorität muss Must, Should oder Could sein»
 
 ### Requirement: Gemischte Priorität wird getrennt (RC-003, Must)
-Eine Quellanforderung mit gemischter Priorität (z. B. «Must / Should») SHALL in je eine OpenSpec-Anforderung pro Priorität getrennt werden, die dieselbe ID tragen.
+Eine Quellanforderung mit gemischter Priorität (z. B. «Must / Should») SHALL in je eine OpenSpec-Anforderung pro Priorität getrennt werden, die dieselbe ID tragen. Geht aus der Quelle nicht eindeutig hervor, welcher Teil welche Priorität hat, wird die Zuordnung als offener Punkt beim Maintainer erfragt, nicht geraten.
 
 #### Scenario: Must/Should-Quelle
 - **GIVEN** die Quellanforderung LA-F-105 mit Priorität «Must / Should»
 - **WHEN** sie in OpenSpec überführt wird
 - **THEN** entstehen zwei Anforderungen mit den Titeln «… (LA-F-105, Must)» und «… (LA-F-105, Should)»
-- **AND** `scripts/check-conventions.py` akzeptiert eine ID, die mit unterschiedlichen Prioritäten mehrfach vorkommt, meldet aber dieselbe ID mit derselben Priorität doppelt
 
-### Requirement: Regel beim Projektstart verankert (RC-004, Must)
-Der Skill `project-init` SHALL die Konvention beim Initialisieren von OpenSpec in den `context` von `openspec/config.yaml` des Projekts eintragen.
+### Requirement: Eindeutigkeit von ID und Priorität (RC-007, Must)
+Innerhalb einer Spec-Datei SHALL jede Kombination aus ID und Priorität nur einmal vorkommen. Geprüft werden Basis-Specs sowie ADDED- und MODIFIED-Abschnitte, nicht REMOVED, RENAMED und `archive/`.
 
-#### Scenario: Neues Projekt
-- **GIVEN** ein neues Projekt, in dem `project-init` OpenSpec initialisiert hat
-- **WHEN** `openspec/config.yaml` gelesen wird
-- **THEN** enthält der `context` die Regeln RC-001 bis RC-003 in Kurzform
+#### Scenario: Duplikat in einer Datei
+- **GIVEN** eine Spec-Datei mit zwei Anforderungen, die beide «(LA-F-105, Must)» tragen
+- **WHEN** `scripts/check-conventions.py` ausgeführt wird
+- **THEN** meldet die Prüfung RC-007 für die zweite Anforderung und endet mit Exitcode 1
 
-### Requirement: Prüfung in der CI (RC-005, Should)
-Das Plugin SHALL `scripts/check-conventions.py` so bereitstellen, dass Projekte es in ihrer CI auf `openspec/specs/` und `openspec/changes/` ausführen können; das Plugin-Repository führt es auf seine eigenen Spezifikationen aus.
+#### Scenario: Gleiche ID mit zwei Prioritäten
+- **GIVEN** eine Spec-Datei mit «(LA-F-105, Must)» und «(LA-F-105, Should)»
+- **WHEN** `scripts/check-conventions.py` ausgeführt wird
+- **THEN** werden beide akzeptiert
+
+### Requirement: Priorität ändern über RENAMED (RC-004, Must)
+Eine Umpriorisierung SHALL als RENAMED-Delta mit FROM/TO erfasst werden, weil der Titel die Anforderung identifiziert. Ein MODIFIED-Abschnitt, dessen Titel in der Basis-Spezifikation nicht existiert, sich von einem bestehenden Titel aber nur in der Priorität unterscheidet, wird von der Prüfung mit Hinweis auf RENAMED gemeldet.
+
+#### Scenario: Should wird Must
+- **GIVEN** die Basis-Anforderung «Darstellungsmodi (LA-F-110, Should)» in `openspec/specs/<cap>/spec.md`
+- **WHEN** ein Change sie mit `## RENAMED Requirements`, `FROM: ### Requirement: Darstellungsmodi (LA-F-110, Should)` und `TO: ### Requirement: Darstellungsmodi (LA-F-110, Must)` umbenennt
+- **THEN** akzeptiert `scripts/check-conventions.py` den Change
+
+#### Scenario: Umpriorisierung fälschlich als MODIFIED
+- **GIVEN** dieselbe Basis-Anforderung
+- **WHEN** ein Change unter `## MODIFIED Requirements` den Titel «Darstellungsmodi (LA-F-110, Must)» führt
+- **THEN** meldet die Prüfung RC-004 mit dem Hinweis, RENAMED zu verwenden, und endet mit Exitcode 1
+
+### Requirement: Regel beim Projektstart verankert (RC-005, Must)
+Der Skill `project-init` SHALL nach `openspec init` den Textbaustein `template-project/openspec-context.md` an den `context` in `openspec/config.yaml` des Projekts anfügen, ohne bestehenden Inhalt zu überschreiben und ohne ihn bei wiederholtem Lauf doppelt einzutragen. Must-, Should- und Could-Anforderungen werden überführt.
+
+#### Scenario: Textbaustein vollständig
+- **WHEN** der Test der Plugin-Vorlagen läuft
+- **THEN** enthält `template-project/openspec-context.md` die Regeln RC-001 bis RC-004 und RC-007 in Kurzform mit Markierung `spec-concordance:requirement-conventions`
+- **AND** `skills/project-init/SKILL.md` verweist auf den Textbaustein und auf die Prüfung, ob die Markierung bereits vorhanden ist
+
+#### Scenario: Bestehender Kontext
+> Manueller Test, nicht automatisierbar (KI-Lauf von `project-init`).
+- **GIVEN** ein Projekt, dessen `openspec/config.yaml` bereits einen `context` mit Sprachangabe hat
+- **WHEN** `project-init` zweimal ausgeführt wird
+- **THEN** bleibt die Sprachangabe erhalten und der Baustein steht genau einmal im `context`
+
+### Requirement: Prüfung im Plugin-Repository (RC-006, Should)
+Das Plugin-Repository SHALL `scripts/check-conventions.py` in seiner CI auf `openspec/specs/` und `openspec/changes/` ausführen. Die Bereitstellung der Prüfung für die CI von Projekten ist ein eigener Change.
 
 #### Scenario: Plugin-CI
 - **WHEN** ein Pull Request im Plugin-Repository erstellt wird
-- **THEN** führt die CI `scripts/check-conventions.py` aus und schlägt bei einer Verletzung fehl
+- **THEN** führt die CI die Prüfung aus, scannt keine Testdaten unter `tests/` und schlägt bei einer Verletzung fehl
+
+#### Scenario: Übergangsmodus
+- **GIVEN** ein bestehendes Projekt mit Titeln ohne Priorität
+- **WHEN** die Prüfung mit `--warn` ausgeführt wird
+- **THEN** meldet sie alle Verstösse, endet aber mit Exitcode 0
