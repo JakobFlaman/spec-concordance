@@ -73,6 +73,13 @@ class TestRC001Keyword(CliTestCase):
         self.assertEqual(code, 1)
         self.assertIn("spec.md:7: RC-001", out)
 
+    def test_backslash_inside_code_span_does_not_hide_keyword(self):
+        # Gate-Lauf 11: innerhalb von Code wirkt \\ nicht als Maskierung; beide Lesarten prüfen
+        code, out = project("code-span-backslash")
+        self.assertEqual(code, 1)
+        self.assertIn("spec.md:7: RC-001", out)
+        self.assertIn("auf eine Zeile setzen", out)
+
     def test_escaped_backticks_do_not_hide_keyword(self):
         code, out = project("code-span-escaped")
         self.assertEqual(code, 1)

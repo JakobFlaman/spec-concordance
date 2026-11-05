@@ -301,11 +301,12 @@ def check_title(path: Path, line: int, title: str, id_re: re.Pattern) -> list[Vi
     return out
 
 
-def strip_code_spans(line: str) -> str:
+def strip_code_spans(line: str, escapes: bool) -> str:
     """Inline-Code innerhalb einer Zeile entfernen: ein Backtick-Lauf öffnet, der nächste gleich
-    lange Lauf derselben Zeile schliesst; ein Lauf ohne Gegenstück ist Text. Mit Backslash
-    maskierte Backticks begrenzen nichts."""
-    line = ESCAPE_RE.sub("  ", line)
+    lange Lauf derselben Zeile schliesst; ein Lauf ohne Gegenstück ist Text. Mit escapes=True
+    begrenzen mit Backslash maskierte Backticks nichts (Lesart ausserhalb von Code)."""
+    if escapes:
+        line = ESCAPE_RE.sub("  ", line)
     runs = list(BACKTICK_RUN_RE.finditer(line))
     keep: list[str] = []
     pos = i = 0
@@ -322,18 +323,25 @@ def strip_code_spans(line: str) -> str:
     return "".join(keep)
 
 
-def strip_mentions(text: str) -> str:
+def strip_mentions(text: str, escapes: bool) -> str:
     """Erwähnungen (Inline-Code, Zitate) zählen nur innerhalb einer Zeile. OpenSpec liefert
-    keine Absatzgrenzen; zeilenübergreifende Erwähnungen werden daher bewusst geprüft
-    (im Zweifel melden: selten ein Fehlalarm, nie ein stiller Durchlass)."""
-    return "\n".join(QUOTE_RE.sub("", strip_code_spans(line)) for line in text.split("\n"))
+    keine Absatzgrenzen; zeilenübergreifende Erwähnungen werden daher bewusst geprüft."""
+    return "\n".join(QUOTE_RE.sub("", strip_code_spans(line, escapes)) for line in text.split("\n"))
+
+
+def find_keyword(text: str) -> re.Match | None:
+    """Im Zweifel melden: Ein Backslash vor einem Backtick maskiert ausserhalb von Code, innerhalb
+    eines Code-Spans nicht (CommonMark). Beide Lesarten werden geprüft; legt eine davon ein
+    Schlüsselwort frei, wird gemeldet – selten ein Fehlalarm, nie ein stiller Durchlass."""
+    return KEYWORD_RE.search(strip_mentions(text, True)) or KEYWORD_RE.search(strip_mentions(text, False))
 
 
 def check_text(path: Path, line: int, title: str, text: str) -> list[Violation]:
-    m = KEYWORD_RE.search(strip_mentions(text))
+    m = find_keyword(text)
     if m:
         return [Violation(path, line, "RC-001",
-                          f"Schlüsselwort {m.group(1)} im Anforderungstext – SHALL verwenden, Priorität steht im Titel", title)]
+                          f"Schlüsselwort {m.group(1)} im Anforderungstext – SHALL verwenden, Priorität steht im Titel"
+                          " (Erwähnung in Code oder Zitat: auf eine Zeile setzen)", title)]
     return []
 
 

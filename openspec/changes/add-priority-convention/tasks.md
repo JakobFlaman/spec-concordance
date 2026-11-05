@@ -82,3 +82,8 @@ Version: Änderungen werden unter [Unreleased] gesammelt; `plugin.json` wird bei
 
 - [x] 13.1 G7 / RC-001: Inline-Code und Zitate zählen nur innerhalb einer Zeile als Erwähnung; `\`` und `\\` begrenzen keinen Code; Regel und Begründung in Spec und `design.md`
 - [x] 13.2 Szenario «Inline-Code oder Zitat über einen Zeilenumbruch» umgekehrt (meldet RC-001), Szenario «Maskierte Backticks» neu; Testprojekte `code-span-escaped`, `quote-wrap`; Tests
+
+## 14. Nach Qualitäts-Gate (Lauf 11 nicht bestanden)
+
+- [x] 14.1 G7 / RC-001: Backslash vor Backtick wirkt innerhalb von Code nicht als Maskierung; beide Lesarten prüfen, melden, wenn eine das Schlüsselwort freilegt; Szenario «Backslash am Ende von Inline-Code», Testprojekt `code-span-backslash`, Test
+- [x] 14.2 Beobachtung: RC-001-Meldung nennt die Abhilfe «auf eine Zeile setzen»

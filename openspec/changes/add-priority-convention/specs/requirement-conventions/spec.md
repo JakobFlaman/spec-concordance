@@ -32,6 +32,11 @@ Der Anforderungstext jeder Anforderung SHALL das Schlüsselwort SHALL verwenden 
 - **WHEN** `scripts/check-conventions.py` ausgeführt wird
 - **THEN** meldet die Prüfung RC-001
 
+#### Scenario: Backslash am Ende von Inline-Code
+- **GIVEN** eine Anforderung mit Inline-Code, der auf einen Backslash endet, gefolgt von `SHOULD` ausserhalb von Code
+- **WHEN** `scripts/check-conventions.py` ausgeführt wird
+- **THEN** meldet die Prüfung RC-001
+
 #### Scenario: Unpaarige Backticks
 - **GIVEN** eine Anforderung, in der vor `SHOULD` ein Backtick-Lauf ohne gleich langes Gegenstück steht
 - **WHEN** `scripts/check-conventions.py` ausgeführt wird

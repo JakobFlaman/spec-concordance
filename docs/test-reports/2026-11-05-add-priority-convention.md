@@ -2,13 +2,13 @@
 
 Datum: 2026-11-05 · Umgebung: Linux, Python 3, OpenSpec 1.16.0 (auch mit `--ignore-scripts` installiert geprüft) · Ausgeführt von: umsetzender Agent (Nachprüfung im Qualitäts-Gate durch unabhängigen Agenten)
 
-## Ergebnis (Lauf 11, Revision 2)
+## Ergebnis (Lauf 12, Revision 2)
 
 | Prüfung | Befehl | Ergebnis |
 |---|---|---|
-| Unit-Tests mit OpenSpec-CLI | `python3 -m unittest discover -s tests -v` | 43 von 43 grün |
-| Unit-Tests ohne CLI, lokal | `PATH` ohne `openspec` | 10 grün, 33 sichtbar übersprungen |
-| Unit-Tests ohne CLI, CI | `CI=true`, `PATH` ohne `openspec` | 33 Fehlschläge (gewollt: kein trügerisches Grün) |
+| Unit-Tests mit OpenSpec-CLI | `python3 -m unittest discover -s tests -v` | 44 von 44 grün |
+| Unit-Tests ohne CLI, lokal | `PATH` ohne `openspec` | 10 grün, 34 sichtbar übersprungen |
+| Unit-Tests ohne CLI, CI | `CI=true`, `PATH` ohne `openspec` | 34 Fehlschläge (gewollt: kein trügerisches Grün) |
 | Konvention, eigenes Repo | `python3 scripts/check-conventions.py` | Exit 0, 8 Anforderungen |
 | OpenSpec | `openspec validate --all --strict` | gültig |
 | Übersetzungen | `python3 scripts/check-i18n.py` | OK |
@@ -22,6 +22,7 @@ Datum: 2026-11-05 · Umgebung: Linux, Python 3, OpenSpec 1.16.0 (auch mit `--ign
 | RC-001 | Erwähnung ist kein Verstoss | `test_mentions_in_code_quotes_codeblock_and_scenarios_are_accepted`; Codeblöcke mit Überschriften: `test_headings_inside_code_blocks_do_not_hide_violations` |
 | RC-001 | Inline-Code oder Zitat über einen Zeilenumbruch | `test_inline_code_across_line_break_is_checked`, `test_quote_across_paragraph_is_checked` |
 | RC-001 | Maskierte Backticks | `test_escaped_backticks_do_not_hide_keyword` |
+| RC-001 | Backslash am Ende von Inline-Code | `test_backslash_inside_code_span_does_not_hide_keyword` |
 | RC-001 | Unpaarige Backticks | `test_unpaired_backticks_do_not_hide_keyword` |
 | RC-001 | Plugin besteht die eigene Prüfung | `test_plugin_passes_its_own_check` |
 | RC-002 | Korrekter Titel | `test_valid_titles_incl_could_nfr_and_scenario_title` |
@@ -83,3 +84,4 @@ Datum: 2026-11-05 · Umgebung: Linux, Python 3, OpenSpec 1.16.0 (auch mit `--ign
 | 9 | 39 | grün | Gate 8 nicht bestanden (G6: N1-Text gab S4 falsch wieder – korrigiert; G7: RC-007 in OpenSpec- statt Dateireihenfolge – sortiert) |
 | 10 | 41 | grün | Gate 9 nicht bestanden (G7: Inline-Code über Zeilenumbruch) – Inline-Code nach CommonMark |
 | 11 | 43 | grün | Gate 10 nicht bestanden (G7: maskierte Backticks, Code über Absatzgrenze) – Entscheid Maintainer «im Zweifel melden»: Erwähnungen nur innerhalb einer Zeile |
+| 12 | 44 | grün | Gate 11 nicht bestanden (G7: Backslash innerhalb von Inline-Code) – beide Lesarten prüfen |
