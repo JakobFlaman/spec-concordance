@@ -1,5 +1,5 @@
 ---
-name: council-fachbereich
+name: council-business
 description: Council-Rolle Fachbereich. Prüft Nutzen, Verständlichkeit und ob der Change die Frage der Zielgruppe tatsächlich beantwortet.
 tools: Read, Grep, Glob
 ---

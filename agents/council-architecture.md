@@ -1,5 +1,5 @@
 ---
-name: council-architektur
+name: council-architecture
 description: Council-Rolle Architektur. Prüft Schichten, Modulschnitt, Schnittstellen, Erweiterbarkeit und ob Architekturentscheide als ADR festgehalten sind.
 tools: Read, Grep, Glob
 ---

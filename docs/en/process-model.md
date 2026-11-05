@@ -1,5 +1,5 @@
 ---
-source: docs/de/vorgehensmodell.md
+source: docs/de/process-model.md
 source-hash: 50eba6f9fda1
 status: translated
 ---

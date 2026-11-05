@@ -16,6 +16,11 @@ Dieses Repository ist das Plugin `spec-concordance` selbst. Es wird nach seinem 
 - Fachbegriffe beim ersten Auftreten kurz erklären.
 - Vorlagen enthalten Leitfragen statt Beispieltext, der kopiert wird.
 
+## Namen
+
+- Datei-, Ordner- und technische Namen (IDs, Frontmatter `name`, Befehle) sind **englisch**, kleingeschrieben, mit Bindestrich (`council-business.md`, `01-project-brief.md`).
+- Inhalte sind deutsch (Quellsprache), Übersetzungen liegen in `en`-Ordnern.
+
 ## Struktur
 
 - `agents/` – eine Datei pro Council-Rolle, Frontmatter `name`, `description`, `tools`

@@ -12,8 +12,8 @@ description: Prüft eine Spezifikation oder einen OpenSpec-Change aus allen sech
 
 ## Ablauf
 
-1. **Kontext laden:** Projektsteckbrief (`docs/artefakte/01-projektsteckbrief.md`), Rollen- und Berechtigungskonzept, CLAUDE.md und den zu prüfenden Change lesen.
-2. **Rollen unabhängig prüfen lassen:** Für jede Rolle einen eigenen Subagenten starten – `council-security`, `council-architektur`, `council-betrieb`, `council-entwicklung`, `council-fachbereich`, `council-testmanagement` sowie projektspezifische Rollen. Alle parallel, ohne dass sie die Voten der anderen sehen.
+1. **Kontext laden:** Projektsteckbrief (`docs/artifacts/01-project-brief.md`), Rollen- und Berechtigungskonzept, CLAUDE.md und den zu prüfenden Change lesen.
+2. **Rollen unabhängig prüfen lassen:** Für jede Rolle einen eigenen Subagenten starten – `council-security`, `council-architecture`, `council-operations`, `council-development`, `council-business`, `council-test-management` sowie projektspezifische Rollen. Alle parallel, ohne dass sie die Voten der anderen sehen.
 3. **Voten einsammeln** im vorgegebenen Format jeder Rolle.
 4. **Konsolidieren:**
    - Widersprüche zwischen Rollen ausdrücklich benennen, nicht glätten.

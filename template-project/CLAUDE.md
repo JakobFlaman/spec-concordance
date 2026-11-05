@@ -5,7 +5,7 @@ Dieses Projekt arbeitet nach dem Vorgehensmodell [spec-concordance](https://gith
 ## Projekt
 
 - **Name:** <Projektname>
-- **Zweck:** siehe `docs/artefakte/01-projektsteckbrief.md`
+- **Zweck:** siehe `docs/artifacts/01-project-brief.md`
 - **Lizenz:** <MIT | Apache-2.0 | EPL-2.0 | AGPL-3.0>
 - **Namensraum / Paket-ID:** <z. B. org.beispiel.produkt>
 - **Maintainer:** <Name>
@@ -31,6 +31,7 @@ Dieses Projekt arbeitet nach dem Vorgehensmodell [spec-concordance](https://gith
 
 ## Konventionen
 
+- Datei-, Ordner- und technische Namen auf Englisch (kleingeschrieben, Bindestrich); Inhalte in der Projektsprache
 - Datei-Header: <Projektname, Zweck, Copyright/SPDX-Lizenz, Kurz-Changelog>
 - Schreibstil Doku: <Sprache, Rechtschreibung>
 - Fehlermeldungen: sprechend, mit Fehlercode, Verweis auf `docs/errors.md`

@@ -1,5 +1,5 @@
 ---
-name: council-testmanagement
+name: council-test-management
 description: Council-Rolle Testmanagement. Prüft Teststrategie, Abdeckung der Abnahmekriterien, Regressionstests für behobene Fehler und das Test-Reporting.
 tools: Read, Grep, Glob, Bash
 ---

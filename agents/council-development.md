@@ -1,5 +1,5 @@
 ---
-name: council-entwicklung
+name: council-development
 description: Council-Rolle Entwicklung. Prüft Machbarkeit, Aufwand, Codequalität, Testbarkeit und ob die Tasks klein und eindeutig genug für eine KI-Umsetzung sind.
 tools: Read, Grep, Glob, Bash
 ---

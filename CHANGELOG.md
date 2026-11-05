@@ -9,6 +9,7 @@ Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionier
 - Qualitäts-Gate: neuer Punkt G0 (`openspec validate`) und G1a (Rückverfolgbarkeit Task ↔ Anforderung ↔ Szenario); G6 verlangt nur noch `blocker`/`major` erledigt
 - Rolle Entwicklung: Prüffragen zu Wartbarkeit und Rückverfolgbarkeit ergänzt
 - Ideen übernommen aus dem Copilot-Entwurf (Branch `copilot/process-model-ai-spec-driven-dev`)
+- Datei-, Ordner- und Rollennamen auf Englisch umgestellt (z. B. `council-business`, `01-project-brief.md`, `docs/artifacts/`); Inhalte bleiben deutsch. Regel in CLAUDE.md festgehalten
 
 ## [0.1.0] – 2026-11-05
 

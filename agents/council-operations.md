@@ -1,5 +1,5 @@
 ---
-name: council-betrieb
+name: council-operations
 description: Council-Rolle Support/Betrieb. Prüft Betriebstauglichkeit – Fehlermeldungen, Logging, Monitoring, Installation, Updates und Supportbarkeit.
 tools: Read, Grep, Glob
 ---
