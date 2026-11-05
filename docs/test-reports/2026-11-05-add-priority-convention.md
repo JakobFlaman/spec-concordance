@@ -33,7 +33,7 @@ Datum: 2026-11-05 · Umgebung: Linux, Python 3, OpenSpec 1.16.0 (auch mit `--ign
 | RC-004 | Umpriorisieren und ändern im selben Change | `test_renamed_plus_modified_in_same_change_is_accepted`, `test_renamed_without_bullet_plus_modified_is_accepted` |
 | RC-005 | Textbaustein vollständig | `test_context_snippet_contains_rules`, `test_project_init_references_snippet`, `test_plugin_config_contains_snippet` |
 | RC-005 | Bestehender Kontext (idempotent) | **manuell, ausgeführt** (Lauf 2) und von den Gate-Prüfern in Lauf 3–7 unabhängig nachgestellt: Sprachangabe erhalten, Markierung genau 1×, Lauf 2 byte-identisch, YAML gültig |
-| RC-006 | Plugin-CI | Inspektion `.github/workflows/checks.yml` (Node 20, OpenSpec 1.16.0 fixiert, `--ignore-scripts`, `permissions: contents: read`, Aufruf im Stamm); echter CI-Lauf mit dem Push |
+| RC-006 | Plugin-CI | **echter CI-Lauf auf GitHub:** Run 42102433660 grün (Commit 0b90fee) mit Node 20, OpenSpec 1.16.0 fixiert, `--ignore-scripts`, `permissions: contents: read`, Aufruf im Stamm. Der vorherige Lauf 42102287287 schlug fehl, weil Git das leere Testprojekt `empty` nicht versionierte – behoben mit `.gitkeep` |
 | RC-006 | Übergangsmodus | `test_warn_mode_reports_but_exits_zero`; weitere Bedienung: `test_root_argument`, `test_invalid_pattern_exit_2`, `test_empty_project_exit_2` |
 | RC-008 | Verschachtelte Capability | `test_nested_capability_rc004` |
 | RC-008 | Basis-Anforderung ohne Präfix | `test_base_requirement_without_prefix` |
