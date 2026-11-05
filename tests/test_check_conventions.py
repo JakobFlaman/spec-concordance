@@ -127,6 +127,17 @@ class TestRC003And007Duplicates(unittest.TestCase):
             self.assertIn("5 Anforderung(en)", out)
 
 
+    def test_changes_archive_outside_openspec_is_checked(self):
+        code, out = run(FIX / "archive-outside")
+        self.assertEqual(code, 1)
+        self.assertIn("RC-002", out)
+
+    def test_capability_named_changes_archive_is_checked(self):
+        code, out = run(FIX / "archive-capability")
+        self.assertEqual(code, 1)
+        self.assertIn("RC-002", out)
+
+
 class TestRC004Reprioritisation(unittest.TestCase):
     def test_renamed_is_accepted(self):
         code, out = run(FIX / "reprio" / "openspec" / "changes" / "renamed-ok")
@@ -135,6 +146,11 @@ class TestRC004Reprioritisation(unittest.TestCase):
     def test_renamed_plus_modified_in_same_change_is_accepted(self):
         code, out = run(FIX / "reprio" / "openspec" / "changes" / "renamed-and-modified")
         self.assertEqual(code, 0, out)
+
+    def test_renamed_to_title_is_checked_for_rc002(self):
+        code, out = run(FIX / "renamed-to-invalid")
+        self.assertEqual(code, 1)
+        self.assertIn("spec.md:4: RC-002: Priorität fehlt", out)
 
     def test_modified_with_changed_priority_is_violation(self):
         code, out = run(FIX / "reprio" / "openspec" / "changes" / "modified-bad")
@@ -158,6 +174,11 @@ class TestRC006Cli(unittest.TestCase):
         code, out = run(FIX / "with-archive" / "openspec" / "changes")
         self.assertEqual(code, 2)
         self.assertIn("keine spec.md", out)
+
+    def test_non_utf8_file_exit_2(self):
+        code, out = run(FIX / "latin1")
+        self.assertEqual(code, 2)
+        self.assertIn("nicht UTF-8", out)
 
     def test_invalid_pattern_exit_2(self):
         code, out = run("--id-pattern", "(", FIX / "valid")

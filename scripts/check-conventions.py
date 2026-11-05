@@ -242,7 +242,8 @@ def find_specs(paths: list[Path]) -> list[Path]:
 def is_archived(path: Path) -> bool:
     """Nur openspec/changes/archive/ ausschliessen, nicht beliebige Ordner namens «archive»."""
     parts = path.resolve().parts
-    return any(parts[i] == "changes" and parts[i + 1] == "archive" for i in range(len(parts) - 1))
+    return any(parts[i - 1] == "openspec" and parts[i] == "changes" and parts[i + 1] == "archive"
+               for i in range(1, len(parts) - 1))
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -272,7 +273,11 @@ def main(argv: list[str] | None = None) -> int:
     all_violations: list[Violation] = []
     total = 0
     for f in files:
-        v, n = check_file(f, id_re)
+        try:
+            v, n = check_file(f, id_re)
+        except UnicodeDecodeError:
+            print(f"Fehler: {f} ist nicht UTF-8-kodiert", file=sys.stderr)
+            return 2
         all_violations += v
         total += n
 

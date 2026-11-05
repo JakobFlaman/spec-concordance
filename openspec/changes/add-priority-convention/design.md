@@ -35,10 +35,10 @@ OpenSpec erwartet SHALL/MUST (RFC 2119: SHALL = verbindlich, SHOULD = empfohlen,
 | Eingabe | rekursiv alle `spec.md` unter den Pfaden; nur `openspec/changes/archive/` wird übersprungen, nicht beliebige Ordner namens «archive» |
 | Codeblöcke | eingezäunte Codeblöcke nach CommonMark (Zaun aus mindestens drei `` ` `` oder `~`, höchstens drei Leerzeichen Einzug; schliessender Zaun aus demselben Zeichen, mindestens gleich lang, ohne Sprachangabe) gelten dateiweit als Erwähnung: Überschriften darin sind weder Abschnitte noch Anforderungen, Schlüsselwörter darin keine Verstösse. Inline-Code mit beliebig vielen Backticks gilt ebenfalls als Erwähnung |
 | Zeichenkodierung | UTF-8, ein Byte-Order-Mark am Dateianfang wird ignoriert |
-| Geprüft | Basis-Specs (`## Requirements`) sowie `## ADDED` und `## MODIFIED Requirements`; `## REMOVED` und `## RENAMED` werden nur für RC-004 gelesen |
+| Geprüft | Basis-Specs (`## Requirements`) sowie `## ADDED` und `## MODIFIED Requirements` auf RC-001, RC-002, RC-007 und (MODIFIED) RC-004; unter `## RENAMED Requirements` werden die TO-Titel auf RC-002 geprüft und für RC-004 gelesen; `## REMOVED` wird nicht geprüft |
 | Basis für RC-004 | `openspec/specs/<capability>/spec.md` relativ zum Projektstamm (Elternordner von `openspec/`) |
 | Ausgabe | eine Zeile je Verstoss: `<datei>:<zeile>: <RC-ID>: <Meldung> – «<Titel>» – siehe docs/de/process-model.md, Abschnitt «Anforderungen in OpenSpec»`; am Ende Zusammenfassung |
-| Exitcodes | 0 = keine Verstösse (oder `--warn`), 1 = Verstösse, 2 = Bedien-/Eingabefehler (Pfad fehlt, keine `spec.md` gefunden, ungültiges Muster) |
+| Exitcodes | 0 = keine Verstösse (oder `--warn`), 1 = Verstösse, 2 = Bedien-/Eingabefehler (Pfad fehlt, keine `spec.md` gefunden, ungültiges Muster, Datei nicht UTF-8) |
 | ID-Muster | Standard `[A-Z][A-Z0-9]*(-[A-Z0-9]+)*-[0-9]+` |
 | Abhängigkeiten | nur Python-Standardbibliothek (≥ 3.10) |
 | Sicherheit | liest nur, schreibt nichts, führt keine Inhalte aus (kein eval/exec, keine Shell), braucht keine Zugangsdaten |

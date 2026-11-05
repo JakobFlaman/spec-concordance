@@ -41,3 +41,9 @@ Version: Änderungen werden unter [Unreleased] gesammelt; `plugin.json` wird bei
 
 - [x] 6.1 G7: Codeblock-Erkennung nach CommonMark (gleiches Zeichen, Mindestlänge, keine Sprachangabe beim Schliessen); Inline-Code mit mehreren Backticks; Fixtures und Tests für geschachtelte Zäune, Zaun mit Sprachangabe, doppelte Backticks
 - [x] 6.2 Beobachtung BOM: Dateien mit Byte-Order-Mark werden geprüft statt still bestanden; Fixture und Test
+
+## 7. Nach Qualitäts-Gate (Lauf 4 nicht bestanden)
+
+- [x] 7.1 G7: Archiv-Ausschluss an `openspec/changes/archive/` gebunden; Fixtures und Tests für `changes/archive` ausserhalb von `openspec/` und für eine Capability namens «changes»
+- [x] 7.2 G7: `design.md` präzisiert – TO-Titel unter RENAMED werden auf RC-002 geprüft; Test
+- [x] 7.3 Beobachtung: Datei nicht UTF-8 → Exit 2 mit Meldung statt Abbruch; Test
