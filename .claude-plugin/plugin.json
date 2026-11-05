@@ -1,0 +1,6 @@
+{
+  "name": "spec-concordance",
+  "version": "0.1.0",
+  "description": "Process model for AI spec-driven development on OpenSpec: council reviews from six roles, hard quality gates and project templates.",
+  "license": "MIT"
+}
