@@ -35,6 +35,16 @@ class TestRC001Keyword(unittest.TestCase):
         self.assertEqual(code, 0, out)
         self.assertNotIn("RC-001", out)
 
+    def test_headings_inside_code_blocks_do_not_break_parsing(self):
+        # Codeblock enthält «## RENAMED Requirements» und eine «### Requirement:»-Zeile
+        code, out = run(FIX / "fenced-headings")
+        self.assertEqual(code, 1)
+        self.assertIn("2 Anforderung(en)", out)            # Überschrift im Code zählt nicht
+        self.assertIn("spec.md:15: RC-001", out)           # SHOULD nach dem Codeblock wird erkannt
+        self.assertIn("spec.md:21: RC-002", out)           # nächste Anforderung wird erkannt
+        self.assertIn("spec.md:22: RC-001", out)
+        self.assertNotIn("Beispiel ohne Priorität", out)
+
     def test_plugin_passes_its_own_check(self):
         code, out = run(ROOT / "openspec" / "specs", ROOT / "openspec" / "changes")
         self.assertEqual(code, 0, out)

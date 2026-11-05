@@ -70,7 +70,7 @@ def check_title(path: Path, line: int, title: str, id_re: re.Pattern) -> list[Vi
     name, rid, prio = parse_title(title)
     out: list[Violation] = []
     if rid is None:
-        out.append(Violation(path, line, "RC-002", "ID und Priorität fehlen im Titel", title))
+        out.append(Violation(path, line, "RC-002", "Titelform ungültig – erwartet «<Titel> (<ID>, <Must|Should|Could>)»", title))
         return out
     if prio is None:
         out.append(Violation(path, line, "RC-002", "Priorität fehlt", title))
@@ -95,9 +95,33 @@ def base_spec_for(path: Path) -> Path | None:
     return None
 
 
+def fenced_lines(lines: list[str]) -> set[int]:
+    """Indizes (0-basiert) aller Zeilen in eingezäunten Codeblöcken, inkl. Zaunzeilen.
+
+    Codeblöcke gelten dateiweit als Erwähnung: Überschriften darin sind weder Abschnitte
+    noch Anforderungen, Schlüsselwörter darin keine Verstösse.
+    """
+    fenced: set[int] = set()
+    fence: str | None = None
+    for i, raw in enumerate(lines):
+        m = FENCE_RE.match(raw)
+        if fence is None and m:
+            fence = m.group(1)
+            fenced.add(i)
+        elif fence is not None:
+            fenced.add(i)
+            if raw.strip().startswith(fence):
+                fence = None
+    return fenced
+
+
 def requirement_titles(path: Path) -> list[str]:
+    lines = path.read_text(encoding="utf-8").splitlines()
+    skip = fenced_lines(lines)
     titles = []
-    for line in path.read_text(encoding="utf-8").splitlines():
+    for i, line in enumerate(lines):
+        if i in skip:
+            continue
         m = REQ_RE.match(line)
         if m:
             titles.append(m.group(1))
@@ -108,7 +132,10 @@ def renamed_targets(lines: list[str]) -> set[str]:
     """TO-Titel aller RENAMED-Einträge der Datei (für RC-004 «RENAMED plus MODIFIED»)."""
     targets: set[str] = set()
     section = ""
-    for raw in lines:
+    skip = fenced_lines(lines)
+    for i, raw in enumerate(lines):
+        if i in skip:
+            continue
         sm = SECTION_RE.match(raw)
         if sm:
             section = sm.group(1).strip().lower()
@@ -127,12 +154,14 @@ def check_file(path: Path, id_re: re.Pattern) -> tuple[list[Violation], int]:
     section = ""
     current: tuple[int, str] | None = None  # (line, title) while reading requirement text
     in_text = False
-    in_fence = False
     count = 0
     base_titles: list[str] | None = None
     renamed_to = renamed_targets(lines)
+    skip = fenced_lines(lines)
 
     for no, raw in enumerate(lines, start=1):
+        if no - 1 in skip:
+            continue
         sm = SECTION_RE.match(raw)
         if sm and not raw.startswith("###"):
             section = sm.group(1).strip().lower()
@@ -155,7 +184,6 @@ def check_file(path: Path, id_re: re.Pattern) -> tuple[list[Violation], int]:
             count += 1
             current = (no, title)
             in_text = True
-            in_fence = False
             violations += check_title(path, no, title, id_re)
             name, rid, prio = parse_title(title)
             if rid and prio:
@@ -183,11 +211,6 @@ def check_file(path: Path, id_re: re.Pattern) -> tuple[list[Violation], int]:
             continue
 
         if in_text and current:
-            if FENCE_RE.match(raw):
-                in_fence = not in_fence
-                continue
-            if in_fence:
-                continue
             stripped = MENTION_RE.sub("", raw)
             km = KEYWORD_RE.search(stripped)
             if km:

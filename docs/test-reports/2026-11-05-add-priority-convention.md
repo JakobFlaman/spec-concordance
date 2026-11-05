@@ -6,7 +6,7 @@ Datum: 2026-11-05 · Umgebung: Linux, Python 3, OpenSpec 1.16.0 · Ausgeführt v
 
 | Prüfung | Befehl | Ergebnis |
 |---|---|---|
-| Unit-Tests | `python3 -m unittest discover -s tests -v` | 23 von 23 grün (Lauf 2, nach Gate 1) |
+| Unit-Tests | `python3 -m unittest discover -s tests -v` | 24 von 24 grün (Lauf 3, nach Gate-Lauf 2) |
 | Konvention, eigene Specs | `python3 scripts/check-conventions.py openspec/specs openspec/changes` | Exit 0, 7 Anforderungen geprüft |
 | OpenSpec | `openspec validate --all --strict` | 1 von 1 gültig |
 | Übersetzungen | `python3 scripts/check-i18n.py` | OK |
@@ -18,6 +18,7 @@ Datum: 2026-11-05 · Umgebung: Linux, Python 3, OpenSpec 1.16.0 · Ausgeführt v
 | RC-001 | Should-Anforderung validiert | indirekt: RC-006 ist Should und besteht `openspec validate --strict` (G0) |
 | RC-001 | Empfehlungs-Schlüsselwort im Anforderungstext | `test_keyword_in_requirement_text_is_violation` |
 | RC-001 | Erwähnung ist kein Verstoss | `test_mentions_in_code_quotes_and_scenarios_are_accepted` (Inline-Code, «…», „…“, Codeblock, Szenario) |
+| RC-001 | Überschriften in Codeblöcken | `test_headings_inside_code_blocks_do_not_break_parsing` |
 | RC-001 | Plugin besteht die eigene Prüfung | `test_plugin_passes_its_own_check` |
 | RC-002 | Korrekter Titel | `test_scenario_title_is_accepted` (Titel aus dem Szenario), `test_valid_titles_incl_could_and_nfr` |
 | RC-002 | Fehlende Priorität | `test_missing_priority` |
@@ -44,3 +45,4 @@ Lauf im Übergangsmodus auf `pdf-concordance/openspec/changes`: 15 RC-002-Verst�
 |---|---|---|---|
 | 1 | 19 | grün | Umsetzung |
 | 2 | 23 | grün | Qualitäts-Gate nicht bestanden (G3 RC-003, RC-005; G7 RC-004 RENAMED+MODIFIED) – behoben; zusätzlich Archiv-Ausschluss präzisiert, Codeblöcke und „…“ als Erwähnung, Tests geschärft |
+| 3 | 24 | grün | Qualitäts-Gate Lauf 2 nicht bestanden (G7: Überschriften in Codeblöcken störten die Abschnittserkennung) – behoben |

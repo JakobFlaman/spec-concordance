@@ -32,7 +32,8 @@ OpenSpec erwartet SHALL/MUST (RFC 2119: SHALL = verbindlich, SHOULD = empfohlen,
 | Aspekt | Festlegung |
 |---|---|
 | Aufruf | `python3 scripts/check-conventions.py [--warn] [--id-pattern REGEX] [PFAD ...]`; ohne Pfad: `openspec/specs openspec/changes` |
-| Eingabe | rekursiv alle `spec.md` unter den Pfaden; `archive/` wird übersprungen |
+| Eingabe | rekursiv alle `spec.md` unter den Pfaden; nur `openspec/changes/archive/` wird übersprungen, nicht beliebige Ordner namens «archive» |
+| Codeblöcke | eingezäunte Codeblöcke (```` ``` ````, `~~~`) gelten dateiweit als Erwähnung: Überschriften darin sind weder Abschnitte noch Anforderungen, Schlüsselwörter darin keine Verstösse |
 | Geprüft | Basis-Specs (`## Requirements`) sowie `## ADDED` und `## MODIFIED Requirements`; `## REMOVED` und `## RENAMED` werden nur für RC-004 gelesen |
 | Basis für RC-004 | `openspec/specs/<capability>/spec.md` relativ zum Projektstamm (Elternordner von `openspec/`) |
 | Ausgabe | eine Zeile je Verstoss: `<datei>:<zeile>: <RC-ID>: <Meldung> – «<Titel>» – siehe docs/de/process-model.md, Abschnitt «Anforderungen in OpenSpec»`; am Ende Zusammenfassung |

@@ -31,3 +31,8 @@ Version: Änderungen werden unter [Unreleased] gesammelt; `plugin.json` wird bei
 - [x] 4.2 RC-003: Szenario «Must/Should-Quelle» als manuell kennzeichnen und Nachweis ausführen; Szenario «Regel im Textbaustein» mit Test
 - [x] 4.3 RC-005: manuellen Idempotenz-Test ausführen und dokumentieren
 - [x] 4.4 Beobachtungen: Archiv-Ausschluss nur `openspec/changes/archive/`; Codeblöcke und „…“ als Erwähnung (RC-001); RC-Nummern im Protokoll; Tests geschärft
+
+## 5. Nach Qualitäts-Gate (Lauf 2 nicht bestanden)
+
+- [x] 5.1 G7: Codeblöcke dateiweit vor der Abschnitts- und Anforderungserkennung ausblenden; Fixture «fenced-headings» und Test
+- [x] 5.2 Meldung bei ungültiger Titelform präzisiert; `design.md` zu Archiv und Codeblöcken präzisiert
