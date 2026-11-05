@@ -21,6 +21,13 @@ OpenSpec erwartet SHALL/MUST (RFC 2119: SHALL = verbindlich, SHOULD = empfohlen,
 | Priorität im Titel | sichtbar in jeder Übersicht, maschinell prüfbar, im Pilot erprobt | Umpriorisierung ist RENAMED (siehe Folgen) | **gewählt** |
 | Eigenes Frontmatter / Metadatenblock | sauber getrennt | von OpenSpec nicht unterstützt | verworfen |
 
+Für die Prüfung (Revision 2):
+
+| Alternative | Vorteil | Nachteil | Entscheid |
+|---|---|---|---|
+| Eigener Markdown-Parser in Python | keine Node-Abhängigkeit | weicht laufend von OpenSpec ab (fünf Gate-Läufe) | verworfen |
+| OpenSpec-CLI als Parser | sieht exakt dieselben Anforderungen wie OpenSpec | Node/OpenSpec nötig, langsamer | **gewählt** |
+
 ## Folgen
 
 - Eine Umpriorisierung ist in OpenSpec eine Umbenennung (RENAMED mit FROM/TO). Das Prüfskript erkennt den typischen Fehler (MODIFIED mit nur geänderter Priorität) und weist darauf hin (RC-004).
@@ -29,21 +36,21 @@ OpenSpec erwartet SHALL/MUST (RFC 2119: SHALL = verbindlich, SHOULD = empfohlen,
 
 ## Schnittstelle `scripts/check-conventions.py`
 
+Revision 2 (nach Gate-Lauf 7): Das Skript parst Markdown nicht mehr selbst, sondern liest die Struktur über die OpenSpec-CLI. Die Läufe 3 bis 7 scheiterten alle an Abweichungen zwischen eigenem Parser und OpenSpec (Codeblöcke, Kopfzeilen-Varianten, RENAMED-Syntax, verschachtelte Capabilities, Basis-Specs ohne Präfix). Ein Nachbau bleibt lückenhaft; die CLI ist für Gate G0 ohnehin Pflicht.
+
 | Aspekt | Festlegung |
 |---|---|
-| Aufruf | `python3 scripts/check-conventions.py [--warn] [--id-pattern REGEX] [PFAD ...]`; ohne Pfad: `openspec/specs openspec/changes` |
-| Eingabe | rekursiv alle `spec.md` unter den Pfaden; nur `openspec/changes/archive/` wird übersprungen, nicht beliebige Ordner namens «archive» |
-| Codeblöcke | eingezäunte Codeblöcke wie im OpenSpec-Parser 1.16 (`parsers/code-fence.js`): Zaun aus mindestens drei `` ` `` oder `~` bei beliebigem Einzug; bei `` ` ``-Zäunen darf die Sprachangabe kein `` ` `` enthalten; schliessender Zaun aus demselben Zeichen, mindestens gleich lang, ohne Sprachangabe. Bewusst wie OpenSpec statt CommonMark, damit beide dieselben Blöcke sehen. Codeblöcke gelten dateiweit als Erwähnung: Überschriften darin sind weder Abschnitte noch Anforderungen, Schlüsselwörter darin keine Verstösse. Inline-Code mit beliebig vielen Backticks gilt ebenfalls als Erwähnung |
-| Zeichenkodierung | UTF-8, ein Byte-Order-Mark am Dateianfang wird ignoriert |
-| Geprüft | Basis-Specs (`## Requirements`) sowie `## ADDED` und `## MODIFIED Requirements` auf RC-001, RC-002, RC-007 und (MODIFIED) RC-004; unter `## RENAMED Requirements` werden die TO-Titel auf RC-002 geprüft und für RC-004 gelesen; `## REMOVED` wird nicht geprüft |
-| Erkennung | Kopfzeilen wie im OpenSpec-Parser 1.16: `### Requirement:` ohne Rücksicht auf Gross-/Kleinschreibung und mit beliebig viel (auch keinem) Leerraum nach `###`; RENAMED-Zeilen `FROM:`/`TO:` mit `-`, `*`, `+` oder ohne Aufzählungszeichen; abschliessende `#` nach Leerraum werden wie bei OpenSpec ignoriert. Ein Abschnitt `## Requirements`, `## ADDED/MODIFIED/RENAMED Requirements` ohne erkannte Anforderung erzeugt einen Hinweis auf stderr (Exitcode unverändert) |
-| Basis für RC-004 | `openspec/specs/<capability>/spec.md` relativ zum Projektstamm (Elternordner von `openspec/`) |
+| Aufruf | `python3 scripts/check-conventions.py [--warn] [--id-pattern REGEX] [STAMM ...]`; STAMM ist ein Projektordner mit `openspec/`, Standard: aktueller Ordner |
+| Quelle der Struktur | `openspec list --specs --json`, `openspec list --json` (aktive Changes, archivierte sind nicht enthalten), `openspec show <spec> --type spec --json`, `openspec show <change> --json --deltas-only`; jeweils im Projektstamm ausgeführt |
+| Geprüft | Basis-Anforderungen und ADDED-/MODIFIED-Deltas: RC-001 (Anforderungstext laut OpenSpec), RC-002, RC-007 (pro Spec-Datei); MODIFIED zusätzlich RC-004 gegen die Basis-Spec derselben Capability und die RENAMED-Ziele desselben Changes; RENAMED: Zieltitel auf RC-002; REMOVED wird nicht geprüft |
+| Anforderungstext | so, wie OpenSpec ihn liefert (ohne Szenarien und Codeblöcke); Inline-Code mit beliebig vielen Backticks und Zitate («…», "…", „…“) gelten als Erwähnung |
+| Zeilennummer | wird zur Ausgabe in der Spec-Datei gesucht (erste Kopfzeile ausserhalb von Codeblöcken, die den Namen enthält); nicht gefunden → Zeile 0 |
 | Ausgabe | eine Zeile je Verstoss: `<datei>:<zeile>: <RC-ID>: <Meldung> – «<Titel>» – siehe docs/de/process-model.md, Abschnitt «Anforderungen in OpenSpec»`; am Ende Zusammenfassung |
-| Exitcodes | 0 = keine Verstösse (oder `--warn`), 1 = Verstösse, 2 = Bedien-/Eingabefehler (Pfad fehlt, keine `spec.md` gefunden, ungültiges Muster, Datei nicht UTF-8) |
+| Exitcodes | 0 = keine Verstösse (oder `--warn`), 1 = Verstösse, 2 = Bedien-/Eingabefehler (Stamm ohne `openspec/`, OpenSpec-CLI fehlt oder meldet einen Fehler, ungültiges Muster, keine Anforderungen gefunden) |
 | ID-Muster | Standard `[A-Z][A-Z0-9]*(-[A-Z0-9]+)*-[0-9]+` |
-| Abhängigkeiten | nur Python-Standardbibliothek (≥ 3.10) |
-| Sicherheit | liest nur, schreibt nichts, führt keine Inhalte aus (kein eval/exec, keine Shell), braucht keine Zugangsdaten |
+| Abhängigkeiten | Python-Standardbibliothek (≥ 3.10) und OpenSpec-CLI (≥ 1.16, MIT, Node.js) im `PATH` oder über `OPENSPEC_BIN` |
+| Sicherheit | liest nur, schreibt nichts, führt keine Inhalte aus; einziger Fremdaufruf ist die OpenSpec-CLI mit festen Argumenten (Liste, keine Shell), Namen von Specs und Changes stammen aus deren eigener Ausgabe |
 
 ## Tests
 
-`python3 -m unittest discover -s tests -v` (nur Standardbibliothek). Testdaten unter `tests/fixtures/conventions/`; die CI scannt nur `openspec/`, nicht `tests/`.
+`python3 -m unittest discover -s tests -v`. Testdaten unter `tests/fixtures/conventions/` sind eigene kleine OpenSpec-Projekte (Ordner mit `openspec/`); die CI prüft nur den Stamm des Plugin-Repositorys. Tests, die die OpenSpec-CLI brauchen, setzen sie voraus (in der CI installiert).

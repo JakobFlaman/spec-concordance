@@ -5,7 +5,7 @@ Einheitliche Form von Anforderungen in OpenSpec-Spezifikationen von Projekten na
 ## ADDED Requirements
 
 ### Requirement: SHALL unabhängig von der Priorität (RC-001, Must)
-Der Anforderungstext jeder Anforderung SHALL das Schlüsselwort SHALL verwenden und kein anderes RFC-2119-Schlüsselwort für Empfehlung oder Option (`SHOULD`, `MAY`). Als Anforderungstext gilt der Text zwischen der Zeile `### Requirement:` und dem ersten `#### Scenario:`; als Schlüsselwort gilt nur das grossgeschriebene ganze Wort ausserhalb von Code (Inline-Code in Backticks und eingezäunte Codeblöcke) und Zitaten («…», "…", „…“).
+Der Anforderungstext jeder Anforderung SHALL das Schlüsselwort SHALL verwenden und kein anderes RFC-2119-Schlüsselwort für Empfehlung oder Option (`SHOULD`, `MAY`). Als Anforderungstext gilt der Text, den OpenSpec der Anforderung zuordnet (ohne Szenarien und ohne Codeblöcke); als Schlüsselwort gilt nur das grossgeschriebene ganze Wort ausserhalb von Inline-Code (Backticks) und Zitaten («…», "…", „…“).
 
 #### Scenario: Should-Anforderung validiert
 - **GIVEN** eine Anforderung mit Priorität Should, formuliert mit SHALL und Priorität im Titel
@@ -23,7 +23,7 @@ Der Anforderungstext jeder Anforderung SHALL das Schlüsselwort SHALL verwenden 
 - **THEN** wird die Anforderung akzeptiert
 
 #### Scenario: Plugin besteht die eigene Prüfung
-- **WHEN** `scripts/check-conventions.py openspec/specs openspec/changes` im Plugin-Repository ausgeführt wird
+- **WHEN** `scripts/check-conventions.py` im Plugin-Repository ausgeführt wird
 - **THEN** endet die Prüfung mit Exitcode 0
 
 ### Requirement: ID und Priorität im Titel (RC-002, Must)
@@ -58,7 +58,7 @@ Eine Quellanforderung mit gemischter Priorität (z. B. «Must / Should») SHALL 
 - **THEN** enthält `template-project/openspec-context.md` die Trennregel inklusive «ask the maintainer instead of guessing», und `skills/project-init/SKILL.md` enthält die Anweisung, bei unklarer Aufteilung beim Maintainer nachzufragen
 
 ### Requirement: Eindeutigkeit von ID und Priorität (RC-007, Must)
-Innerhalb einer Spec-Datei SHALL jede Kombination aus ID und Priorität nur einmal vorkommen. Geprüft werden Basis-Specs sowie ADDED- und MODIFIED-Abschnitte, nicht REMOVED, RENAMED und `archive/`.
+Innerhalb einer Spec-Datei SHALL jede Kombination aus ID und Priorität nur einmal vorkommen. Geprüft werden Basis-Specs sowie ADDED- und MODIFIED-Deltas aktiver Changes, nicht REMOVED, RENAMED und archivierte Changes.
 
 #### Scenario: Duplikat in einer Datei
 - **GIVEN** eine Spec-Datei mit zwei Anforderungen, die beide «(LA-F-105, Must)» tragen
@@ -103,13 +103,36 @@ Der Skill `project-init` SHALL nach `openspec init` den Textbaustein `template-p
 - **THEN** bleibt die Sprachangabe erhalten und der Baustein steht genau einmal im `context`
 
 ### Requirement: Prüfung im Plugin-Repository (RC-006, Should)
-Das Plugin-Repository SHALL `scripts/check-conventions.py` in seiner CI auf `openspec/specs/` und `openspec/changes/` ausführen. Die Bereitstellung der Prüfung für die CI von Projekten ist ein eigener Change.
+Das Plugin-Repository SHALL `scripts/check-conventions.py` in seiner CI ausführen. Die Bereitstellung der Prüfung für die CI von Projekten ist ein eigener Change.
 
 #### Scenario: Plugin-CI
 - **WHEN** ein Pull Request im Plugin-Repository erstellt wird
-- **THEN** führt die CI die Prüfung aus, scannt keine Testdaten unter `tests/` und schlägt bei einer Verletzung fehl
+- **THEN** führt die CI die Prüfung im Projektstamm aus, prüft keine Testdaten unter `tests/` und schlägt bei einer Verletzung fehl
 
 #### Scenario: Übergangsmodus
 - **GIVEN** ein bestehendes Projekt mit Titeln ohne Priorität
 - **WHEN** die Prüfung mit `--warn` ausgeführt wird
 - **THEN** meldet sie alle Verstösse, endet aber mit Exitcode 0
+
+### Requirement: Erkennung über OpenSpec (RC-008, Must)
+Die Prüfung SHALL Anforderungen, ihre Namen und Texte ausschliesslich über die OpenSpec-CLI (ab Version 1.16) ermitteln, damit sie dieselben Anforderungen sieht wie OpenSpec. Fehlt die CLI oder meldet sie einen Fehler, endet die Prüfung mit Exitcode 2 und gibt die Meldung von OpenSpec weiter.
+
+#### Scenario: Verschachtelte Capability
+- **GIVEN** eine Basis-Anforderung «Darstellungsmodi (LA-F-110, Should)» unter `openspec/specs/area/cap/spec.md`
+- **WHEN** ein Change unter `specs/area/cap/spec.md` den Titel «Darstellungsmodi (LA-F-110, Must)» als MODIFIED führt
+- **THEN** meldet die Prüfung RC-004 und endet mit Exitcode 1
+
+#### Scenario: Basis-Anforderung ohne Präfix
+- **GIVEN** eine Basis-Spec, deren Anforderung als `### Seitenleiste (LA-F-104)` ohne «Requirement:» geschrieben ist und die OpenSpec als Anforderung liest
+- **WHEN** die Prüfung ausgeführt wird
+- **THEN** meldet sie RC-002 «Priorität fehlt» und endet mit Exitcode 1
+
+#### Scenario: OpenSpec fehlt
+- **GIVEN** die OpenSpec-CLI ist nicht auffindbar
+- **WHEN** die Prüfung ausgeführt wird
+- **THEN** endet sie mit Exitcode 2 und der Meldung, dass OpenSpec benötigt wird
+
+#### Scenario: OpenSpec meldet einen Fehler
+- **GIVEN** ein Change ohne `proposal.md`
+- **WHEN** die Prüfung ausgeführt wird
+- **THEN** endet sie mit Exitcode 2 und gibt die Fehlermeldung von OpenSpec mit dem Namen des Changes aus
