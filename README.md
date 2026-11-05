@@ -36,7 +36,7 @@ scripts/              Hilfsskripte (z. B. Prüfung veralteter Übersetzungen)
 
 ## Schnellstart
 
-Voraussetzungen: [Claude Code](https://docs.claude.com/en/docs/claude-code/overview), Node.js 20+, Git.
+Voraussetzungen: [Claude Code](https://docs.claude.com/en/docs/claude-code/overview), Node.js 20+, Git, Python 3.10+ (für die Prüfskripte).
 
 ```bash
 # 1. OpenSpec installieren

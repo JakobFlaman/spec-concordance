@@ -28,6 +28,17 @@ Dieses Repository ist das Plugin `spec-concordance` selbst. Es wird nach seinem 
 - `templates/<sprache>/NN-name.md` – nummerierte Artefakt-Vorlagen
 - `docs/<sprache>/` – Erläuterungen zum Vorgehensmodell
 
+## Befehle
+
+```bash
+# Tests (wird vom Qualitäts-Gate G2 ausgeführt)
+python3 -m unittest discover -s tests -v
+# Prüfungen
+python3 scripts/check-conventions.py openspec/specs openspec/changes
+python3 scripts/check-i18n.py
+openspec validate --all --strict
+```
+
 ## Versionierung
 
 Semantic Versioning. Version in `.claude-plugin/plugin.json` und `CHANGELOG.md` immer gemeinsam ändern.

@@ -11,6 +11,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Tests / Run tests
+        run: python3 -m unittest discover -s tests -v
+
+      - name: Anforderungskonvention prüfen / Check requirement conventions
+        run: python3 scripts/check-conventions.py openspec/specs openspec/changes
+
       - name: Übersetzungen prüfen / Check translations
         run: python3 scripts/check-i18n.py
 

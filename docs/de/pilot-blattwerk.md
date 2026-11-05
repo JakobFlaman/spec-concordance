@@ -28,3 +28,10 @@ Das Gate hat gewirkt: Die Ablehnung ist berechtigt, und mehrere Rollen haben die
 | P8 | Viele Befunde betreffen Testbarkeit (Soll-Herkunft, Toleranz, Messverfahren). | Vorlage 08 um «Soll-Ergebnis: Herkunft, Metrik, Schwellwert» je Testart erweitern | mittel |
 | P9 | Begriff «Gate n» doppelt belegt (Phasen-Gate vs. Release). | Begriffe im Vorgehensmodell festlegen: Phasen-Gate P1…P4, Release-Gate R0.5 … | niedrig |
 | P10 | Sechs Rollen à ca. 100k Tokens und 1–1,5 Minuten. | Kosten/Dauer in der Doku nennen; Option «Schnellreview» mit 3 Rollen für kleine Changes | niedrig |
+
+## Folge-Changes
+
+| Herkunft | Change | Repository |
+|---|---|---|
+| add-priority-convention, W1 | Prüfskript für die CI von Projekten bereitstellen | spec-concordance |
+| add-priority-convention, Praxistest | 15 Anforderungstitel nach RC-002 umstellen (RENAMED bzw. vor dem Archivieren direkt im Change) | pdf-concordance |

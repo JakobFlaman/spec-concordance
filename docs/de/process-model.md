@@ -52,7 +52,32 @@ Meldung ─▶ change-proposal ─▶ council-review ─▶ Umsetzung ─▶ qua
    └────────── Rückkopplung: Tests · Doku · Rollenkonzept · Roadmap ◀─────────┘
 ```
 
-## 5. Grundsätze
+## 5. Anforderungen in OpenSpec
+
+OpenSpec verlangt in jeder Anforderung das Schlüsselwort SHALL oder MUST. Diese Schlüsselwörter stammen aus RFC 2119, einem Standard für Verbindlichkeitsstufen in Spezifikationen (SHALL = verbindlich, SHOULD = empfohlen, MAY = optional). Lastenhefte priorisieren dagegen nach MoSCoW. Damit beides zusammengeht, gilt für funktionale und nicht-funktionale Anforderungen:
+
+| Regel | Inhalt |
+|---|---|
+| RC-001 | Im Anforderungstext steht immer SHALL. Das ist nur die von OpenSpec verlangte Syntax – die Verbindlichkeit legt allein die Priorität im Titel fest. |
+| RC-002 | Titel in der Form `<Titel> (<ID>, <Must\|Should\|Could>)`, z. B. `Darstellungsmodi (LA-F-110, Should)`. Die ID ist die stabile Kennung aus der Anforderungsquelle. Won't-Anforderungen stehen in der Roadmap, nicht in OpenSpec. |
+| RC-003 | Eine Quellanforderung mit gemischter Priorität («Must / Should») wird in je eine Anforderung pro Priorität mit derselben ID getrennt. Ist die Aufteilung unklar, entscheidet der Maintainer. |
+| RC-004 | Eine Umpriorisierung ist eine Umbenennung: RENAMED mit FROM/TO, nicht MODIFIED. |
+| RC-007 | Innerhalb einer Spec-Datei kommt jede Kombination aus ID und Priorität nur einmal vor. |
+
+**Beispiel Umpriorisierung** (Should wird Must):
+
+```markdown
+## RENAMED Requirements
+
+- FROM: `### Requirement: Darstellungsmodi (LA-F-110, Should)`
+- TO: `### Requirement: Darstellungsmodi (LA-F-110, Must)`
+```
+
+**Prüfung:** `python3 scripts/check-conventions.py [PFAD ...]` meldet Verstösse mit Datei, Zeile, Regel und Titel. Exitcodes: 0 = in Ordnung, 1 = Verstösse, 2 = Bedien- oder Eingabefehler.
+
+**Migration bestehender Projekte:** Zuerst die Regeln mit `project-init` (Schritt «OpenSpec initialisieren») in `openspec/config.yaml` übernehmen. Dann die Prüfung mit `--warn` laufen lassen – sie meldet alle Verstösse, bricht aber nicht ab. Die Titel bestehender Anforderungen werden in einem eigenen Change per RENAMED umgestellt; danach läuft die Prüfung ohne `--warn`.
+
+## 6. Grundsätze
 
 1. **Die Spezifikation ist die Wahrheit.** Code, der nicht der Spec entspricht, ist ein Fehler – oder die Spec muss per Change angepasst werden.
 2. **Keine Selbstabnahme.** Wer umsetzt, prüft nicht.
@@ -60,7 +85,7 @@ Meldung ─▶ change-proposal ─▶ council-review ─▶ Umsetzung ─▶ qua
 4. **Der Mensch entscheidet an den Gates.** Die KI bereitet vor, der Maintainer gibt frei.
 5. **Jede Meldung bekommt eine Antwort.**
 
-## 6. Abgrenzung zu OpenSpec, Spec Kit und BMAD
+## 7. Abgrenzung zu OpenSpec, Spec Kit und BMAD
 
 | | OpenSpec | Spec Kit | BMAD | spec-concordance |
 |---|---|---|---|---|

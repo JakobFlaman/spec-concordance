@@ -1,6 +1,6 @@
 ---
 source: docs/de/process-model.md
-source-hash: 50eba6f9fda1
+source-hash: 9e6f9f075e5e
 status: translated
 ---
 
@@ -58,7 +58,32 @@ Report ─▶ change-proposal ─▶ council-review ─▶ implement ─▶ qual
    └────────── feedback: tests · docs · role model · roadmap ◀───────────────┘
 ```
 
-## 5. Principles
+## 5. Requirements in OpenSpec
+
+OpenSpec requires the keyword SHALL or MUST in every requirement. These keywords come from RFC 2119, a standard for levels of obligation in specifications (SHALL = mandatory, SHOULD = recommended, MAY = optional). Requirements specifications, however, prioritise with MoSCoW. To reconcile both, the following applies to functional and non-functional requirements:
+
+| Rule | Content |
+|---|---|
+| RC-001 | The requirement text always uses SHALL. This is only the syntax OpenSpec requires – the obligation is defined solely by the priority in the title. |
+| RC-002 | Title in the form `<Title> (<ID>, <Must\|Should\|Could>)`, e.g. `Display modes (LA-F-110, Should)`. The ID is the stable identifier from the requirements source. Won't items go to the roadmap, not to OpenSpec. |
+| RC-003 | A source requirement with mixed priority ("Must / Should") is split into one requirement per priority with the same ID. If the split is unclear, the maintainer decides. |
+| RC-004 | A change of priority is a rename: RENAMED with FROM/TO, not MODIFIED. |
+| RC-007 | Within one spec file, each combination of ID and priority appears only once. |
+
+**Example of a priority change** (Should becomes Must):
+
+```markdown
+## RENAMED Requirements
+
+- FROM: `### Requirement: Display modes (LA-F-110, Should)`
+- TO: `### Requirement: Display modes (LA-F-110, Must)`
+```
+
+**Check:** `python3 scripts/check-conventions.py [PATH ...]` reports violations with file, line, rule and title. Exit codes: 0 = ok, 1 = violations, 2 = usage or input error.
+
+**Migrating existing projects:** First add the rules to `openspec/config.yaml` using `project-init` (step "Initialise OpenSpec"). Then run the check with `--warn` – it reports all violations without failing. Rename the titles of existing requirements in a separate change via RENAMED; afterwards run the check without `--warn`.
+
+## 6. Principles
 
 1. **The specification is the truth.** Code that does not match the spec is a defect – or the spec is changed through a change.
 2. **No self-approval.** Whoever implements does not review.
@@ -66,7 +91,7 @@ Report ─▶ change-proposal ─▶ council-review ─▶ implement ─▶ qual
 4. **Humans decide at the gates.** The AI prepares, the maintainer approves.
 5. **Every report gets an answer.**
 
-## 6. How it relates to OpenSpec, Spec Kit and BMAD
+## 7. How it relates to OpenSpec, Spec Kit and BMAD
 
 | | OpenSpec | Spec Kit | BMAD | spec-concordance |
 |---|---|---|---|---|
