@@ -2,13 +2,13 @@
 
 Datum: 2026-11-05 · Umgebung: Linux, Python 3, OpenSpec 1.16.0 (auch mit `--ignore-scripts` installiert geprüft) · Ausgeführt von: umsetzender Agent (Nachprüfung im Qualitäts-Gate durch unabhängigen Agenten)
 
-## Ergebnis (Lauf 8, Revision 2)
+## Ergebnis (Lauf 10, Revision 2)
 
 | Prüfung | Befehl | Ergebnis |
 |---|---|---|
-| Unit-Tests mit OpenSpec-CLI | `python3 -m unittest discover -s tests -v` | 39 von 39 grün (Lauf 9) |
-| Unit-Tests ohne CLI, lokal | `PATH` ohne `openspec` | 10 grün, 29 sichtbar übersprungen |
-| Unit-Tests ohne CLI, CI | `CI=true`, `PATH` ohne `openspec` | 29 Fehlschläge (gewollt: kein trügerisches Grün) |
+| Unit-Tests mit OpenSpec-CLI | `python3 -m unittest discover -s tests -v` | 41 von 41 grün |
+| Unit-Tests ohne CLI, lokal | `PATH` ohne `openspec` | 10 grün, 31 sichtbar übersprungen |
+| Unit-Tests ohne CLI, CI | `CI=true`, `PATH` ohne `openspec` | 31 Fehlschläge (gewollt: kein trügerisches Grün) |
 | Konvention, eigenes Repo | `python3 scripts/check-conventions.py` | Exit 0, 8 Anforderungen |
 | OpenSpec | `openspec validate --all --strict` | gültig |
 | Übersetzungen | `python3 scripts/check-i18n.py` | OK |
@@ -20,6 +20,8 @@ Datum: 2026-11-05 · Umgebung: Linux, Python 3, OpenSpec 1.16.0 (auch mit `--ign
 | RC-001 | Should-Anforderung validiert | indirekt: RC-006 ist Should und besteht `openspec validate --strict` (G0) |
 | RC-001 | Empfehlungs-Schlüsselwort im Anforderungstext | `test_keyword_in_requirement_text_is_violation` |
 | RC-001 | Erwähnung ist kein Verstoss | `test_mentions_in_code_quotes_codeblock_and_scenarios_are_accepted`; Codeblöcke mit Überschriften: `test_headings_inside_code_blocks_do_not_hide_violations` |
+| RC-001 | Inline-Code über einen Zeilenumbruch | `test_inline_code_across_line_break_is_mention` |
+| RC-001 | Unpaarige Backticks | `test_unpaired_backticks_do_not_hide_keyword` |
 | RC-001 | Plugin besteht die eigene Prüfung | `test_plugin_passes_its_own_check` |
 | RC-002 | Korrekter Titel | `test_valid_titles_incl_could_nfr_and_scenario_title` |
 | RC-002 | Fehlende Priorität | `test_missing_priority` (Datei und Zeile geprüft) |
@@ -78,3 +80,4 @@ Datum: 2026-11-05 · Umgebung: Linux, Python 3, OpenSpec 1.16.0 (auch mit `--ign
 | 7 | 38 | grün | Gate 6 nicht bestanden (G7: eingerückte Zäune) – behoben |
 | 8 | 38 | grün | Gate 7 nicht bestanden (G7: verschachtelte Capability, Basis ohne Präfix) – **Revision 2:** Erkennung über OpenSpec-CLI, Nachtrags-Review N1–N12 |
 | 9 | 39 | grün | Gate 8 nicht bestanden (G6: N1-Text gab S4 falsch wieder – korrigiert; G7: RC-007 in OpenSpec- statt Dateireihenfolge – sortiert) |
+| 10 | 41 | grün | Gate 9 nicht bestanden (G7: Inline-Code über Zeilenumbruch) – Inline-Code nach CommonMark |

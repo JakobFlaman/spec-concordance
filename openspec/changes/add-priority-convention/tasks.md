@@ -7,7 +7,7 @@ Version: Änderungen werden unter [Unreleased] gesammelt; `plugin.json` wird bei
 - [x] 1.1 `scripts/check-conventions.py` nach der Schnittstelle in `design.md` (Erkennungsregel RC-001, Titel RC-002, Duplikate RC-007, Umpriorisierung RC-004, Exitcodes 0/1/2, `--warn`, `--id-pattern`; nur Standardbibliothek, nur lesend)
 - [x] 1.2 Testdaten `tests/fixtures/conventions/` und `tests/test_check_conventions.py` (unittest): gültig, Priorität fehlt, unbekannte Priorität, SHOULD im Text, SHOULD als Erwähnung (Code, Zitat, Szenario), Duplikat, gleiche ID mit zwei Prioritäten, RENAMED korrekt, MODIFIED mit nur geänderter Priorität, `archive/` übersprungen, `--warn`, Pfad fehlt (RC-001 bis RC-004, RC-006, RC-007)
 - [x] 1.3 Test «Plugin besteht die eigene Prüfung» (RC-001)
-- [x] 1.4 Testbefehl `python3 -m unittest discover -s tests -v` in `CLAUDE.md` des Plugins; CI-Schritte für Tests und `python3 scripts/check-conventions.py openspec/specs openspec/changes` in `.github/workflows/checks.yml` (RC-006)
+- [x] 1.4 Testbefehl `python3 -m unittest discover -s tests -v` in `CLAUDE.md` des Plugins; CI-Schritte für Tests und `python3 scripts/check-conventions.py openspec/specs openspec/changes` in `.github/workflows/checks.yml` (RC-006) – Aufruf durch 10.5/10.6 ersetzt: jetzt im Projektstamm ohne Argumente
 
 ## 2. Regel verankern
 
@@ -72,3 +72,8 @@ Version: Änderungen werden unter [Unreleased] gesammelt; `plugin.json` wird bei
 - [x] 11.1 G7 / RC-007: Einträge pro Spec-Datei vor der Duplikatprüfung nach Zeilennummer sortieren; Testprojekt «duplicate-modified-first» und Test
 - [x] 11.2 G6 / N1: Auflagentext korrigiert (S4 wörtlich: nie `pull_request_target`; `push` auf `main` bleibt); Einzelvoten des Nachtrags-Reviews abgelegt
 - [x] 11.3 Beobachtungen: OpenSpec-Version im README fixiert (1.16.0); eingerückter Code in design.md geklärt
+
+## 12. Nach Qualitäts-Gate (Lauf 9 nicht bestanden)
+
+- [x] 12.1 G7 / RC-001: Inline-Code nach CommonMark (gleich lange Backtick-Läufe, auch über Zeilenumbrüche; unpaarige Läufe sind Text); Szenarien «Inline-Code über einen Zeilenumbruch» und «Unpaarige Backticks»; Testprojekte und Tests
+- [x] 12.2 Beobachtungen: veralteter Aufruf in 1.4 vermerkt; Laufbezeichnung in der Test-Summary; exakte Fixierung der GitHub-Actions per SHA als Folge-Change (aus dieser Sitzung nicht abfragbar)

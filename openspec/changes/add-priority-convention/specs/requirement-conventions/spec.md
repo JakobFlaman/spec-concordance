@@ -22,6 +22,16 @@ Der Anforderungstext jeder Anforderung SHALL das Schlüsselwort SHALL verwenden 
 - **WHEN** `scripts/check-conventions.py` ausgeführt wird
 - **THEN** wird die Anforderung akzeptiert
 
+#### Scenario: Inline-Code über einen Zeilenumbruch
+- **GIVEN** eine Anforderung, die `SHOULD` in Inline-Code erwähnt, der über einen Zeilenumbruch läuft
+- **WHEN** `scripts/check-conventions.py` ausgeführt wird
+- **THEN** wird die Anforderung akzeptiert
+
+#### Scenario: Unpaarige Backticks
+- **GIVEN** eine Anforderung, in der vor `SHOULD` ein Backtick-Lauf ohne gleich langes Gegenstück steht
+- **WHEN** `scripts/check-conventions.py` ausgeführt wird
+- **THEN** meldet die Prüfung RC-001
+
 #### Scenario: Plugin besteht die eigene Prüfung
 - **WHEN** `scripts/check-conventions.py` im Plugin-Repository ausgeführt wird
 - **THEN** endet die Prüfung mit Exitcode 0

@@ -35,3 +35,4 @@ Das Gate hat gewirkt: Die Ablehnung ist berechtigt, und mehrere Rollen haben die
 |---|---|---|
 | add-priority-convention, W1 | Prüfskript für die CI von Projekten bereitstellen | spec-concordance |
 | add-priority-convention, Praxistest | 15 Anforderungstitel nach RC-002 umstellen (RENAMED bzw. vor dem Archivieren direkt im Change) | pdf-concordance |
+| add-priority-convention, Gate-Lauf 9 | GitHub-Actions in der CI per Commit-SHA statt Major-Tag fixieren (S3) | spec-concordance |

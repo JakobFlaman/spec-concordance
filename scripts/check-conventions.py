@@ -45,7 +45,8 @@ NAME_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._/-]*$")
 TITLE_FULL_RE = re.compile(r"^(?P<name>.*\S)\s+\((?P<id>[^,()]+),\s*(?P<prio>[^,()]+)\)$")
 TITLE_ID_ONLY_RE = re.compile(r"^(?P<name>.*\S)\s+\((?P<id>[^,()]+)\)$")
 KEYWORD_RE = re.compile(r"\b(SHOULD|MAY)\b")
-MENTION_RE = re.compile(r"(`+).+?\1|«[^»]*»|\"[^\"]*\"|“[^”]*”|„[^“”]*[“”]")
+BACKTICK_RUN_RE = re.compile(r"`+")
+QUOTE_RE = re.compile(r"«[^»]*»|\"[^\"]*\"|“[^”]*”|„[^“”]*[“”]")
 
 # Nur für die Zuordnung der Zeilennummer (RC-008: Struktur kommt aus der CLI).
 HEADING_RE = re.compile(r"^###\s*(?:Requirement:\s*)?(?P<name>.+?)\s*$", re.IGNORECASE)
@@ -298,8 +299,31 @@ def check_title(path: Path, line: int, title: str, id_re: re.Pattern) -> list[Vi
     return out
 
 
+def strip_code_spans(text: str) -> str:
+    """Inline-Code nach CommonMark entfernen: ein Backtick-Lauf öffnet, der nächste gleich
+    lange Lauf schliesst (auch über Zeilenumbrüche); ein Lauf ohne Gegenstück ist Text."""
+    runs = list(BACKTICK_RUN_RE.finditer(text))
+    keep: list[str] = []
+    pos = i = 0
+    while i < len(runs):
+        opener = runs[i]
+        closer = next((j for j in range(i + 1, len(runs)) if len(runs[j].group()) == len(opener.group())), None)
+        if closer is None:
+            i += 1          # unpaariger Lauf: bleibt Text
+            continue
+        keep.append(text[pos:opener.start()])
+        pos = runs[closer].end()
+        i = closer + 1
+    keep.append(text[pos:])
+    return "".join(keep)
+
+
+def strip_mentions(text: str) -> str:
+    return QUOTE_RE.sub("", strip_code_spans(text))
+
+
 def check_text(path: Path, line: int, title: str, text: str) -> list[Violation]:
-    m = KEYWORD_RE.search(MENTION_RE.sub("", text))
+    m = KEYWORD_RE.search(strip_mentions(text))
     if m:
         return [Violation(path, line, "RC-001",
                           f"Schlüsselwort {m.group(1)} im Anforderungstext – SHALL verwenden, Priorität steht im Titel", title)]

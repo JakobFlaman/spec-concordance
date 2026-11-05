@@ -62,6 +62,15 @@ class TestRC001Keyword(CliTestCase):
         self.assertEqual(code, 0, out)
         self.assertNotIn("RC-001", out)
 
+    def test_inline_code_across_line_break_is_mention(self):
+        code, out = project("code-span-wrap")
+        self.assertEqual(code, 0, out)
+
+    def test_unpaired_backticks_do_not_hide_keyword(self):
+        code, out = project("code-span-unpaired")
+        self.assertEqual(code, 1)
+        self.assertIn("spec.md:7: RC-001", out)
+
     def test_headings_inside_code_blocks_do_not_hide_violations(self):
         code, out = project("fenced-headings")
         self.assertEqual(code, 1)
