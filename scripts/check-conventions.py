@@ -44,10 +44,10 @@ DOC_HINT = "siehe docs/de/process-model.md, Abschnitt «Anforderungen in OpenSpe
 NAME_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._/-]*$")
 TITLE_FULL_RE = re.compile(r"^(?P<name>.*\S)\s+\((?P<id>[^,()]+),\s*(?P<prio>[^,()]+)\)$")
 TITLE_ID_ONLY_RE = re.compile(r"^(?P<name>.*\S)\s+\((?P<id>[^,()]+)\)$")
-KEYWORD_RE = re.compile(r"\b(SHOULD|MAY)\b")
+# Ganzes Wort; Unterstrich zählt nicht als Wortzeichen (_SHOULD_ ist Hervorhebung)
+KEYWORD_RE = re.compile(r"(?<![^\W_])(SHOULD|MAY)(?![^\W_])")
 BACKTICK_RUN_RE = re.compile(r"`+")
-ESCAPED_BACKTICK_RE = re.compile(r"\\`")
-ANGLE_BACKTICK_RE = re.compile(r"<[^>\n]*`[^\n]*>")
+UNSAFE_CHARS_RE = re.compile(r"[\\<\[]")   # siehe strip_mentions
 # Zitate nur innerhalb einer Zeile; gerade Anführungszeichen zählen nicht (auch Zollzeichen)
 QUOTE_RE = re.compile(r"«[^»\n]*»|“[^”\n]*”|„[^“”\n]*[“”]")
 
@@ -302,37 +302,41 @@ def check_title(path: Path, line: int, title: str, id_re: re.Pattern) -> list[Vi
     return out
 
 
-def strip_code_spans(line: str) -> str:
-    """Inline-Code innerhalb einer Zeile entfernen: ein Backtick-Lauf öffnet, der nächste gleich
-    lange Lauf derselben Zeile schliesst; ein Lauf ohne Gegenstück ist Text."""
+def pair_code_spans(line: str) -> tuple[str, bool]:
+    """Inline-Code einer Zeile entfernen: ein Backtick-Lauf öffnet, der nächste gleich lange Lauf
+    derselben Zeile schliesst. Liefert den Rest und ob ein Lauf ohne Gegenstück blieb."""
     runs = list(BACKTICK_RUN_RE.finditer(line))
     keep: list[str] = []
     pos = i = 0
+    unpaired = False
     while i < len(runs):
         opener = runs[i]
         closer = next((j for j in range(i + 1, len(runs)) if len(runs[j].group()) == len(opener.group())), None)
         if closer is None:
-            i += 1          # unpaariger Lauf: bleibt Text
+            unpaired = True
+            i += 1
             continue
-        keep.append(line[pos:opener.start()])
+        keep.append(line[pos:opener.start()] + " ")   # Leerzeichen: keine Wortverschmelzung
         pos = runs[closer].end()
         i = closer + 1
     keep.append(line[pos:])
-    return "".join(keep)
-
-
-def ambiguous(line: str) -> bool:
-    """Zeilen, in denen die Paarung der Backticks ohne vollständigen CommonMark-Parser nicht
-    sicher ist: ein Backslash direkt vor einem Backtick (Maskierung ausserhalb, nicht innerhalb
-    von Code) oder ein Backtick zwischen < und > (Autolink oder HTML haben Vorrang vor Code)."""
-    return bool(ESCAPED_BACKTICK_RE.search(line) or ANGLE_BACKTICK_RE.search(line))
+    return "".join(keep), unpaired
 
 
 def strip_mentions(text: str) -> str:
-    """Erwähnungen (Inline-Code, Zitate) zählen nur innerhalb einer Zeile und nur in Zeilen ohne
-    Mehrdeutigkeit. Im Zweifel melden: selten ein Fehlalarm, nie ein stiller Durchlass."""
-    return "\n".join(line if ambiguous(line) else QUOTE_RE.sub("", strip_code_spans(line))
-                     for line in text.split("\n"))
+    """Erwähnungen (Inline-Code, Zitate) nur dort ausblenden, wo die Code-Grenzen sicher feststehen
+    (positiv festgelegt statt Sonderfälle aufzuzählen). Sicher ist ein Anforderungstext, wenn
+    - er keines der Zeichen \\ < [ enthält: nur Backslash-Maskierung, Autolinks/HTML und
+      Link-Ziele/-Titel können nach CommonMark Backticks vor Inline-Code verbrauchen, und
+    - jeder Backtick-Lauf ein Gegenstück auf derselben Zeile hat: dann paart CommonMark die Läufe
+      genauso, und Absatzgrenzen (die OpenSpec nicht liefert) spielen keine Rolle.
+    Sonst gilt keine Erwähnung – im Zweifel melden: selten ein Fehlalarm, nie ein stiller Durchlass."""
+    if UNSAFE_CHARS_RE.search(text):
+        return text
+    lines = [pair_code_spans(line) for line in text.split("\n")]
+    if any(unpaired for _, unpaired in lines):
+        return text
+    return "\n".join(QUOTE_RE.sub(" ", rest) for rest, _ in lines)
 
 
 def check_text(path: Path, line: int, title: str, text: str) -> list[Violation]:

@@ -93,3 +93,9 @@ Version: Änderungen werden unter [Unreleased] gesammelt; `plugin.json` wird bei
 - [x] 15.1 G7 / RC-001: statt Einzelfällen eine Grundregel – in Zeilen mit mehrdeutigen Code-Grenzen (Backslash vor Backtick, Backtick in `<…>`) gilt keine Erwähnung; ersetzt die Prüfung zweier Lesarten aus 14.1
 - [x] 15.2 Beobachtung Zollzeichen: gerade Anführungszeichen zählen nicht mehr als Zitat
 - [x] 15.3 Szenarien «Mehrdeutige Code-Grenzen» (ersetzt «Backslash am Ende von Inline-Code») und «Gerade Anführungszeichen»; Testprojekte `code-span-mixed`, `code-span-autolink`, `straight-quotes`; alle Gegenbeispiele aus Lauf 11 und 12 nachgeprüft
+
+## 16. Nach Qualitäts-Gate (Lauf 13 nicht bestanden)
+
+- [x] 16.1 G7 / RC-001: Erwähnungen positiv festgelegt – nur in Texten ohne `\`, `<`, `[` und mit vollständig zeilenweise gepaarten Backtick-Läufen; ersetzt die Aufzählung mehrdeutiger Fälle aus 15.1
+- [x] 16.2 Vergleichstest gegen CommonMark (markdown-it) in `tests/fuzz/`; dabei gefunden und behoben: `_SHOULD_` wurde nicht erkannt (Wortgrenze), ausgeblendeter Code liess Wörter verschmelzen
+- [x] 16.3 Szenarien «Unsichere Code-Grenzen» (ersetzt «Mehrdeutige Code-Grenzen», «Maskierte Backticks») und «Kein stiller Durchlass gegenüber CommonMark»; Testprojekte `code-span-shift`, `html-attribute`, `emphasis-keyword`, `code-span-glued`; alle Gegenbeispiele aus Lauf 11–13 nachgeprüft

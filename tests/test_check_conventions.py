@@ -96,6 +96,27 @@ class TestRC001Keyword(CliTestCase):
         self.assertEqual(code, 1)
         self.assertIn("spec.md:7: RC-001", out)
 
+    def test_code_across_lines_shifting_pairing_does_not_hide_keyword(self):
+        # Gate-Lauf 13: ein Lauf ohne Gegenstück auf seiner Zeile verschiebt die Paarung danach
+        code, out = project("code-span-shift")
+        self.assertEqual(code, 1)
+        self.assertIn("spec.md:7: RC-001", out)
+
+    def test_html_attribute_does_not_hide_keyword(self):
+        code, out = project("html-attribute")
+        self.assertEqual(code, 1)
+        self.assertIn("spec.md:7: RC-001", out)
+
+    def test_keyword_in_underscore_emphasis_is_violation(self):
+        code, out = project("emphasis-keyword")
+        self.assertEqual(code, 1)
+        self.assertIn("spec.md:7: RC-001", out)
+
+    def test_keyword_directly_before_code_is_violation(self):
+        code, out = project("code-span-glued")
+        self.assertEqual(code, 1)
+        self.assertIn("spec.md:7: RC-001", out)
+
     def test_escaped_backticks_do_not_hide_keyword(self):
         code, out = project("code-span-escaped")
         self.assertEqual(code, 1)

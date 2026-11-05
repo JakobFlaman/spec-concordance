@@ -5,7 +5,7 @@ Einheitliche Form von Anforderungen in OpenSpec-Spezifikationen von Projekten na
 ## ADDED Requirements
 
 ### Requirement: SHALL unabhängig von der Priorität (RC-001, Must)
-Der Anforderungstext jeder Anforderung SHALL das Schlüsselwort SHALL verwenden und kein anderes RFC-2119-Schlüsselwort für Empfehlung oder Option (`SHOULD`, `MAY`). Als Anforderungstext gilt der Text, den OpenSpec der Anforderung zuordnet (ohne Szenarien und ohne Codeblöcke); als Schlüsselwort gilt nur das grossgeschriebene ganze Wort ausserhalb von Inline-Code (Backticks) und Zitaten («…», “…”, „…“). Beides gilt nur eindeutig und innerhalb einer Zeile; im Zweifel wird gemeldet.
+Der Anforderungstext jeder Anforderung SHALL das Schlüsselwort SHALL verwenden und kein anderes RFC-2119-Schlüsselwort für Empfehlung oder Option (`SHOULD`, `MAY`). Als Anforderungstext gilt der Text, den OpenSpec der Anforderung zuordnet (ohne Szenarien und ohne Codeblöcke); als Schlüsselwort gilt das grossgeschriebene ganze Wort, auch in `_SHOULD_`. Inline-Code und Zitate («…», “…”, „…“) sind nur bei sicheren Grenzen eine Erwähnung; sonst wird gemeldet.
 
 #### Scenario: Should-Anforderung validiert
 - **GIVEN** eine Anforderung mit Priorität Should, formuliert mit SHALL und Priorität im Titel
@@ -27,13 +27,8 @@ Der Anforderungstext jeder Anforderung SHALL das Schlüsselwort SHALL verwenden 
 - **WHEN** `scripts/check-conventions.py` ausgeführt wird
 - **THEN** meldet die Prüfung RC-001 (im Zweifel melden; Abhilfe: Erwähnung auf eine Zeile setzen)
 
-#### Scenario: Maskierte Backticks
-- **GIVEN** eine Anforderung, in der `SHOULD` zwischen mit Backslash maskierten Backticks steht
-- **WHEN** `scripts/check-conventions.py` ausgeführt wird
-- **THEN** meldet die Prüfung RC-001
-
-#### Scenario: Mehrdeutige Code-Grenzen
-- **GIVEN** eine Anforderung, in deren Zeile mit `SHOULD` ein Backslash direkt vor einem Backtick steht oder ein Backtick innerhalb von `<…>` (Autolink, HTML)
+#### Scenario: Unsichere Code-Grenzen
+- **GIVEN** eine Anforderung, deren Text einen Backslash, `<` oder `[` enthält oder einen Backtick-Lauf ohne Gegenstück auf derselben Zeile, und die `SHOULD` ausserhalb von «…» enthält
 - **WHEN** `scripts/check-conventions.py` ausgeführt wird
 - **THEN** meldet die Prüfung RC-001, auch wenn `SHOULD` nach CommonMark in Code stünde
 
@@ -42,10 +37,10 @@ Der Anforderungstext jeder Anforderung SHALL das Schlüsselwort SHALL verwenden 
 - **WHEN** `scripts/check-conventions.py` ausgeführt wird
 - **THEN** meldet die Prüfung RC-001
 
-#### Scenario: Unpaarige Backticks
-- **GIVEN** eine Anforderung, in der vor `SHOULD` ein Backtick-Lauf ohne gleich langes Gegenstück steht
-- **WHEN** `scripts/check-conventions.py` ausgeführt wird
-- **THEN** meldet die Prüfung RC-001
+#### Scenario: Kein stiller Durchlass gegenüber CommonMark
+- **GIVEN** ein Anforderungstext, in dem `SHOULD` nach CommonMark ausserhalb von Inline-Code und «…», “…”, „…“ steht
+- **WHEN** die Erkennung mit einem CommonMark-Parser verglichen wird (`tests/fuzz/`)
+- **THEN** meldet die Prüfung RC-001 in jedem Fall
 
 #### Scenario: Plugin besteht die eigene Prüfung
 - **WHEN** `scripts/check-conventions.py` im Plugin-Repository ausgeführt wird
