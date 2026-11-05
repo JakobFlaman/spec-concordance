@@ -59,6 +59,21 @@ class TestRC001Keyword(unittest.TestCase):
         self.assertEqual(code, 0, out)
         self.assertIn("1 Anforderung(en)", out)
 
+    def test_indented_closing_fence_like_openspec(self):
+        # OpenSpec (code-fence.js) erkennt Zäune bei beliebigem Einzug
+        code, out = run(FIX / "fences-indented-close")
+        self.assertEqual(code, 1)
+        self.assertIn("2 Anforderung(en)", out)
+        self.assertIn("spec.md:14: RC-002", out)
+        self.assertIn("spec.md:15: RC-001", out)
+
+    def test_indented_opening_fence_like_openspec(self):
+        code, out = run(FIX / "fences-indented-open")
+        self.assertEqual(code, 1)
+        self.assertIn("2 Anforderung(en)", out)
+        self.assertIn("spec.md:14: RC-002", out)
+        self.assertNotIn("Im Code (X)", out)
+
     def test_inline_code_with_double_backticks_is_mention(self):
         code, out = run(FIX / "inline-double")
         self.assertEqual(code, 0, out)

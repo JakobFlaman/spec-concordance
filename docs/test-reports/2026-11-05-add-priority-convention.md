@@ -6,7 +6,7 @@ Datum: 2026-11-05 · Umgebung: Linux, Python 3, OpenSpec 1.16.0 · Ausgeführt v
 
 | Prüfung | Befehl | Ergebnis |
 |---|---|---|
-| Unit-Tests | `python3 -m unittest discover -s tests -v` | 36 von 36 grün (Lauf 6, nach Gate-Lauf 5) |
+| Unit-Tests | `python3 -m unittest discover -s tests -v` | 38 von 38 grün (Lauf 7, nach Gate-Lauf 6) |
 | Konvention, eigene Specs | `python3 scripts/check-conventions.py openspec/specs openspec/changes` | Exit 0, 7 Anforderungen geprüft |
 | OpenSpec | `openspec validate --all --strict` | 1 von 1 gültig |
 | Übersetzungen | `python3 scripts/check-i18n.py` | OK |
@@ -18,7 +18,7 @@ Datum: 2026-11-05 · Umgebung: Linux, Python 3, OpenSpec 1.16.0 · Ausgeführt v
 | RC-001 | Should-Anforderung validiert | indirekt: RC-006 ist Should und besteht `openspec validate --strict` (G0) |
 | RC-001 | Empfehlungs-Schlüsselwort im Anforderungstext | `test_keyword_in_requirement_text_is_violation` |
 | RC-001 | Erwähnung ist kein Verstoss | `test_mentions_in_code_quotes_and_scenarios_are_accepted` (Inline-Code, «…», „…“, Codeblock, Szenario) |
-| RC-001 | Überschriften in Codeblöcken | `test_headings_inside_code_blocks_do_not_break_parsing`, `test_nested_fences_follow_commonmark`, `test_fence_with_info_string_does_not_close_block` |
+| RC-001 | Überschriften in Codeblöcken | `test_headings_inside_code_blocks_do_not_break_parsing`, `test_nested_fences_follow_commonmark`, `test_fence_with_info_string_does_not_close_block`, `test_indented_closing_fence_like_openspec`, `test_indented_opening_fence_like_openspec` (Gegenprobe: `openspec show --json` sieht dieselben Anforderungen) |
 | RC-001 | Inline-Code mit doppelten Backticks | `test_inline_code_with_double_backticks_is_mention` |
 | RC-002 | Kopfzeilen-Varianten wie OpenSpec | `test_header_variants_like_openspec`, Hinweis bei leerem Abschnitt: `test_section_without_recognised_requirement_is_hinted` |
 | RC-002 | Datei mit Byte-Order-Mark | `test_file_with_bom_is_checked` |
@@ -52,3 +52,4 @@ Lauf im Übergangsmodus auf `pdf-concordance/openspec/changes`: 15 RC-002-Verst�
 | 4 | 28 | grün | Qualitäts-Gate Lauf 3 nicht bestanden (G7: Codeblöcke nicht nach CommonMark, doppelte Backticks) – Erkennung nach CommonMark neu umgesetzt; BOM |
 | 5 | 32 | grün | Qualitäts-Gate Lauf 4 nicht bestanden (G7: Archiv-Ausschluss nicht an `openspec/` gebunden; RENAMED in design.md ungenau) – behoben; Nicht-UTF-8 → Exit 2 |
 | 6 | 36 | grün | Qualitäts-Gate Lauf 5 nicht bestanden (G7: Kopfzeilen und RENAMED strenger erkannt als von OpenSpec) – Muster an OpenSpec-Parser angeglichen; Hinweis bei leerem Abschnitt |
+| 7 | 38 | grün | Qualitäts-Gate Lauf 6 nicht bestanden (G7: eingerückte Zäune anders als OpenSpec) – Zaun-Muster wörtlich aus OpenSpec übernommen |

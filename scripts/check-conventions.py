@@ -41,9 +41,10 @@ TITLE_FULL_RE = re.compile(r"^(?P<name>.*\S)\s+\((?P<id>[^,()]+),\s*(?P<prio>[^,
 TITLE_ID_ONLY_RE = re.compile(r"^(?P<name>.*\S)\s+\((?P<id>[^,()]+)\)$")
 KEYWORD_RE = re.compile(r"\b(SHOULD|MAY)\b")
 MENTION_RE = re.compile(r"(`+).+?\1|«[^»]*»|\"[^\"]*\"|“[^”]*”|„[^“”]*[“”]")
-# CommonMark: Zaun mit höchstens 3 Leerzeichen Einzug, mindestens 3 gleiche Zeichen
-FENCE_OPEN_RE = re.compile(r"^ {0,3}(?P<fence>`{3,}|~{3,})(?P<info>.*)$")
-FENCE_CLOSE_RE = re.compile(r"^ {0,3}(?P<fence>`{3,}|~{3,})\s*$")
+# Codeblock-Zäune wie im OpenSpec-Parser 1.16 (parsers/code-fence.js): beliebiger Einzug,
+# mindestens 3 gleiche Zeichen; abweichend von CommonMark, damit beide dieselben Blöcke sehen.
+FENCE_OPEN_RE = re.compile(r"^\s*(?P<fence>`{3,}|~{3,})(?P<info>.*)")
+FENCE_CLOSE_RE = re.compile(r"^\s*(?P<fence>`{3,}|~{3,})\s*$")
 
 CHECKED = {"requirements", "added requirements", "modified requirements"}
 
@@ -108,8 +109,8 @@ def base_spec_for(path: Path) -> Path | None:
 def fenced_lines(lines: list[str]) -> set[int]:
     """Indizes (0-basiert) aller Zeilen in eingezäunten Codeblöcken, inkl. Zaunzeilen.
 
-    Nach CommonMark: Ein Block öffnet mit mindestens drei ` oder ~ (höchstens drei
-    Leerzeichen Einzug; bei `-Zäunen darf die Sprachangabe kein ` enthalten) und schliesst
+    Wie OpenSpec (code-fence.js): Ein Block öffnet mit mindestens drei ` oder ~ (beliebiger
+    Einzug; bei `-Zäunen darf die Sprachangabe kein ` enthalten) und schliesst
     nur mit einem Zaun aus demselben Zeichen, mindestens gleich lang, ohne Sprachangabe.
     Ein nicht geschlossener Block reicht bis zum Dateiende.
     Codeblöcke gelten dateiweit als Erwähnung: Überschriften darin sind weder Abschnitte

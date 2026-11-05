@@ -52,3 +52,7 @@ Version: Änderungen werden unter [Unreleased] gesammelt; `plugin.json` wird bei
 
 - [x] 8.1 G7: Kopfzeilen- und RENAMED-Erkennung an den OpenSpec-Parser angeglichen (Gross-/Kleinschreibung, Leerraum, Aufzählungszeichen, abschliessende #); Fixtures und Tests
 - [x] 8.2 Sicherheitsnetz: Hinweis bei Anforderungsabschnitt ohne erkannte Anforderung; Test; design.md nachgeführt
+
+## 9. Nach Qualitäts-Gate (Lauf 6 nicht bestanden)
+
+- [x] 9.1 G7: Zaun-Erkennung wörtlich wie OpenSpec `parsers/code-fence.js` (beliebiger Einzug); Fixtures für eingerückten Öffner und Schliesser; Gegenprobe mit `openspec show --json` (beide sehen dieselben Anforderungen); design.md nachgeführt
