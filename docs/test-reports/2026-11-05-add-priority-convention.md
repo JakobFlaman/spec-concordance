@@ -2,7 +2,7 @@
 
 Datum: 2026-11-05 · Umgebung: Linux, Python 3, OpenSpec 1.16.0 (auch mit `--ignore-scripts` installiert geprüft) · Ausgeführt von: umsetzender Agent (Nachprüfung im Qualitäts-Gate durch unabhängigen Agenten)
 
-## Ergebnis (Lauf 19, Revision 2)
+## Ergebnis (Lauf 19, Revision 2) – Gate bestanden
 
 | Prüfung | Befehl | Ergebnis |
 |---|---|---|
@@ -28,8 +28,6 @@ Datum: 2026-11-05 · Umgebung: Linux, Python 3, OpenSpec 1.16.0 (auch mit `--ign
 | RC-001 | Unsichere Zitatgrenzen | `test_quote_from_character_reference_does_not_hide_keyword`, `test_unpaired_quote_on_previous_line_does_not_hide_keyword` |
 | RC-001 | Schlüsselwort erst in der Darstellung | `test_keyword_from_character_reference_is_violation`, `test_keyword_split_by_emphasis_is_violation`, `test_keyword_split_by_invisible_format_character_is_violation`, `test_keyword_in_underscore_emphasis_is_violation` |
 | RC-001 | Unsicherer Codeblock | `test_fence_after_desynchronised_fence_is_violation`, `test_indented_fence_hiding_keyword_is_violation`, `test_fence_in_list_item_hiding_keyword_is_violation`, `test_fence_in_html_block_hiding_keyword_is_violation`; Vergleich auf Blockebene |
-| 18 | 61 | grün | Gate 17 nicht bestanden (G7: versetzte Zäune nach eingerücktem Schliesser) – alle früheren Zäune in Spalte 1; unsichtbare Zeichen Kategorie Cf |
-| 19 | 61 | grün | Gate 18 nicht bestanden (G7: nur konstruierte Fälle – absichtlich durch komplexes Markup zerteilte Schlüsselwörter) – Entscheid Maintainer: als Grenze dokumentiert |
 | RC-001 | Gerade Anführungszeichen | `test_straight_quotes_are_not_mentions` |
 | RC-001 | Kein stiller Durchlass gegenüber CommonMark | Vergleichstest `tests/fuzz/` (siehe Ergebnis) |
 | RC-001 | Unpaarige Backticks | `test_unpaired_backticks_do_not_hide_keyword` |
@@ -99,3 +97,5 @@ Datum: 2026-11-05 · Umgebung: Linux, Python 3, OpenSpec 1.16.0 (auch mit `--ign
 | 15 | 55 | grün | Gate 14 nicht bestanden (G7: Zeichenreferenzen, eingerückter Zaun) – Schlüsselwort in der Darstellung, Zaun-Einzug, `|`; Grenzen dokumentiert |
 | 16 | 57 | grün | Gate 15 nicht bestanden (G7: Anführungszeichen als Zeichenreferenz, offenes Zitat auf der Vorzeile) – sichere Grenzen auch für Zitate |
 | 17 | 59 | grün | Gate 16 nicht bestanden (G7: Zaun unter Listenpunkt, Zaun im HTML-Block) – Codeblöcke positiv festgelegt, Vergleich auf Blockebene |
+| 18 | 61 | grün | Gate 17 nicht bestanden (G7: versetzte Zäune nach eingerücktem Schliesser) – alle früheren Zäune in Spalte 1; unsichtbare Zeichen Kategorie Cf |
+| 19 | 61 | grün | Gate 18 nicht bestanden (G7: nur konstruierte Fälle – absichtlich durch komplexes Markup zerteilte Schlüsselwörter) – Entscheid Maintainer: als Grenze dokumentiert |
