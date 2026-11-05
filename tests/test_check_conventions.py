@@ -62,9 +62,21 @@ class TestRC001Keyword(CliTestCase):
         self.assertEqual(code, 0, out)
         self.assertNotIn("RC-001", out)
 
-    def test_inline_code_across_line_break_is_mention(self):
+    def test_inline_code_across_line_break_is_checked(self):
+        # im Zweifel melden: Inline-Code zählt nur innerhalb einer Zeile als Erwähnung
         code, out = project("code-span-wrap")
-        self.assertEqual(code, 0, out)
+        self.assertEqual(code, 1)
+        self.assertIn("spec.md:7: RC-001", out)
+
+    def test_quote_across_paragraph_is_checked(self):
+        code, out = project("quote-wrap")
+        self.assertEqual(code, 1)
+        self.assertIn("spec.md:7: RC-001", out)
+
+    def test_escaped_backticks_do_not_hide_keyword(self):
+        code, out = project("code-span-escaped")
+        self.assertEqual(code, 1)
+        self.assertIn("spec.md:7: RC-001", out)
 
     def test_unpaired_backticks_do_not_hide_keyword(self):
         code, out = project("code-span-unpaired")

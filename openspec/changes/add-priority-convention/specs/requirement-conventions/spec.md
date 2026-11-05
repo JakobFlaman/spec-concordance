@@ -5,7 +5,7 @@ Einheitliche Form von Anforderungen in OpenSpec-Spezifikationen von Projekten na
 ## ADDED Requirements
 
 ### Requirement: SHALL unabhängig von der Priorität (RC-001, Must)
-Der Anforderungstext jeder Anforderung SHALL das Schlüsselwort SHALL verwenden und kein anderes RFC-2119-Schlüsselwort für Empfehlung oder Option (`SHOULD`, `MAY`). Als Anforderungstext gilt der Text, den OpenSpec der Anforderung zuordnet (ohne Szenarien und ohne Codeblöcke); als Schlüsselwort gilt nur das grossgeschriebene ganze Wort ausserhalb von Inline-Code (Backticks) und Zitaten («…», "…", „…“).
+Der Anforderungstext jeder Anforderung SHALL das Schlüsselwort SHALL verwenden und kein anderes RFC-2119-Schlüsselwort für Empfehlung oder Option (`SHOULD`, `MAY`). Als Anforderungstext gilt der Text, den OpenSpec der Anforderung zuordnet (ohne Szenarien und ohne Codeblöcke); als Schlüsselwort gilt nur das grossgeschriebene ganze Wort ausserhalb von Inline-Code (Backticks) und Zitaten («…», "…", „…“). Beides gilt nur innerhalb einer Zeile; im Zweifel wird gemeldet.
 
 #### Scenario: Should-Anforderung validiert
 - **GIVEN** eine Anforderung mit Priorität Should, formuliert mit SHALL und Priorität im Titel
@@ -22,10 +22,15 @@ Der Anforderungstext jeder Anforderung SHALL das Schlüsselwort SHALL verwenden 
 - **WHEN** `scripts/check-conventions.py` ausgeführt wird
 - **THEN** wird die Anforderung akzeptiert
 
-#### Scenario: Inline-Code über einen Zeilenumbruch
-- **GIVEN** eine Anforderung, die `SHOULD` in Inline-Code erwähnt, der über einen Zeilenumbruch läuft
+#### Scenario: Inline-Code oder Zitat über einen Zeilenumbruch
+- **GIVEN** eine Anforderung, die `SHOULD` in Inline-Code oder in einem Zitat erwähnt, das über einen Zeilenumbruch oder eine Absatzgrenze läuft
 - **WHEN** `scripts/check-conventions.py` ausgeführt wird
-- **THEN** wird die Anforderung akzeptiert
+- **THEN** meldet die Prüfung RC-001 (im Zweifel melden; Abhilfe: Erwähnung auf eine Zeile setzen)
+
+#### Scenario: Maskierte Backticks
+- **GIVEN** eine Anforderung, in der `SHOULD` zwischen mit Backslash maskierten Backticks steht
+- **WHEN** `scripts/check-conventions.py` ausgeführt wird
+- **THEN** meldet die Prüfung RC-001
 
 #### Scenario: Unpaarige Backticks
 - **GIVEN** eine Anforderung, in der vor `SHOULD` ein Backtick-Lauf ohne gleich langes Gegenstück steht

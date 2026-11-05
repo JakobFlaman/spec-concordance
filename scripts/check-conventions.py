@@ -46,7 +46,9 @@ TITLE_FULL_RE = re.compile(r"^(?P<name>.*\S)\s+\((?P<id>[^,()]+),\s*(?P<prio>[^,
 TITLE_ID_ONLY_RE = re.compile(r"^(?P<name>.*\S)\s+\((?P<id>[^,()]+)\)$")
 KEYWORD_RE = re.compile(r"\b(SHOULD|MAY)\b")
 BACKTICK_RUN_RE = re.compile(r"`+")
-QUOTE_RE = re.compile(r"«[^»]*»|\"[^\"]*\"|“[^”]*”|„[^“”]*[“”]")
+ESCAPE_RE = re.compile(r"\\[\\`]")       # \\ und \` sind Text, keine Code-Begrenzer
+# Zitate nur innerhalb einer Zeile (wie Inline-Code, siehe strip_mentions)
+QUOTE_RE = re.compile(r"«[^»\n]*»|\"[^\"\n]*\"|“[^”\n]*”|„[^“”\n]*[“”]")
 
 # Nur für die Zuordnung der Zeilennummer (RC-008: Struktur kommt aus der CLI).
 HEADING_RE = re.compile(r"^###\s*(?:Requirement:\s*)?(?P<name>.+?)\s*$", re.IGNORECASE)
@@ -299,10 +301,12 @@ def check_title(path: Path, line: int, title: str, id_re: re.Pattern) -> list[Vi
     return out
 
 
-def strip_code_spans(text: str) -> str:
-    """Inline-Code nach CommonMark entfernen: ein Backtick-Lauf öffnet, der nächste gleich
-    lange Lauf schliesst (auch über Zeilenumbrüche); ein Lauf ohne Gegenstück ist Text."""
-    runs = list(BACKTICK_RUN_RE.finditer(text))
+def strip_code_spans(line: str) -> str:
+    """Inline-Code innerhalb einer Zeile entfernen: ein Backtick-Lauf öffnet, der nächste gleich
+    lange Lauf derselben Zeile schliesst; ein Lauf ohne Gegenstück ist Text. Mit Backslash
+    maskierte Backticks begrenzen nichts."""
+    line = ESCAPE_RE.sub("  ", line)
+    runs = list(BACKTICK_RUN_RE.finditer(line))
     keep: list[str] = []
     pos = i = 0
     while i < len(runs):
@@ -311,15 +315,18 @@ def strip_code_spans(text: str) -> str:
         if closer is None:
             i += 1          # unpaariger Lauf: bleibt Text
             continue
-        keep.append(text[pos:opener.start()])
+        keep.append(line[pos:opener.start()])
         pos = runs[closer].end()
         i = closer + 1
-    keep.append(text[pos:])
+    keep.append(line[pos:])
     return "".join(keep)
 
 
 def strip_mentions(text: str) -> str:
-    return QUOTE_RE.sub("", strip_code_spans(text))
+    """Erwähnungen (Inline-Code, Zitate) zählen nur innerhalb einer Zeile. OpenSpec liefert
+    keine Absatzgrenzen; zeilenübergreifende Erwähnungen werden daher bewusst geprüft
+    (im Zweifel melden: selten ein Fehlalarm, nie ein stiller Durchlass)."""
+    return "\n".join(QUOTE_RE.sub("", strip_code_spans(line)) for line in text.split("\n"))
 
 
 def check_text(path: Path, line: int, title: str, text: str) -> list[Violation]:

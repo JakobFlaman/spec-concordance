@@ -77,3 +77,8 @@ Version: Änderungen werden unter [Unreleased] gesammelt; `plugin.json` wird bei
 
 - [x] 12.1 G7 / RC-001: Inline-Code nach CommonMark (gleich lange Backtick-Läufe, auch über Zeilenumbrüche; unpaarige Läufe sind Text); Szenarien «Inline-Code über einen Zeilenumbruch» und «Unpaarige Backticks»; Testprojekte und Tests
 - [x] 12.2 Beobachtungen: veralteter Aufruf in 1.4 vermerkt; Laufbezeichnung in der Test-Summary; exakte Fixierung der GitHub-Actions per SHA als Folge-Change (aus dieser Sitzung nicht abfragbar)
+
+## 13. Nach Qualitäts-Gate (Lauf 10 nicht bestanden; Entscheid Maintainer «Im Zweifel melden»)
+
+- [x] 13.1 G7 / RC-001: Inline-Code und Zitate zählen nur innerhalb einer Zeile als Erwähnung; `\`` und `\\` begrenzen keinen Code; Regel und Begründung in Spec und `design.md`
+- [x] 13.2 Szenario «Inline-Code oder Zitat über einen Zeilenumbruch» umgekehrt (meldet RC-001), Szenario «Maskierte Backticks» neu; Testprojekte `code-span-escaped`, `quote-wrap`; Tests
