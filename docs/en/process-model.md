@@ -1,6 +1,6 @@
 ---
 source: docs/de/process-model.md
-source-hash: 9e6f9f075e5e
+source-hash: 83b0fc209681
 status: translated
 ---
 
@@ -79,7 +79,14 @@ OpenSpec requires the keyword SHALL or MUST in every requirement. These keywords
 - TO: `### Requirement: Display modes (LA-F-110, Must)`
 ```
 
-**Check:** `python3 scripts/check-conventions.py [PATH ...]` reports violations with file, line, rule and title. Exit codes: 0 = ok, 1 = violations, 2 = usage or input error.
+**Check:** `python3 scripts/check-conventions.py [ROOT ...]` in the project root (folder containing `openspec/`) reports violations with file, line of the requirement, rule and title. It reads the structure through the OpenSpec CLI (1.16 or later) so that it sees exactly the requirements OpenSpec sees; the CLI is found via `OPENSPEC_BIN` or `openspec` on the `PATH`. Exit codes: 0 = ok, 1 = violations, 2 = usage or input error.
+
+| Message (exit 2) | Remedy |
+|---|---|
+| OpenSpec CLI not found / too old | `npm install -g @fission-ai/openspec@1.16.0` or set `OPENSPEC_BIN` |
+| contains no openspec/ | run in the project root, not in `openspec/specs` |
+| OpenSpec reports for «…» | fix the OpenSpec message, e.g. missing `proposal.md`; `openspec validate --all --strict` shows details |
+| Unexpected structure from OpenSpec | check the OpenSpec version; 1.16.0 is tested |
 
 **Migrating existing projects:** First add the rules to `openspec/config.yaml` using `project-init` (step "Initialise OpenSpec"). Then run the check with `--warn` – it reports all violations without failing. Rename the titles of existing requirements in a separate change via RENAMED; afterwards run the check without `--warn`.
 

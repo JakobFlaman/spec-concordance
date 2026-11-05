@@ -1,8 +1,8 @@
-## Requirements
+## ADDED Requirements
 
-### Requirement: Darstellungsmodi (LA-F-110, Should)
-Das System SHOULD einen Dunkelmodus bieten.
+### Requirement: Alt (LA-F-1)
+Das System SHOULD alt sein.
 
-#### Scenario: Dunkel
-- **WHEN** umgeschaltet wird
-- **THEN** ist es dunkel
+#### Scenario: Fall
+- **WHEN** etwas geschieht
+- **THEN** ist es so

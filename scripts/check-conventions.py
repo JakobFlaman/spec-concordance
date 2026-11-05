@@ -1,52 +1,65 @@
 #!/usr/bin/env python3
-"""spec-concordance – Prüfung der Anforderungskonvention in OpenSpec-Spezifikationen.
+"""spec-concordance – Prüfung der Anforderungskonvention in OpenSpec-Projekten.
 
 Regeln (siehe openspec/specs/requirement-conventions):
   RC-001  Anforderungstext ohne Empfehlungs-/Options-Schlüsselwort (nur SHALL)
   RC-002  Titel in der Form «<Titel> (<ID>, <Must|Should|Could>)»
   RC-004  Umpriorisierung als RENAMED, nicht als MODIFIED
-  RC-007  ID + Priorität pro Datei eindeutig
+  RC-007  ID + Priorität pro Spec-Datei eindeutig
+  RC-008  Struktur, Namen und Texte ausschliesslich über die OpenSpec-CLI
 
 Aufruf:
-  python3 scripts/check-conventions.py [--warn] [--id-pattern REGEX] [PFAD ...]
-  Ohne Pfad: openspec/specs openspec/changes
+  python3 scripts/check-conventions.py [--warn] [--id-pattern REGEX] [STAMM ...]
+  STAMM ist ein Projektordner mit openspec/ (Standard: aktueller Ordner).
 
 Exitcodes: 0 = keine Verstösse (oder --warn), 1 = Verstösse, 2 = Bedien-/Eingabefehler.
 
+Abhängigkeiten: Python-Standardbibliothek (>= 3.10) und OpenSpec-CLI (>= 1.16),
+gefunden über die Umgebungsvariable OPENSPEC_BIN oder «openspec» im PATH.
 Das Skript liest nur, schreibt nichts und führt keine Inhalte aus.
-Nur Python-Standardbibliothek (>= 3.10).
 
 Copyright (c) 2026 Jakob Flaman · SPDX-License-Identifier: MIT
 """
 from __future__ import annotations
 
 import argparse
+import json
+import os
 import re
+import shutil
+import subprocess
 import sys
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
+MIN_VERSION = (1, 16, 0)
+INSTALL_HINT = "npm install -g @fission-ai/openspec@1.16.0"
+TIMEOUT_S = 60
 DEFAULT_ID_PATTERN = r"[A-Z][A-Z0-9]*(-[A-Z0-9]+)*-[0-9]+"
 PRIORITIES = ("Must", "Should", "Could")
 DOC_HINT = "siehe docs/de/process-model.md, Abschnitt «Anforderungen in OpenSpec»"
 
-# Erkennungsmuster wie im OpenSpec-Parser (1.16: requirement-blocks.js, spec-structure.js),
-# damit das Skript dieselben Anforderungen sieht wie OpenSpec.
-SECTION_RE = re.compile(r"^##\s+(.*?)\s*$")
-REQ_RE = re.compile(r"^###\s*Requirement:\s*(.+?)\s*$", re.IGNORECASE)
-SCENARIO_RE = re.compile(r"^####\s+Scenario:", re.IGNORECASE)
-RENAMED_TO_RE = re.compile(r"^\s*[-*+]?\s*TO:\s*`?###\s*Requirement:\s*(.+?)`?\s*$", re.IGNORECASE)
-CLOSING_HASHES_RE = re.compile(r"[ \t]+#+$")
+# Namen von Specs und Changes (aus der CLI-Ausgabe, stammen aber aus Ordnernamen):
+# kein führendes «-» (OpenSpec kennt kein «--»), kein «..».
+NAME_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._/-]*$")
 TITLE_FULL_RE = re.compile(r"^(?P<name>.*\S)\s+\((?P<id>[^,()]+),\s*(?P<prio>[^,()]+)\)$")
 TITLE_ID_ONLY_RE = re.compile(r"^(?P<name>.*\S)\s+\((?P<id>[^,()]+)\)$")
 KEYWORD_RE = re.compile(r"\b(SHOULD|MAY)\b")
 MENTION_RE = re.compile(r"(`+).+?\1|«[^»]*»|\"[^\"]*\"|“[^”]*”|„[^“”]*[“”]")
-# Codeblock-Zäune wie im OpenSpec-Parser 1.16 (parsers/code-fence.js): beliebiger Einzug,
-# mindestens 3 gleiche Zeichen; abweichend von CommonMark, damit beide dieselben Blöcke sehen.
-FENCE_OPEN_RE = re.compile(r"^\s*(?P<fence>`{3,}|~{3,})(?P<info>.*)")
+
+# Nur für die Zuordnung der Zeilennummer (RC-008: Struktur kommt aus der CLI).
+HEADING_RE = re.compile(r"^###\s*(?:Requirement:\s*)?(?P<name>.+?)\s*$", re.IGNORECASE)
+RENAMED_TO_RE = re.compile(r"^\s*[-*+]?\s*TO:\s*`?###\s*Requirement:\s*(?P<name>.+?)`?\s*$", re.IGNORECASE)
+CLOSING_HASHES_RE = re.compile(r"[ \t]+#+$")
+FENCE_OPEN_RE = re.compile(r"^\s*(?P<fence>`{3,}|~{3,})(?P<info>.*)")   # wie OpenSpec code-fence.js
 FENCE_CLOSE_RE = re.compile(r"^\s*(?P<fence>`{3,}|~{3,})\s*$")
 
-CHECKED = {"requirements", "added requirements", "modified requirements"}
+# OpenSpec-Umgebungsvariablen, die Verzeichnisse oder Konfiguration umlenken
+REDIRECT_ENV_PREFIX = "OPENSPEC_"
+
+
+class UsageError(Exception):
+    """Bedien- oder Eingabefehler → Exitcode 2."""
 
 
 @dataclass
@@ -58,15 +71,209 @@ class Violation:
     title: str
 
     def format(self) -> str:
-        return f"{self.path}:{self.line}: {self.rule}: {self.message} – «{self.title}» – {DOC_HINT}"
+        return f"{display(self.path)}:{self.line}: {self.rule}: {self.message} – «{self.title}» – {DOC_HINT}"
+
+
+@dataclass
+class Entry:
+    """Eine Anforderung bzw. ein RENAMED-Ziel, wie OpenSpec sie liefert."""
+    kind: str          # base | ADDED | MODIFIED | RENAMED
+    name: str
+    text: str = ""
+    rename_from: str = ""
+
+
+@dataclass
+class SpecFile:
+    path: Path
+    entries: list[Entry] = field(default_factory=list)
+
+
+def display(path: Path) -> str:
+    try:
+        return str(path.relative_to(Path.cwd()))
+    except ValueError:
+        return str(path)
+
+
+# --------------------------------------------------------------------------- OpenSpec-CLI
+
+def find_cli() -> str:
+    cli = os.environ.get("OPENSPEC_BIN") or shutil.which("openspec")
+    if not cli or not Path(cli).exists():
+        raise UsageError(f"OpenSpec-CLI nicht gefunden – installieren mit «{INSTALL_HINT}» oder OPENSPEC_BIN setzen")
+    return cli
+
+
+def cli_env() -> dict[str, str]:
+    env = {k: v for k, v in os.environ.items() if not k.startswith(REDIRECT_ENV_PREFIX)}
+    env["DO_NOT_TRACK"] = "1"
+    return env
+
+
+def run_cli(cli: str, args: list[str], root: Path, label: str) -> str:
+    try:
+        p = subprocess.run([cli, *args], cwd=root, capture_output=True, text=True,
+                           timeout=TIMEOUT_S, env=cli_env())
+    except subprocess.TimeoutExpired:
+        raise UsageError(f"OpenSpec antwortet nicht innert {TIMEOUT_S} s ({label})")
+    except OSError as exc:
+        raise UsageError(f"OpenSpec-CLI nicht ausführbar: {exc}")
+    if p.returncode != 0:
+        raise UsageError(f"OpenSpec meldet für «{label}»: {error_message(p.stdout, p.stderr)}")
+    return p.stdout
+
+
+def error_message(stdout: str, stderr: str) -> str:
+    try:
+        data = json.loads(stdout)
+        msgs = [s.get("message", "") for s in data.get("status", []) if s.get("severity") == "error"]
+        if msgs:
+            return "; ".join(msgs)
+    except (json.JSONDecodeError, AttributeError):
+        pass
+    return (stderr or stdout).strip() or "unbekannter Fehler"
+
+
+def cli_json(cli: str, args: list[str], root: Path, label: str) -> dict:
+    out = run_cli(cli, args, root, label)
+    try:
+        data = json.loads(out)
+    except json.JSONDecodeError:
+        raise UsageError(f"Unerwartete Ausgabe von OpenSpec für «{label}» (kein JSON)")
+    if not isinstance(data, dict):
+        raise UsageError(f"Unerwartete Struktur von OpenSpec für «{label}»")
+    errors = [s.get("message", "") for s in data.get("status", []) if isinstance(s, dict) and s.get("severity") == "error"]
+    if errors:
+        raise UsageError(f"OpenSpec meldet für «{label}»: {'; '.join(errors)}")
+    return data
+
+
+def require(obj, key: str, label: str):
+    if not isinstance(obj, dict) or key not in obj:
+        raise UsageError(f"Unerwartete Struktur von OpenSpec für «{label}»: Feld «{key}» fehlt "
+                         f"(getestet mit OpenSpec {'.'.join(map(str, MIN_VERSION))})")
+    return obj[key]
+
+
+def check_version(cli: str, root: Path) -> None:
+    out = run_cli(cli, ["--version"], root, "--version").strip()
+    m = re.search(r"(\d+)\.(\d+)\.(\d+)", out)
+    if not m:
+        raise UsageError(f"OpenSpec-Version nicht erkennbar: «{out}»")
+    found = tuple(int(x) for x in m.groups())
+    if found < MIN_VERSION:
+        raise UsageError(f"OpenSpec {'.'.join(map(str, found))} ist zu alt – benötigt ab "
+                         f"{'.'.join(map(str, MIN_VERSION))} («{INSTALL_HINT}»)")
+
+
+def checked_name(name, label: str) -> str:
+    if not isinstance(name, str) or not NAME_RE.fullmatch(name) or ".." in name:
+        raise UsageError(f"Ungültiger Name von OpenSpec für «{label}»: {name!r}")
+    return name
+
+
+def safe_path(root: Path, *parts: str) -> Path:
+    base = (root / "openspec").resolve()
+    p = base.joinpath(*parts).resolve()
+    if p != base and base not in p.parents:
+        raise UsageError(f"Pfad ausserhalb von openspec/: {p}")
+    return p
+
+
+# --------------------------------------------------------------------------- Struktur laden
+
+def load_project(cli: str, root: Path) -> tuple[dict[str, SpecFile], list[tuple[str, dict[str, SpecFile]]]]:
+    """Basis-Specs {spec_id: SpecFile} und Changes [(name, {spec_id: SpecFile})]."""
+    specs_list = require(cli_json(cli, ["list", "--specs", "--json"], root, "list --specs"), "specs", "list --specs")
+    base: dict[str, SpecFile] = {}
+    for item in specs_list:
+        sid = checked_name(require(item, "id", "list --specs"), "list --specs")
+        data = cli_json(cli, ["show", sid, "--type", "spec", "--json"], root, sid)
+        sf = SpecFile(safe_path(root, "specs", sid, "spec.md"))
+        for r in require(data, "requirements", sid):
+            sf.entries.append(Entry("base", require(r, "name", sid), require(r, "text", sid)))
+        base[sid] = sf
+
+    changes_list = require(cli_json(cli, ["list", "--json"], root, "list"), "changes", "list")
+    changes: list[tuple[str, dict[str, SpecFile]]] = []
+    for item in changes_list:
+        cname = checked_name(require(item, "name", "list"), "list")
+        data = cli_json(cli, ["show", cname, "--json", "--deltas-only"], root, cname)
+        files: dict[str, SpecFile] = {}
+        for d in require(data, "deltas", cname):
+            sid = checked_name(require(d, "spec", cname), cname)
+            op = require(d, "operation", cname)
+            sf = files.setdefault(sid, SpecFile(safe_path(root, "changes", cname, "specs", sid, "spec.md")))
+            if op in ("ADDED", "MODIFIED"):
+                for r in require(d, "requirements", cname):
+                    sf.entries.append(Entry(op, require(r, "name", cname), require(r, "text", cname)))
+            elif op == "RENAMED":
+                rn = require(d, "rename", cname)
+                sf.entries.append(Entry("RENAMED", require(rn, "to", cname), rename_from=require(rn, "from", cname)))
+        changes.append((cname, files))
+    return base, changes
+
+
+# --------------------------------------------------------------------------- Zeilenzuordnung
+
+def fenced_lines(lines: list[str]) -> set[int]:
+    """Zeilen in Codeblöcken, erkannt wie OpenSpec (parsers/code-fence.js)."""
+    fenced: set[int] = set()
+    active: str | None = None
+    for i, raw in enumerate(lines):
+        if active is None:
+            m = FENCE_OPEN_RE.match(raw)
+            if m and not (m.group("fence")[0] == "`" and "`" in m.group("info")):
+                active = m.group("fence")
+                fenced.add(i)
+        else:
+            fenced.add(i)
+            m = FENCE_CLOSE_RE.match(raw)
+            if m and m.group("fence")[0] == active[0] and len(m.group("fence")) >= len(active):
+                active = None
+    return fenced
 
 
 def normalize(title: str) -> str:
     return CLOSING_HASHES_RE.sub("", title.strip()).strip()
 
 
+class LineFinder:
+    """Ordnet dem n-ten Vorkommen eines Namens die n-te passende Kopfzeile zu; sonst Zeile 0."""
+
+    def __init__(self, path: Path):
+        self.headings: dict[str, list[int]] = {}
+        self.renamed: dict[str, list[int]] = {}
+        self.used: dict[tuple[str, str], int] = {}
+        try:
+            lines = path.read_text(encoding="utf-8-sig", errors="replace").splitlines()
+        except OSError:
+            return
+        skip = fenced_lines(lines)
+        for i, raw in enumerate(lines):
+            if i in skip:
+                continue
+            m = RENAMED_TO_RE.match(raw)
+            if m:
+                self.renamed.setdefault(normalize(m.group("name")), []).append(i + 1)
+                continue
+            m = HEADING_RE.match(raw)
+            if m:
+                self.headings.setdefault(normalize(m.group("name")), []).append(i + 1)
+
+    def line(self, name: str, renamed: bool = False) -> int:
+        table = self.renamed if renamed else self.headings
+        key = ("r" if renamed else "h", name)
+        n = self.used.get(key, 0)
+        self.used[key] = n + 1
+        hits = table.get(name, [])
+        return hits[n] if n < len(hits) else 0
+
+
+# --------------------------------------------------------------------------- Regeln
+
 def parse_title(title: str) -> tuple[str, str | None, str | None]:
-    """Return (name, id, priority); id/priority None if absent."""
     title = normalize(title)
     m = TITLE_FULL_RE.match(title)
     if m:
@@ -79,10 +286,9 @@ def parse_title(title: str) -> tuple[str, str | None, str | None]:
 
 def check_title(path: Path, line: int, title: str, id_re: re.Pattern) -> list[Violation]:
     name, rid, prio = parse_title(title)
-    out: list[Violation] = []
     if rid is None:
-        out.append(Violation(path, line, "RC-002", "Titelform ungültig – erwartet «<Titel> (<ID>, <Must|Should|Could>)»", title))
-        return out
+        return [Violation(path, line, "RC-002", "Titelform ungültig – erwartet «<Titel> (<ID>, <Must|Should|Could>)»", title)]
+    out: list[Violation] = []
     if prio is None:
         out.append(Violation(path, line, "RC-002", "Priorität fehlt", title))
     elif prio not in PRIORITIES:
@@ -92,219 +298,99 @@ def check_title(path: Path, line: int, title: str, id_re: re.Pattern) -> list[Vi
     return out
 
 
-def base_spec_for(path: Path) -> Path | None:
-    """openspec/changes/<change>/specs/<cap>/spec.md -> openspec/specs/<cap>/spec.md"""
-    parts = path.resolve().parts
-    try:
-        i = len(parts) - 1 - parts[::-1].index("openspec")
-    except ValueError:
-        return None
-    rest = parts[i + 1:]
-    if len(rest) >= 5 and rest[0] == "changes" and rest[2] == "specs":
-        cap = rest[3]
-        return Path(*parts[: i + 1], "specs", cap, "spec.md")
-    return None
+def check_text(path: Path, line: int, title: str, text: str) -> list[Violation]:
+    m = KEYWORD_RE.search(MENTION_RE.sub("", text))
+    if m:
+        return [Violation(path, line, "RC-001",
+                          f"Schlüsselwort {m.group(1)} im Anforderungstext – SHALL verwenden, Priorität steht im Titel", title)]
+    return []
 
 
-def fenced_lines(lines: list[str]) -> set[int]:
-    """Indizes (0-basiert) aller Zeilen in eingezäunten Codeblöcken, inkl. Zaunzeilen.
-
-    Wie OpenSpec (code-fence.js): Ein Block öffnet mit mindestens drei ` oder ~ (beliebiger
-    Einzug; bei `-Zäunen darf die Sprachangabe kein ` enthalten) und schliesst
-    nur mit einem Zaun aus demselben Zeichen, mindestens gleich lang, ohne Sprachangabe.
-    Ein nicht geschlossener Block reicht bis zum Dateiende.
-    Codeblöcke gelten dateiweit als Erwähnung: Überschriften darin sind weder Abschnitte
-    noch Anforderungen, Schlüsselwörter darin keine Verstösse.
-    """
-    fenced: set[int] = set()
-    open_fence: str | None = None
-    for i, raw in enumerate(lines):
-        if open_fence is None:
-            m = FENCE_OPEN_RE.match(raw)
-            if m and not (m.group("fence")[0] == "`" and "`" in m.group("info")):
-                open_fence = m.group("fence")
-                fenced.add(i)
-        else:
-            fenced.add(i)
-            m = FENCE_CLOSE_RE.match(raw)
-            if m and m.group("fence")[0] == open_fence[0] and len(m.group("fence")) >= len(open_fence):
-                open_fence = None
-    return fenced
-
-
-def requirement_titles(path: Path) -> list[str]:
-    lines = path.read_text(encoding="utf-8-sig").splitlines()
-    skip = fenced_lines(lines)
-    titles = []
-    for i, line in enumerate(lines):
-        if i in skip:
-            continue
-        m = REQ_RE.match(line)
-        if m:
-            titles.append(normalize(m.group(1)))
-    return titles
-
-
-def renamed_targets(lines: list[str]) -> set[str]:
-    """TO-Titel aller RENAMED-Einträge der Datei (für RC-004 «RENAMED plus MODIFIED»)."""
-    targets: set[str] = set()
-    section = ""
-    skip = fenced_lines(lines)
-    for i, raw in enumerate(lines):
-        if i in skip:
-            continue
-        sm = SECTION_RE.match(raw)
-        if sm:
-            section = sm.group(1).strip().lower()
-            continue
-        if section == "renamed requirements":
-            tm = RENAMED_TO_RE.match(raw)
-            if tm:
-                targets.add(normalize(tm.group(1)))
-    return targets
-
-
-def check_file(path: Path, id_re: re.Pattern) -> tuple[list[Violation], int]:
-    lines = path.read_text(encoding="utf-8-sig").splitlines()
-    violations: list[Violation] = []
+def check_spec_file(sf: SpecFile, id_re: re.Pattern, base_names: list[str]) -> list[Violation]:
+    finder = LineFinder(sf.path)
+    out: list[Violation] = []
     seen: dict[tuple[str, str], int] = {}
-    section = ""
-    current: tuple[int, str] | None = None  # (line, title) while reading requirement text
-    in_text = False
-    count = 0
-    base_titles: list[str] | None = None
-    renamed_to = renamed_targets(lines)
-    skip = fenced_lines(lines)
-    section_counts: dict[str, list[int]] = {}  # Abschnitt -> [Zeile, erkannte Anforderungen]
-
-    for no, raw in enumerate(lines, start=1):
-        if no - 1 in skip:
+    renamed_to = {e.name for e in sf.entries if e.kind == "RENAMED"}
+    for e in sf.entries:
+        if e.kind == "RENAMED":
+            out += check_title(sf.path, finder.line(e.name, renamed=True), e.name, id_re)
             continue
-        sm = SECTION_RE.match(raw)
-        if sm and not raw.startswith("###"):
-            section = re.sub(r"\s+", " ", sm.group(1).strip().lower())
-            in_text = False
-            if section in CHECKED or section == "renamed requirements":
-                section_counts.setdefault(section, [no, 0])
-            continue
-
-        if section == "renamed requirements":
-            tm = RENAMED_TO_RE.match(raw)
-            if tm:
-                count += 1
-                section_counts[section][1] += 1
-                violations += check_title(path, no, normalize(tm.group(1)), id_re)
-            continue
-
-        if section not in CHECKED:
-            continue
-
-        rm = REQ_RE.match(raw)
-        if rm:
-            title = normalize(rm.group(1))
-            count += 1
-            section_counts[section][1] += 1
-            current = (no, title)
-            in_text = True
-            violations += check_title(path, no, title, id_re)
-            name, rid, prio = parse_title(title)
-            if rid and prio:
-                key = (rid, prio)
-                if key in seen:
-                    violations.append(Violation(path, no, "RC-007",
-                        f"ID und Priorität ({rid}, {prio}) schon in Zeile {seen[key]} verwendet", title))
-                else:
-                    seen[key] = no
-            if section == "modified requirements":
-                if base_titles is None:
-                    base = base_spec_for(path)
-                    base_titles = requirement_titles(base) if base and base.exists() else []
-                if title not in base_titles and title not in renamed_to:
-                    for bt in base_titles:
-                        bname, bid, bprio = parse_title(bt)
-                        if bname == name and bid == rid and bprio != prio:
-                            violations.append(Violation(path, no, "RC-004",
-                                f"Nur die Priorität weicht von «{bt}» ab – Umpriorisierung als RENAMED mit FROM/TO erfassen", title))
-                            break
-            continue
-
-        if SCENARIO_RE.match(raw) or raw.startswith("### "):
-            in_text = False
-            continue
-
-        if in_text and current:
-            stripped = MENTION_RE.sub("", raw)
-            km = KEYWORD_RE.search(stripped)
-            if km:
-                violations.append(Violation(path, no, "RC-001",
-                    f"Schlüsselwort {km.group(1)} im Anforderungstext – SHALL verwenden, Priorität steht im Titel", current[1]))
-
-    for sec, (line, n) in section_counts.items():
-        if n == 0:
-            print(f"Hinweis: {path}:{line}: Abschnitt «{sec}» ohne erkannte Anforderung – Kopfzeilen prüfen", file=sys.stderr)
-    return violations, count
+        line = finder.line(e.name)
+        out += check_title(sf.path, line, e.name, id_re)
+        out += check_text(sf.path, line, e.name, e.text)
+        name, rid, prio = parse_title(e.name)
+        if rid and prio:
+            key = (rid, prio)
+            if key in seen:
+                out.append(Violation(sf.path, line, "RC-007",
+                                     f"ID und Priorität ({rid}, {prio}) schon in Zeile {seen[key]} verwendet", e.name))
+            else:
+                seen[key] = line
+        if e.kind == "MODIFIED" and e.name not in base_names and e.name not in renamed_to:
+            for bt in base_names:
+                bname, bid, bprio = parse_title(bt)
+                if bname == name and bid == rid and bprio != prio:
+                    out.append(Violation(sf.path, line, "RC-004",
+                                         f"Nur die Priorität weicht von «{bt}» ab – Umpriorisierung als RENAMED mit FROM/TO erfassen", e.name))
+                    break
+    return out
 
 
-def find_specs(paths: list[Path]) -> list[Path]:
-    files: list[Path] = []
-    for p in paths:
-        if p.is_file() and p.name == "spec.md":
-            candidates = [p]
-        else:
-            candidates = sorted(p.rglob("spec.md"))
-        files += [f for f in candidates if not is_archived(f)]
-    return files
-
-
-def is_archived(path: Path) -> bool:
-    """Nur openspec/changes/archive/ ausschliessen, nicht beliebige Ordner namens «archive»."""
-    parts = path.resolve().parts
-    return any(parts[i - 1] == "openspec" and parts[i] == "changes" and parts[i + 1] == "archive"
-               for i in range(1, len(parts) - 1))
+def check_root(cli: str, root: Path, id_re: re.Pattern) -> tuple[list[Violation], int, int]:
+    if not (root / "openspec").is_dir():
+        raise UsageError(f"«{root}» enthält kein openspec/ – den Projektstamm angeben, nicht openspec/specs oder openspec/changes")
+    check_version(cli, root)
+    base, changes = load_project(cli, root)
+    violations: list[Violation] = []
+    count = files = 0
+    for sid, sf in base.items():
+        violations += check_spec_file(sf, id_re, [])
+        count += len(sf.entries)
+        files += 1
+    for _, spec_files in changes:
+        for sid, sf in spec_files.items():
+            base_names = [e.name for e in base[sid].entries] if sid in base else []
+            violations += check_spec_file(sf, id_re, base_names)
+            count += len(sf.entries)
+            files += 1
+    return violations, count, files
 
 
 def main(argv: list[str] | None = None) -> int:
-    ap = argparse.ArgumentParser(description="Prüft die Anforderungskonvention in OpenSpec-Spezifikationen.")
-    ap.add_argument("paths", nargs="*", type=Path, help="Dateien oder Ordner (Standard: openspec/specs openspec/changes)")
+    ap = argparse.ArgumentParser(description="Prüft die Anforderungskonvention in OpenSpec-Projekten.")
+    ap.add_argument("roots", nargs="*", type=Path, help="Projektordner mit openspec/ (Standard: aktueller Ordner)")
     ap.add_argument("--warn", action="store_true", help="Verstösse melden, aber mit Exitcode 0 enden (Übergangsmodus)")
     ap.add_argument("--id-pattern", default=DEFAULT_ID_PATTERN, help="Regulärer Ausdruck für Anforderungs-IDs")
     args = ap.parse_args(argv)
 
     try:
         id_re = re.compile(args.id_pattern)
+        cli = find_cli()
+        violations: list[Violation] = []
+        total = files = 0
+        for root in args.roots or [Path(".")]:
+            if not root.exists():
+                raise UsageError(f"Pfad nicht gefunden: {root}")
+            v, n, f = check_root(cli, root.resolve(), id_re)
+            violations += v
+            total += n
+            files += f
+        if total == 0:
+            raise UsageError("keine Anforderungen gefunden")
     except re.error as exc:
         print(f"Fehler: ungültiges ID-Muster: {exc}", file=sys.stderr)
         return 2
-
-    paths = args.paths or [Path("openspec/specs"), Path("openspec/changes")]
-    missing = [p for p in paths if not p.exists()]
-    if missing:
-        print("Fehler: Pfad nicht gefunden: " + ", ".join(map(str, missing)), file=sys.stderr)
+    except UsageError as exc:
+        print(f"Fehler: {exc}", file=sys.stderr)
         return 2
 
-    files = find_specs(paths)
-    if not files:
-        print("Fehler: keine spec.md gefunden in " + ", ".join(map(str, paths)), file=sys.stderr)
-        return 2
-
-    all_violations: list[Violation] = []
-    total = 0
-    for f in files:
-        try:
-            v, n = check_file(f, id_re)
-        except UnicodeDecodeError:
-            print(f"Fehler: {f} ist nicht UTF-8-kodiert", file=sys.stderr)
-            return 2
-        all_violations += v
-        total += n
-
-    for v in all_violations:
+    for v in violations:
         print(v.format())
-    if all_violations:
-        affected = len({v.path for v in all_violations})
-        print(f"{len(all_violations)} Verstoss/Verstösse in {affected} von {len(files)} Datei(en); {total} Anforderung(en) geprüft.")
+    if violations:
+        affected = len({v.path for v in violations})
+        print(f"{len(violations)} Verstoss/Verstösse in {affected} von {files} Datei(en); {total} Anforderung(en) geprüft.")
         return 0 if args.warn else 1
-    print(f"OK: {total} Anforderung(en) in {len(files)} Datei(en) geprüft.")
+    print(f"OK: {total} Anforderung(en) in {files} Datei(en) geprüft.")
     return 0
 
 

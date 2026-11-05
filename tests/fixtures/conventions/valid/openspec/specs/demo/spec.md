@@ -1,44 +1,45 @@
 ## Purpose
 
-Testdaten: gültige Anforderungen nach der Konvention.
+Testdaten.
 
 ## Requirements
 
 ### Requirement: Volltextsuche (LA-F-105, Must)
-Das System SHALL Text finden. Die Wörter `SHOULD` und «MAY» sind hier nur erwähnt.
+Das System SHALL Text finden. Die Wörter `SHOULD`, ``MAY`` und «MAY» sind hier nur erwähnt.
 
 #### Scenario: Suche
-- **WHEN** gesucht wird
-- **THEN** SHOULD in einem Szenario ist keine Anforderung
+- **WHEN** etwas geschieht
+- **THEN** ist es so
 
 ### Requirement: Suche über Dokumente (LA-F-105, Should)
 Das System SHALL über mehrere Dokumente suchen.
 
-#### Scenario: Zwei Dokumente
-- **WHEN** zwei Dokumente offen sind
-- **THEN** werden beide durchsucht
+#### Scenario: Fall
+- **WHEN** etwas geschieht
+- **THEN** ist es so
 
 ### Requirement: Vorlesen (LA-F-112, Could)
 Das System SHALL vorlesen.
 
-#### Scenario: Vorlesen
-- **WHEN** vorlesen gewählt wird
-- **THEN** wird vorgelesen
+#### Scenario: Fall
+- **WHEN** etwas geschieht
+- **THEN** ist es so
 
 ### Requirement: Startzeit (N-001, Must)
 Das System SHALL in 2 s starten.
 
-#### Scenario: Start
-- **WHEN** gestartet wird
-- **THEN** ist das Fenster nach 2 s bedienbar
+#### Scenario: Fall
+- **WHEN** etwas geschieht
+- **THEN** ist es so
 
 ### Requirement: Darstellungsmodi (LA-F-110, Should)
-Das System SHALL einen Dunkelmodus bieten. Ein deutsches Zitat „MAY“ ist eine Erwähnung.
+Das System SHALL einen Dunkelmodus bieten. Ein Zitat „MAY“ ist eine Erwähnung.
 
 ```text
-Beispiel aus einer Quelle: The system SHOULD support dark mode.
+Quelle: The system SHOULD support dark mode.
+### Requirement: Im Code (X)
 ```
 
 #### Scenario: Dunkel
 - **WHEN** umgeschaltet wird
-- **THEN** ist es dunkel
+- **THEN** SHOULD in einem Szenario ist keine Anforderung

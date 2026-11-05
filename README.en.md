@@ -36,7 +36,7 @@ scripts/              Helper scripts (e.g. stale-translation check)
 
 ## Quick start
 
-Requirements: [Claude Code](https://docs.claude.com/en/docs/claude-code/overview), Node.js 20+, Git, Python 3.10+ (for the check scripts).
+Requirements: [Claude Code](https://docs.claude.com/en/docs/claude-code/overview), Node.js 20+, Git, Python 3.10+ (for the check scripts; the convention check also uses the OpenSpec CLI 1.16 or later).
 
 ```bash
 # 1. Install OpenSpec

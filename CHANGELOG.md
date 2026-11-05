@@ -6,7 +6,7 @@ Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionier
 
 ### Hinzugefügt
 - Anforderungskonvention RC-001 bis RC-007 (Change `add-priority-convention`): immer SHALL, MoSCoW-Priorität und ID im Titel, gemischte Prioritäten getrennt, Umpriorisierung als RENAMED; gilt für funktionale und nicht-funktionale Anforderungen
-- Prüfskript `scripts/check-conventions.py` (Exitcodes 0/1/2, Übergangsmodus `--warn`) mit 38 Tests; Ausführung in der CI
+- Prüfskript `scripts/check-conventions.py` (Exitcodes 0/1/2, Übergangsmodus `--warn`) mit 38 Tests; liest die Struktur über die OpenSpec-CLI (ab 1.16), damit es dieselben Anforderungen sieht wie OpenSpec; Ausführung in der CI mit fixierter OpenSpec-Version 1.16.0 und minimalen Token-Rechten
 - Textbaustein `template-project/openspec-context.md`; `project-init` trägt ihn idempotent in `openspec/config.yaml` ein und überführt jetzt Must, Should und Could
 - Vorgehensmodell DE/EN: Abschnitt «Anforderungen in OpenSpec» inkl. Migration bestehender Projekte
 - Testbefehl in CLAUDE.md; OpenSpec im Plugin-Repository eingerichtet (Dogfooding)

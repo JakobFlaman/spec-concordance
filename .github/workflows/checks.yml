@@ -5,17 +5,34 @@ on:
     branches: [main]
   pull_request:
 
+permissions:
+  contents: read
+
+env:
+  DO_NOT_TRACK: "1"
+  OPENSPEC_VERSION: "1.16.0"
+
 jobs:
   checks:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: OpenSpec installieren / Install OpenSpec (fixierte Version)
+        run: npm install -g --ignore-scripts "@fission-ai/openspec@${OPENSPEC_VERSION}" && openspec --version
+
       - name: Tests / Run tests
         run: python3 -m unittest discover -s tests -v
 
       - name: Anforderungskonvention prüfen / Check requirement conventions
-        run: python3 scripts/check-conventions.py openspec/specs openspec/changes
+        run: python3 scripts/check-conventions.py
+
+      - name: OpenSpec validieren / Validate OpenSpec
+        run: openspec validate --all --strict
 
       - name: Übersetzungen prüfen / Check translations
         run: python3 scripts/check-i18n.py

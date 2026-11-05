@@ -73,7 +73,14 @@ OpenSpec verlangt in jeder Anforderung das Schlüsselwort SHALL oder MUST. Diese
 - TO: `### Requirement: Darstellungsmodi (LA-F-110, Must)`
 ```
 
-**Prüfung:** `python3 scripts/check-conventions.py [PFAD ...]` meldet Verstösse mit Datei, Zeile, Regel und Titel. Exitcodes: 0 = in Ordnung, 1 = Verstösse, 2 = Bedien- oder Eingabefehler.
+**Prüfung:** `python3 scripts/check-conventions.py [STAMM ...]` im Projektstamm (Ordner mit `openspec/`) meldet Verstösse mit Datei, Zeile der Anforderung, Regel und Titel. Die Prüfung liest die Struktur über die OpenSpec-CLI (ab 1.16), damit sie dieselben Anforderungen sieht wie OpenSpec; die CLI wird über `OPENSPEC_BIN` oder `openspec` im `PATH` gefunden. Exitcodes: 0 = in Ordnung, 1 = Verstösse, 2 = Bedien- oder Eingabefehler.
+
+| Meldung (Exit 2) | Abhilfe |
+|---|---|
+| OpenSpec-CLI nicht gefunden / zu alt | `npm install -g @fission-ai/openspec@1.16.0` oder `OPENSPEC_BIN` setzen |
+| enthält kein openspec/ | im Projektstamm aufrufen, nicht in `openspec/specs` |
+| OpenSpec meldet für «…» | Meldung von OpenSpec beheben, z. B. fehlende `proposal.md`; `openspec validate --all --strict` zeigt Details |
+| Unerwartete Struktur von OpenSpec | OpenSpec-Version prüfen; getestet ist 1.16.0 |
 
 **Migration bestehender Projekte:** Zuerst die Regeln mit `project-init` (Schritt «OpenSpec initialisieren») in `openspec/config.yaml` übernehmen. Dann die Prüfung mit `--warn` laufen lassen – sie meldet alle Verstösse, bricht aber nicht ab. Die Titel bestehender Anforderungen werden in einem eigenen Change per RENAMED umgestellt; danach läuft die Prüfung ohne `--warn`.
 

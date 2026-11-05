@@ -34,7 +34,7 @@ Dieses Repository ist das Plugin `spec-concordance` selbst. Es wird nach seinem 
 # Tests (wird vom Qualitäts-Gate G2 ausgeführt)
 python3 -m unittest discover -s tests -v
 # Prüfungen
-python3 scripts/check-conventions.py openspec/specs openspec/changes
+python3 scripts/check-conventions.py          # im Projektstamm; braucht OpenSpec-CLI ≥ 1.16
 python3 scripts/check-i18n.py
 openspec validate --all --strict
 ```

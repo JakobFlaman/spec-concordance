@@ -5,4 +5,4 @@ Requirement conventions (spec-concordance, see docs/de/process-model.md «Anford
 - RC-003: A source requirement with mixed priority ("Must / Should") is split into one requirement per priority with the same ID. If the split is not clear from the source, ask the maintainer instead of guessing.
 - RC-004: A priority change is a RENAMED delta (FROM/TO), not MODIFIED.
 - RC-007: Within one spec file, each combination of ID and priority appears only once.
-Check: python3 <spec-concordance>/scripts/check-conventions.py (exit 0 = ok, 1 = violations, 2 = usage error; --warn for transition).
+Check: run python3 <spec-concordance>/scripts/check-conventions.py in the project root; needs OpenSpec CLI >= 1.16 (exit 0 = ok, 1 = violations, 2 = usage error; --warn for transition).

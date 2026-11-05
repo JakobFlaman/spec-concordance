@@ -1,8 +1,12 @@
+## Purpose
+
+Testdaten.
+
 ## Requirements
 
 ### Requirement: Seitenleiste (LA-F-104)
-Das System SHALL eine Seitenleiste zeigen.
+Das System SHALL etwas tun.
 
-#### Scenario: Leiste
-- **WHEN** geöffnet
-- **THEN** sichtbar
+#### Scenario: Fall
+- **WHEN** etwas geschieht
+- **THEN** ist es so
