@@ -64,13 +64,13 @@ Geprüft von den fünf betroffenen Rollen. Fachbereich nicht beteiligt: Die Konv
 | Entwicklung (Aufwand M) | Zustimmung mit Auflagen | 2 | 2 |
 | Testmanagement | Zustimmung mit Auflagen | 3 | 1 |
 
-Alle Rollen bestätigen den Entscheid; Architektur, Entwicklung und Testmanagement haben das JSON von OpenSpec 1.16.0 selbst gegengeprüft.
+Alle Rollen bestätigen den Entscheid; Architektur, Entwicklung und Testmanagement haben das JSON von OpenSpec 1.16.0 selbst gegengeprüft. Einzelvoten in `council-review-votes.md`, Abschnitt «Nachtrags-Review Revision 2».
 
 ## Entscheidungsliste Revision 2
 
 | Nr. | Auflage | Schweregrad | Rolle(n) | Status |
 |---|---|---|---|---|
-| N1 | CI: `actions/setup-node` und OpenSpec in exakt fixierter Version (1.16.0); `permissions: contents: read`; nur `pull_request`; Telemetrie aus (`DO_NOT_TRACK=1`) | major | Sec. (S3, S4), Betr. (B1), Entw. (E2), Arch. (A2) | eingearbeitet |
+| N1 | CI: `actions/setup-node` und OpenSpec in exakt fixierter Version (1.16.0); `permissions: contents: read`; nie `pull_request_target` (S4 wörtlich: «Bei `pull_request` bleiben, nie `pull_request_target` verwenden» – korrigiert nach Gate-Lauf 8, die erste Fassung «nur `pull_request`» gab S4 falsch wieder; `push` auf `main` bleibt für RC-006 nötig); Telemetrie aus (`DO_NOT_TRACK=1`) | major | Sec. (S3, S4), Betr. (B1), Entw. (E2), Arch. (A2) | eingearbeitet |
 | N2 | Aufrufer auf Projektstamm umstellen (CI, CLAUDE.md, process-model DE/EN, Test-Summary); Pfad ohne `openspec/` → Exit 2 mit klarer Meldung und Test | major | Arch. (A1), Entw. (E2), Test (T1), Betr. (B3) | eingearbeitet |
 | N3 | Version beim Start prüfen (`openspec --version` < 1.16 → Exit 2 mit gefundener und benötigter Version); fehlende JSON-Felder → Exit 2, nie still bestehen; Szenarien und Vertragstest | major | Betr. (B2), Arch. (A3), Entw. (E3) | eingearbeitet |
 | N4 | Fixtures als OpenSpec-Projekte mit minimaler `proposal.md` (genau eines ohne, für RC-008); Zuordnung alte → neue Tests in der Test-Summary | major | Test (T2) | eingearbeitet |

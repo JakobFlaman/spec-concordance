@@ -124,6 +124,14 @@ class TestRC003And007Duplicates(CliTestCase):
         self.assertIn("spec.md:10: RC-007", out)
         self.assertIn("schon in Zeile 3", out)
 
+    def test_duplicate_reported_in_file_order_when_modified_precedes_added(self):
+        # OpenSpec liefert ADDED vor MODIFIED; die Meldung gehört zur zweiten Anforderung der Datei
+        code, out = project("duplicate-modified-first")
+        self.assertEqual(code, 1)
+        self.assertIn("spec.md:12: RC-007", out)
+        self.assertIn("schon in Zeile 3", out)
+        self.assertIn("«Zweit (B-1, Must)»", out)
+
     def test_archived_changes_are_not_checked(self):
         code, out = project("with-archive")
         self.assertEqual(code, 0, out)

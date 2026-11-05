@@ -40,7 +40,7 @@ Voraussetzungen: [Claude Code](https://docs.claude.com/en/docs/claude-code/overv
 
 ```bash
 # 1. OpenSpec installieren
-npm install -g @fission-ai/openspec@latest
+npm install -g @fission-ai/openspec@1.16.0
 
 # 2. Plugin in Claude Code einbinden (lokaler Klon)
 git clone https://github.com/<owner>/spec-concordance.git

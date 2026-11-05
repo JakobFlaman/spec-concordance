@@ -48,3 +48,42 @@ Abdeckung: 6 von 8 Abnahmekriterien mit geplantem Test · Testlauf: nicht ausgef
 - [T2] major – Kein Test für RC-004. – Test auf Textbaustein; Szenario am Baustein prüfbar formulieren.
 - [T3] minor – Keine Fixture für «Should validiert». – Validierbare Fixture oder Nachweis über RC-005 in der Test-Summary.
 - [T4] minor – Fixtures mit Absicht-Verstössen könnten mitgescannt werden. – CI-Scan auf `openspec/specs/` und `openspec/changes/` begrenzen.
+
+---
+
+# Nachtrags-Review Revision 2 – Einzelvoten
+
+Datum: 2026-11-05 · Fünf Rollen, gekürzt auf Befund und Auflage; Konsolidierung in `council-review.md`, Abschnitt «Nachtrags-Review».
+
+## Security – Zustimmung mit Auflagen
+- [S3] major – S1 («nur Standardbibliothek») ohne formellen Ersatz aufgehoben; OpenSpec nur «≥ 1.16», README installiert `@latest`, CI ohne Node/Installation → bei jedem PR ungeprüfter neuester Fremdcode inkl. npm-Install-Skripte. – Exakte Version fixieren (wenn möglich mit Integritätsprüfung), `actions/setup-node` mit fester Version, Installation als Task; S1 in design.md ausdrücklich ersetzen.
+- [S4] minor – Workflow ohne Token-Rechte, obwohl jetzt Fremdcode im PR-Kontext läuft. – `permissions: contents: read`; **«Bei `pull_request` bleiben, nie `pull_request_target` verwenden»**; Telemetrie/Netzzugriffe von OpenSpec in der CI abschalten (z. B. `DO_NOT_TRACK=1`).
+- [S5] minor – Namen aus der CLI entsprechen Ordnernamen aus dem PR; führendes «-» wäre Argument-Injection; Pfade aus JSON beim Lesen der Zeilennummer. – Namen gegen festes Muster prüfen, sonst Exit 2; `--` wo unterstützt; gelesene Dateien nach `resolve()` unter `<STAMM>/openspec/`; Fixture.
+- [S6] minor – `OPENSPEC_BIN` erlaubt beliebiges Programm, Unterprozess ohne Grenzen. – Nur aus der Umgebung lesen und dokumentieren; Timeout; bei Zeitüberschreitung oder ungültigem JSON Exit 2.
+
+## Architektur – Zustimmung mit Auflagen
+- [A1] major – Aufrufschnittstelle inkompatibel (Pfade → Stamm); CI, CLAUDE.md, process-model DE/EN, Test-Report verwenden alte Form; kein Tasks-Abschnitt für Revision 2. – Abschnitt 10 anlegen, Aufrufer nachführen; Pfad ohne `openspec/` → klare Meldung.
+- [A2] major – CI installiert weder Node noch OpenSpec. – Node einrichten, OpenSpec 1.16.0 fest installieren, getestete Version im Test-Report.
+- [A3] minor – JSON wird Schnittstelle ohne Fehlerfall für veränderte Struktur. – Fehlende Felder → Exit 2 mit erwarteter Version; Vertragstest.
+- [A4] minor – Zeilensuche «erste Kopfzeile» meldet RC-007-Duplikate auf der ersten statt der zweiten; RC-008 «ausschliesslich CLI» vs. Datei lesen. – n-tes Vorkommen → n-te Fundstelle; RC-008 präzisieren.
+
+ADR nötig: nein (design.md ersetzt ADR); nachtragen, sobald `docs/adr/` existiert.
+
+## Support / Betrieb – Zustimmung mit Auflagen
+- [B1] major – CI nach Revision 2 nicht lauffähig (keine Node/OpenSpec; Aufruf mit Unterordnern → Exit 2). – Task für `actions/setup-node` (Node 20) und OpenSpec exakt fixiert (1.16.0); Aufruf umstellen; RC-006 real in der CI grün nachweisen.
+- [B2] major – «≥ 1.16» ungeprüft; JSON ist kein versionierter Vertrag. – Version beim Start prüfen (< 1.16 → Exit 2 mit gefundener und benötigter Version); unerwartete Struktur → Exit 2, nie still bestehen; Szenario «OpenSpec zu alt».
+- [B3] minor – Betriebsdoku veraltet (README ohne OpenSpec, process-model `[PFAD ...]`, kein `OPENSPEC_BIN`). – Voraussetzung, Aufruf, `OPENSPEC_BIN`, Exit-2-Ursachen mit Handlungsempfehlung dokumentieren.
+- [B4] minor – Verhalten von CLI-abhängigen Tests ohne CLI offen. – Lokal sichtbar überspringen, in der CI (`CI=true`) Fehlschlag.
+
+## Entwicklung – Zustimmung mit Auflagen · Aufwand M
+- [E1] major – Revision 2 nicht in tasks.md; RC-008 ohne Task. – Abschnitt 10 mit einzeln prüfbaren Tasks.
+- [E2] major – Aufruf inkompatibel; CI ohne Node/OpenSpec. – Aufrufe umstellen, CI-Schritt mit fester Version, als Task.
+- [E3] minor – Fehlererkennung der CLI nicht festgelegt (JSON auf stdout, `status[]`). – Fehler bei Exitcode ≠ 0 oder `severity: error`, `message` weitergeben; Versionsprüfung über `openspec --version`.
+- [E4] minor – Zuordnung JSON → Datei nicht beschrieben. – Pfadableitung und Felder (`requirements[]`, `rename.to`) im Design benennen.
+
+## Testmanagement – Zustimmung mit Auflagen
+Abdeckung vor Umsetzung: 18 von 22 Abnahmekriterien automatisch testbar, 4 manuell/Inspektion/indirekt · Testlauf: nicht ausgeführt (vor Umsetzung)
+- [T1] major – Aufrufer und Tests verwenden alte Schnittstelle. – CI, CLAUDE.md, Tests umstellen; Test «`openspec/specs` → Exit 2».
+- [T2] major – Keine Migrationsregel für Testdaten; Changes ohne `proposal.md` lösen ungewollt Exit 2 aus; keine Zuordnung alt → neu. – Fixtures als Projekte mit `proposal.md` (genau eines ohne); Zuordnung in der Test-Summary.
+- [T3] major – «Tests setzen die CLI voraus» offen; stilles Überspringen möglich; kein Weg, CLI abwesend zu machen; Version ohne Szenario. – In der CI kein Überspringen; `OPENSPEC_BIN` auf nicht vorhandenen Pfad; Attrappe für «zu alt» und Fehler; Versionsprüfung als Szenario.
+- [T4] minor – Zeilennummer heuristisch, ohne eigenes Szenario. – Tests für korrekte Zeile, Codeblock, verschachtelte Capability, Fallback Zeile 0.

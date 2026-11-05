@@ -311,11 +311,14 @@ def check_spec_file(sf: SpecFile, id_re: re.Pattern, base_names: list[str]) -> l
     out: list[Violation] = []
     seen: dict[tuple[str, str], int] = {}
     renamed_to = {e.name for e in sf.entries if e.kind == "RENAMED"}
-    for e in sf.entries:
+    # OpenSpec liefert ADDED vor MODIFIED, unabhängig von der Datei: für RC-007
+    # («für die zweite Anforderung») in Dateireihenfolge prüfen; Zeile 0 ans Ende.
+    located = [(finder.line(e.name, renamed=(e.kind == "RENAMED")), i, e) for i, e in enumerate(sf.entries)]
+    located.sort(key=lambda t: (t[0] == 0, t[0], t[1]))
+    for line, _, e in located:
         if e.kind == "RENAMED":
-            out += check_title(sf.path, finder.line(e.name, renamed=True), e.name, id_re)
+            out += check_title(sf.path, line, e.name, id_re)
             continue
-        line = finder.line(e.name)
         out += check_title(sf.path, line, e.name, id_re)
         out += check_text(sf.path, line, e.name, e.text)
         name, rid, prio = parse_title(e.name)

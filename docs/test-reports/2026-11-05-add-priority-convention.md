@@ -6,9 +6,9 @@ Datum: 2026-11-05 · Umgebung: Linux, Python 3, OpenSpec 1.16.0 (auch mit `--ign
 
 | Prüfung | Befehl | Ergebnis |
 |---|---|---|
-| Unit-Tests mit OpenSpec-CLI | `python3 -m unittest discover -s tests -v` | 38 von 38 grün |
-| Unit-Tests ohne CLI, lokal | `PATH` ohne `openspec` | 10 grün, 28 sichtbar übersprungen |
-| Unit-Tests ohne CLI, CI | `CI=true`, `PATH` ohne `openspec` | 28 Fehlschläge (gewollt: kein trügerisches Grün) |
+| Unit-Tests mit OpenSpec-CLI | `python3 -m unittest discover -s tests -v` | 39 von 39 grün (Lauf 9) |
+| Unit-Tests ohne CLI, lokal | `PATH` ohne `openspec` | 10 grün, 29 sichtbar übersprungen |
+| Unit-Tests ohne CLI, CI | `CI=true`, `PATH` ohne `openspec` | 29 Fehlschläge (gewollt: kein trügerisches Grün) |
 | Konvention, eigenes Repo | `python3 scripts/check-conventions.py` | Exit 0, 8 Anforderungen |
 | OpenSpec | `openspec validate --all --strict` | gültig |
 | Übersetzungen | `python3 scripts/check-i18n.py` | OK |
@@ -26,7 +26,7 @@ Datum: 2026-11-05 · Umgebung: Linux, Python 3, OpenSpec 1.16.0 (auch mit `--ign
 | RC-002 | Unbekannte Priorität | `test_unknown_priority`; zusätzlich `test_custom_id_pattern`, `test_header_variants_like_openspec`, `test_file_with_bom` |
 | RC-003 | Must/Should-Quelle | **manuell, ausgeführt:** Lastenheft Blattwerk LA-F-105 (Must / Should) → `pdf-concordance/openspec/changes/add-viewer-phase-1/specs/viewer-search/spec.md` Zeile 7 «… (LA-F-105, Must)», Zeile 24 «… (LA-F-105, Should)» |
 | RC-003 | Regel im Textbaustein | `test_split_rule_and_ask_maintainer` |
-| RC-007 | Duplikat in einer Datei | `test_same_id_same_priority_is_violation_on_second_line` (Meldung auf der zweiten Anforderung, Zeile 10) |
+| RC-007 | Duplikat in einer Datei | `test_same_id_same_priority_is_violation_on_second_line` (Meldung auf der zweiten Anforderung, Zeile 10); MODIFIED vor ADDED: `test_duplicate_reported_in_file_order_when_modified_precedes_added` |
 | RC-007 | Gleiche ID mit zwei Prioritäten | `test_same_id_two_priorities_accepted`; archivierte Changes: `test_archived_changes_are_not_checked`; Capability «changes/archive»: `test_capability_named_changes_archive_is_checked` |
 | RC-004 | Should wird Must | `test_renamed_is_accepted`; Zieltitel geprüft: `test_renamed_target_without_priority_is_violation` |
 | RC-004 | Umpriorisierung fälschlich als MODIFIED | `test_modified_with_changed_priority_is_violation` |
@@ -77,3 +77,4 @@ Datum: 2026-11-05 · Umgebung: Linux, Python 3, OpenSpec 1.16.0 (auch mit `--ign
 | 6 | 36 | grün | Gate 5 nicht bestanden (G7: Kopfzeilen- und RENAMED-Syntax) – behoben |
 | 7 | 38 | grün | Gate 6 nicht bestanden (G7: eingerückte Zäune) – behoben |
 | 8 | 38 | grün | Gate 7 nicht bestanden (G7: verschachtelte Capability, Basis ohne Präfix) – **Revision 2:** Erkennung über OpenSpec-CLI, Nachtrags-Review N1–N12 |
+| 9 | 39 | grün | Gate 8 nicht bestanden (G6: N1-Text gab S4 falsch wieder – korrigiert; G7: RC-007 in OpenSpec- statt Dateireihenfolge – sortiert) |

@@ -40,7 +40,7 @@ Requirements: [Claude Code](https://docs.claude.com/en/docs/claude-code/overview
 
 ```bash
 # 1. Install OpenSpec
-npm install -g @fission-ai/openspec@latest
+npm install -g @fission-ai/openspec@1.16.0
 
 # 2. Add the plugin to Claude Code (local clone)
 git clone https://github.com/<owner>/spec-concordance.git

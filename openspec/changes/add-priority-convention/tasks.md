@@ -66,3 +66,9 @@ Version: Änderungen werden unter [Unreleased] gesammelt; `plugin.json` wird bei
 - [x] 10.5 CI: Node, OpenSpec 1.16.0, `permissions: contents: read`, `DO_NOT_TRACK=1`, neuer Aufruf (RC-006; N1, N2)
 - [x] 10.6 Aufrufe und Doku nachführen: CLAUDE.md, process-model DE/EN, README DE/EN, Textbaustein (N2, N12)
 - [x] 10.7 Test-Summary: Lauf 8, Zuordnung alte → neue Tests, getestete OpenSpec-Version; CHANGELOG (N4)
+
+## 11. Nach Qualitäts-Gate (Lauf 8 nicht bestanden)
+
+- [x] 11.1 G7 / RC-007: Einträge pro Spec-Datei vor der Duplikatprüfung nach Zeilennummer sortieren; Testprojekt «duplicate-modified-first» und Test
+- [x] 11.2 G6 / N1: Auflagentext korrigiert (S4 wörtlich: nie `pull_request_target`; `push` auf `main` bleibt); Einzelvoten des Nachtrags-Reviews abgelegt
+- [x] 11.3 Beobachtungen: OpenSpec-Version im README fixiert (1.16.0); eingerückter Code in design.md geklärt
