@@ -32,6 +32,11 @@ Der Anforderungstext jeder Anforderung SHALL das Schlüsselwort SHALL verwenden 
 - **WHEN** `scripts/check-conventions.py` ausgeführt wird
 - **THEN** meldet die Prüfung RC-001, auch wenn `SHOULD` nach CommonMark in Code stünde
 
+#### Scenario: Unsichere Zitatgrenzen
+- **GIVEN** eine Anforderung mit Zitaten, deren Text eine Zeichenreferenz (`&`) enthält oder in der ein Anführungszeichen ohne Gegenstück bleibt, und die `SHOULD` ausserhalb von Inline-Code enthält
+- **WHEN** `scripts/check-conventions.py` ausgeführt wird
+- **THEN** meldet die Prüfung RC-001
+
 #### Scenario: Schlüsselwort erst in der Darstellung
 - **GIVEN** eine Anforderung, in der `SHOULD` erst bei der Darstellung entsteht, etwa aus einer Zeichenreferenz (`&#83;HOULD`) oder durch Hervorhebung, HTML oder unsichtbare Zeichen zerteilt (`SH*OUL*D`)
 - **WHEN** `scripts/check-conventions.py` ausgeführt wird

@@ -107,3 +107,8 @@ Version: Änderungen werden unter [Unreleased] gesammelt; `plugin.json` wird bei
 - [x] 17.3 Beobachtungen: `|` als unsicheres Zeichen (GFM-Tabellen); Grenzen (Homoglyphen, RECOMMENDED/OPTIONAL) in `design.md` festgehalten
 - [x] 17.4 Vergleichstest: gezielter Baustein für zerteilte Schlüsselwörter und Zeichenreferenzen; Orakel fügt Inline-Text ohne Trenner zusammen; Gegenprobe mit alter Erkennung findet Durchlässe
 - [x] 17.5 Szenarien «Schlüsselwort erst in der Darstellung», «Eingerückter Codezaun»; Testprojekte `entity-keyword`, `split-keyword`, `table-pipe`, `indented-fence`; alle Gegenbeispiele aus Lauf 11–14 nachgeprüft
+
+## 18. Nach Qualitäts-Gate (Lauf 15 nicht bestanden)
+
+- [x] 18.1 G7 / RC-001: sichere Grenzen auch für Zitate – kein `&` im Text, kein Anführungszeichen ohne Gegenstück; Szenario «Unsichere Zitatgrenzen»; Testprojekte `quote-entity`, `quote-crossline`
+- [x] 18.2 Vergleichstest: Zeichenreferenzen für Anführungszeichen und gezielter Baustein für Zitate; Gegenprobe mit dem Stand aus Lauf 15 findet Durchlässe

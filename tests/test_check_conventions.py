@@ -140,6 +140,17 @@ class TestRC001Keyword(CliTestCase):
         self.assertIn("spec.md:9: RC-001: Codezaun", out)
         self.assertIn("Eingerückter Zaun (RC-045, Must)", out)
 
+    def test_quote_from_character_reference_does_not_hide_keyword(self):
+        # Gate-Lauf 15: Anführungszeichen erst in der Darstellung
+        code, out = project("quote-entity")
+        self.assertEqual(code, 1)
+        self.assertIn("spec.md:7: RC-001", out)
+
+    def test_unpaired_quote_on_previous_line_does_not_hide_keyword(self):
+        code, out = project("quote-crossline")
+        self.assertEqual(code, 1)
+        self.assertIn("spec.md:7: RC-001", out)
+
     def test_escaped_backticks_do_not_hide_keyword(self):
         code, out = project("code-span-escaped")
         self.assertEqual(code, 1)

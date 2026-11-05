@@ -58,6 +58,7 @@ ESCAPE_PAIR_RE = re.compile(r"\\([!-/:-@\[-`{-~])")
 # Codezaun mit 4+ Leerzeichen (oder Tab) Einzug: OpenSpec blendet aus, CommonMark nicht
 INDENTED_FENCE_RE = re.compile(r"^(?: {4,}|[ ]*\t)\s*(?P<fence>`{3,}|~{3,})")
 # Zitate nur innerhalb einer Zeile; gerade Anführungszeichen zählen nicht (auch Zollzeichen)
+QUOTE_CHARS_RE = re.compile(r"[«»“”„]")
 QUOTE_RE = re.compile(r"«[^»\n]*»|“[^”\n]*”|„[^“”\n]*[“”]")
 
 # Nur für die Zuordnung der Zeilennummer (RC-008: Struktur kommt aus der CLI).
@@ -339,13 +340,22 @@ def strip_mentions(text: str) -> str:
       Link-Ziele/-Titel können nach CommonMark Backticks vor Inline-Code verbrauchen, und
     - jeder Backtick-Lauf ein Gegenstück auf derselben Zeile hat: dann paart CommonMark die Läufe
       genauso, und Absatzgrenzen (die OpenSpec nicht liefert) spielen keine Rolle.
+    Zitate gelten zusätzlich nur, wenn der Text keine Zeichenreferenz enthält (kein &, sonst kann
+    ein Anführungszeichen erst in der Darstellung entstehen) und nach dem Ausblenden kein
+    Anführungszeichen ohne Gegenstück übrig bleibt (auch nicht auf einer anderen Zeile).
     Sonst gilt keine Erwähnung – im Zweifel melden: selten ein Fehlalarm, nie ein stiller Durchlass."""
     if UNSAFE_CHARS_RE.search(text):
         return text
     lines = [pair_code_spans(line) for line in text.split("\n")]
     if any(unpaired for _, unpaired in lines):
         return text
-    return "\n".join(QUOTE_RE.sub(" ", rest) for rest, _ in lines)
+    code_free = "\n".join(rest for rest, _ in lines)
+    if "&" in code_free:
+        return code_free
+    quote_free = "\n".join(QUOTE_RE.sub(" ", rest) for rest, _ in lines)
+    if QUOTE_CHARS_RE.search(quote_free):
+        return code_free
+    return quote_free
 
 
 def find_keyword(text: str) -> re.Match | None:

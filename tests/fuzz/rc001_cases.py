@@ -21,7 +21,8 @@ spec.loader.exec_module(mod)
 ATOMS = ["`", "``", "`", "\\", "<", ">", "[", "]", "(", ")", '"', "«", "»", "“", "”", "„", " ", "a",
          " x ", "SHOULD", "\n", "http://a.b/", '<span title="', '">', "</span>", "]: /u ", "](u ",
          "&#96;", "*", "_", "    ", "> ", "- ", "SH", "OULD", "&#83;", "&#x4F;", "&amp;", "|", "~~",
-         "\u200b", "\u00ad", "**", "MAY", "M", "AY"]
+         "\u200b", "\u00ad", "**", "MAY", "M", "AY", "&#171;", "&#187;", "&ldquo;", "&rdquo;", "&bdquo;",
+         "&laquo;", "&raquo;"]
 
 
 NOISE = ["*", "**", "_", "~~", "&#83;", "&#x4F;", "&amp;", "\u200b", "\u00ad", "<b>", "</b>", "[", "]", "](u)", "`", "\\"]
@@ -40,10 +41,24 @@ def split_keyword() -> str:
     return word[:k] + noise + word[k:m] + noise[::-1] + word[m:]
 
 
+QUOTES = [("«", "»"), ("“", "”"), ("„", "“"), ("„", "”")]
+QUOTE_ENTITY = {"«": "&#171;", "»": "&raquo;", "“": "&ldquo;", "”": "&#8221;", "„": "&bdquo;"}
+
+
+def quoted_keyword() -> str:
+    """Schlüsselwort zwischen zwei Zitaten, Anführungszeichen teils als Zeichenreferenz oder auf
+    die Vorzeile verteilt – nach der Darstellung steht es ausserhalb der Zitate."""
+    def q(ch: str) -> str:
+        return QUOTE_ENTITY[ch] if random.random() < 0.4 else ch
+    (o1, c1), (o2, c2) = random.choice(QUOTES), random.choice(QUOTES)
+    sep = random.choice([" ", "\n", " x "])
+    return f"{q(o1)}a{q(c1)}{sep}{random.choice(['SHOULD', 'MAY'])} {q(o2)}b{q(c2)}"
+
+
 def main() -> None:
     random.seed(int(sys.argv[1]))
     for _ in range(int(sys.argv[2])):
-        atoms = ATOMS + [split_keyword()] * 3
+        atoms = ATOMS + [split_keyword()] * 3 + [quoted_keyword()] * 2
         text = "SHALL " + "".join(random.choice(atoms) for _ in range(random.randint(3, 14)))
         if "SHOULD" not in text:
             text += " SHOULD"
