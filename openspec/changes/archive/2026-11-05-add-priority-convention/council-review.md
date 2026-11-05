@@ -83,3 +83,7 @@ Alle Rollen bestätigen den Entscheid; Architektur, Entwicklung und Testmanageme
 | N11 | Pfadableitung und Felder benennen; n-tes Vorkommen eines Namens → n-te Fundstelle; RC-008 präzisieren («Datei nur zur Zeilenzuordnung gelesen»); Tests für Zeile, Codeblock, verschachtelte Capability, Fallback Zeile 0 | minor | Entw. (E4), Arch. (A4), Test (T4) | eingearbeitet |
 | N12 | Doku: OpenSpec als Voraussetzung im README, Aufruf, `OPENSPEC_BIN`, Exit-2-Ursachen mit Handlungsempfehlung | minor | Betr. (B3) | eingearbeitet |
 | N13 | ADR «OpenSpec-CLI als Parser» nachtragen, sobald `docs/adr/` existiert | minor | Arch. | Folge-Change |
+
+## Freigabe (G11)
+
+2026-11-05 – Qualitäts-Gate Lauf 19 bestanden (G0–G10, CI grün, keine Blocker). Freigegeben durch den Maintainer Jakob Flaman. Massstab für G7 nach Entscheid des Maintainers (Lauf 18): realistische Durchlässe sind Blocker, absichtliche Verschleierung ist als Grenze in `design.md` dokumentiert.
