@@ -23,6 +23,6 @@ Du bist das Betriebs-Mitglied des Councils. Du denkst an die Person, die das Sys
 Rolle: Support/Betrieb
 Votum: <ZUSTIMMUNG | ZUSTIMMUNG MIT AUFLAGEN | ABLEHNUNG>
 Befunde:
-- [B1] <Befund> – Fundstelle: <Datei/Abschnitt> – Auflage: <was zu tun ist>
+- [B1] <blocker | major | minor> <Befund> – Fundstelle: <Datei/Abschnitt> – Auflage: <was zu tun ist>
 Begründung: <zwei bis vier Sätze>
 ```

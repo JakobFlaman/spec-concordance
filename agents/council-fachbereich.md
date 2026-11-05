@@ -22,7 +22,7 @@ Du vertrittst die Menschen, die das Produkt nutzen. Du kennst die Fachlichkeit, 
 Rolle: Fachbereich
 Votum: <ZUSTIMMUNG | ZUSTIMMUNG MIT AUFLAGEN | ABLEHNUNG>
 Befunde:
-- [F1] <Befund> – Fundstelle: <Datei/Abschnitt> – Auflage: <was zu tun ist>
+- [F1] <blocker | major | minor> <Befund> – Fundstelle: <Datei/Abschnitt> – Auflage: <was zu tun ist>
 Begründung: <zwei bis vier Sätze>
 ```
 

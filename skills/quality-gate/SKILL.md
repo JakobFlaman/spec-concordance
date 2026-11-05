@@ -11,12 +11,14 @@ Das Gate ist eine Checkliste mit hartem Ergebnis: **bestanden** oder **nicht bes
 
 | Nr. | Prüfpunkt | Wie prüfen |
 |---|---|---|
+| G0 | Change ist strukturell gültig | `openspec validate <id>` ausführen |
 | G1 | Alle Tasks in `tasks.md` erledigt | Checkboxen auswerten |
+| G1a | Rückverfolgbarkeit | Jede Task gehört zu einer Anforderung, jede Anforderung hat eine Task und mindestens ein Szenario |
 | G2 | Testlauf grün | Testbefehl aus CLAUDE.md ausführen, Ausgabe festhalten |
 | G3 | Jedes Abnahmekriterium hat einen Test | Abgleich Spec-Delta ↔ Tests |
 | G4 | Bei Bug: Regressionstest vorhanden | Test, der ohne Fix fehlschlägt |
 | G5 | Council-Review liegt vor, Ergebnis nicht «nicht freigegeben» | `council-review.md` im Change |
-| G6 | Alle Auflagen der Entscheidungsliste erledigt | Status in der Entscheidungsliste |
+| G6 | Alle Auflagen mit Schweregrad `blocker` und `major` erledigt | Status in der Entscheidungsliste; `minor` darf als eigener Change folgen |
 | G7 | Spezifikation nachgeführt | Spec-Deltas vollständig, keine Widersprüche |
 | G8 | Doku nachgeführt | Benutzer-/Betriebsdoku betroffen? Dann geändert? |
 | G9 | CHANGELOG-Eintrag | Unter `[Unreleased]` |
@@ -25,10 +27,10 @@ Das Gate ist eine Checkliste mit hartem Ergebnis: **bestanden** oder **nicht bes
 
 ## Ablauf
 
-1. Prüfpunkte G1–G10 selbst prüfen. G2 wird **ausgeführt**, nicht aus früheren Ausgaben übernommen.
+1. Prüfpunkte G0–G10 selbst prüfen. G2 wird **ausgeführt**, nicht aus früheren Ausgaben übernommen.
 2. Ergebnis als Tabelle ausgeben: Prüfpunkt, Status (✅/❌), Nachweis.
 3. Ist ein Punkt ❌ → **nicht bestanden**, mit Liste der fehlenden Punkte. Kein Archivieren.
-4. Sind G1–G10 ✅ → Maintainer um Freigabe (G11) bitten.
+4. Sind G0–G10 ✅ → Maintainer um Freigabe (G11) bitten.
 5. Erst nach Freigabe: `openspec archive <id>`.
 
 ## Regeln

@@ -23,7 +23,7 @@ Du bist das Architektur-Mitglied des Councils. Du prüfst, du baust nicht.
 Rolle: Architektur
 Votum: <ZUSTIMMUNG | ZUSTIMMUNG MIT AUFLAGEN | ABLEHNUNG>
 Befunde:
-- [A1] <Befund> – Fundstelle: <Datei/Abschnitt> – Auflage: <was zu tun ist>
+- [A1] <blocker | major | minor> <Befund> – Fundstelle: <Datei/Abschnitt> – Auflage: <was zu tun ist>
 ADR nötig: <ja/nein, Titel>
 Begründung: <zwei bis vier Sätze>
 ```

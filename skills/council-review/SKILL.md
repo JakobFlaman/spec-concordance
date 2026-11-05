@@ -18,9 +18,10 @@ description: Prüft eine Spezifikation oder einen OpenSpec-Change aus allen sech
 4. **Konsolidieren:**
    - Widersprüche zwischen Rollen ausdrücklich benennen, nicht glätten.
    - Doppelte Befunde zusammenführen, beide Rollen nennen.
+   - Jeder Befund trägt einen Schweregrad: `blocker` (muss vor der Umsetzung behoben sein), `major` (vor dem Archivieren), `minor` (darf als eigener Change folgen).
    - Entscheidungsliste: jede Auflage als Punkt mit Verantwortung (Maintainer) und Status `offen`.
 5. **Gesamtergebnis bestimmen:**
-   - Ein `VETO` (Security) oder eine `ABLEHNUNG` → **nicht freigegeben**
+   - Ein `VETO` (Security), eine `ABLEHNUNG` oder ein offener Befund mit Schweregrad `blocker` → **nicht freigegeben**
    - Nur Zustimmungen → **freigegeben**
    - Sonst → **freigegeben mit Auflagen**
 6. **Protokoll schreiben** nach `openspec/changes/<id>/council-review.md` (bei Gesamtprüfung nach `docs/council-review.md`).
@@ -37,8 +38,8 @@ Datum: <JJJJ-MM-TT> · Ergebnis: <freigegeben | freigegeben mit Auflagen | nicht
 
 ## Widersprüche
 ## Entscheidungsliste
-| Nr. | Auflage | Rolle(n) | Status |
-|---|---|---|---|
+| Nr. | Auflage | Schweregrad | Rolle(n) | Status |
+|---|---|---|---|---|
 
 ## Einzelvoten
 <vollständige Voten der Rollen>

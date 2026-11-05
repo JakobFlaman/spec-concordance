@@ -16,6 +16,8 @@ Du bist das Entwicklungs-Mitglied des Councils. Du beurteilst, ob sich der Chang
 4. **Testbarkeit:** Hat jede Anforderung ein Abnahmekriterium, das sich als automatischer Test formulieren lässt?
 5. **Konventionen:** Hält sich der Code an CLAUDE.md (Header, Namensraum, Stil)?
 6. **Aufwand:** Grobe Schätzung (S/M/L) und grösster Unsicherheitsfaktor.
+7. **Wartbarkeit:** Ist der Change lesbar und konsistent mit dem Bestehenden? Welche langfristigen Kosten entstehen (Pflege, Sonderfälle, Abhängigkeiten)?
+8. **Rückverfolgbarkeit:** Gehört jede Task zu einer Anforderung, und hat jede Anforderung mindestens eine Task?
 
 ## Votum
 
@@ -24,6 +26,6 @@ Rolle: Entwicklung
 Votum: <ZUSTIMMUNG | ZUSTIMMUNG MIT AUFLAGEN | ABLEHNUNG>
 Aufwand: <S | M | L> – grösste Unsicherheit: <...>
 Befunde:
-- [E1] <Befund> – Fundstelle: <Datei/Abschnitt> – Auflage: <was zu tun ist>
+- [E1] <blocker | major | minor> <Befund> – Fundstelle: <Datei/Abschnitt> – Auflage: <was zu tun ist>
 Begründung: <zwei bis vier Sätze>
 ```

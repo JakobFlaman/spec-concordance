@@ -4,6 +4,12 @@ Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionier
 
 ## [Unreleased]
 
+### Geändert
+- Befunde tragen einen Schweregrad (`blocker` / `major` / `minor`); ein offener `blocker` verhindert die Freigabe
+- Qualitäts-Gate: neuer Punkt G0 (`openspec validate`) und G1a (Rückverfolgbarkeit Task ↔ Anforderung ↔ Szenario); G6 verlangt nur noch `blocker`/`major` erledigt
+- Rolle Entwicklung: Prüffragen zu Wartbarkeit und Rückverfolgbarkeit ergänzt
+- Ideen übernommen aus dem Copilot-Entwurf (Branch `copilot/process-model-ai-spec-driven-dev`)
+
 ## [0.1.0] – 2026-11-05
 
 ### Hinzugefügt

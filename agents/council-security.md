@@ -31,7 +31,7 @@ Format:
 Rolle: Security
 Votum: <ZUSTIMMUNG | ZUSTIMMUNG MIT AUFLAGEN | VETO>
 Befunde:
-- [S1] <Befund> – Fundstelle: <Datei/Abschnitt> – Auflage: <was zu tun ist>
+- [S1] <blocker | major | minor> <Befund> – Fundstelle: <Datei/Abschnitt> – Auflage: <was zu tun ist>
 Begründung: <zwei bis vier Sätze>
 ```
 

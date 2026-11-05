@@ -25,7 +25,7 @@ Votum: <ZUSTIMMUNG | ZUSTIMMUNG MIT AUFLAGEN | ABLEHNUNG>
 Abdeckung: <n von m Abnahmekriterien getestet>
 Testlauf: <grün | rot | nicht ausgeführt>
 Befunde:
-- [T1] <Befund> – Fundstelle: <Datei/Abschnitt> – Auflage: <was zu tun ist>
+- [T1] <blocker | major | minor> <Befund> – Fundstelle: <Datei/Abschnitt> – Auflage: <was zu tun ist>
 Begründung: <zwei bis vier Sätze>
 ```
 
