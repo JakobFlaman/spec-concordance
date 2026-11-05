@@ -124,3 +124,8 @@ Version: Änderungen werden unter [Unreleased] gesammelt; `plugin.json` wird bei
 - [x] 20.1 G7 / RC-001: Codeblock nur sicher, wenn auch alle früheren Zäune (Öffner und Schliesser) in Spalte 1 stehen; falsche Aussage zum Schliesser in `design.md` korrigiert; Testprojekt `fence-desync`
 - [x] 20.2 Beobachtung: unsichtbare Zeichen der ganzen Unicode-Kategorie Cf und Füllzeichen zwischen den Buchstaben zugelassen; Testprojekt `invisible-keyword`
 - [x] 20.3 Vergleichstests: Bausteine für versetzte Zäune (Blockebene) und weitere unsichtbare Zeichen (Inline); Gegenproben mit dem Stand aus Lauf 17 finden Durchlässe
+
+## 21. Nach Qualitäts-Gate (Lauf 18 nicht bestanden; Entscheid Maintainer «Als Grenze dokumentieren»)
+
+- [x] 21.1 G7 / RC-001: absichtliche Verschleierung durch komplexes Markup (HTML-Kommentare, Tags mit `>`, Referenzlinks, Bilder, Autolinks) als Grenze in `design.md`; Szenario «Kein stiller Durchlass gegenüber CommonMark» auf diese Grenzen bezogen
+- [x] 21.2 Beobachtung: »…« als bekannter Fehlalarm dokumentiert

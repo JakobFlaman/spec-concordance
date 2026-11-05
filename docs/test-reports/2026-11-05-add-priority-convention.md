@@ -2,7 +2,7 @@
 
 Datum: 2026-11-05 · Umgebung: Linux, Python 3, OpenSpec 1.16.0 (auch mit `--ignore-scripts` installiert geprüft) · Ausgeführt von: umsetzender Agent (Nachprüfung im Qualitäts-Gate durch unabhängigen Agenten)
 
-## Ergebnis (Lauf 18, Revision 2)
+## Ergebnis (Lauf 19, Revision 2)
 
 | Prüfung | Befehl | Ergebnis |
 |---|---|---|
@@ -29,6 +29,7 @@ Datum: 2026-11-05 · Umgebung: Linux, Python 3, OpenSpec 1.16.0 (auch mit `--ign
 | RC-001 | Schlüsselwort erst in der Darstellung | `test_keyword_from_character_reference_is_violation`, `test_keyword_split_by_emphasis_is_violation`, `test_keyword_split_by_invisible_format_character_is_violation`, `test_keyword_in_underscore_emphasis_is_violation` |
 | RC-001 | Unsicherer Codeblock | `test_fence_after_desynchronised_fence_is_violation`, `test_indented_fence_hiding_keyword_is_violation`, `test_fence_in_list_item_hiding_keyword_is_violation`, `test_fence_in_html_block_hiding_keyword_is_violation`; Vergleich auf Blockebene |
 | 18 | 61 | grün | Gate 17 nicht bestanden (G7: versetzte Zäune nach eingerücktem Schliesser) – alle früheren Zäune in Spalte 1; unsichtbare Zeichen Kategorie Cf |
+| 19 | 61 | grün | Gate 18 nicht bestanden (G7: nur konstruierte Fälle – absichtlich durch komplexes Markup zerteilte Schlüsselwörter) – Entscheid Maintainer: als Grenze dokumentiert |
 | RC-001 | Gerade Anführungszeichen | `test_straight_quotes_are_not_mentions` |
 | RC-001 | Kein stiller Durchlass gegenüber CommonMark | Vergleichstest `tests/fuzz/` (siehe Ergebnis) |
 | RC-001 | Unpaarige Backticks | `test_unpaired_backticks_do_not_hide_keyword` |

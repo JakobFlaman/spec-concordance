@@ -53,7 +53,7 @@ Der Anforderungstext jeder Anforderung SHALL das Schlüsselwort SHALL verwenden 
 - **THEN** meldet die Prüfung RC-001
 
 #### Scenario: Kein stiller Durchlass gegenüber CommonMark
-- **GIVEN** ein Anforderungstext, in dem `SHOULD` nach CommonMark ausserhalb von Inline-Code und «…», “…”, „…“ steht
+- **GIVEN** ein Anforderungstext, in dem `SHOULD` nach CommonMark ausserhalb von Inline-Code und «…», “…”, „…“ steht, ausgenommen die in `design.md` genannten Grenzen (absichtliche Verschleierung)
 - **WHEN** die Erkennung mit einem CommonMark-Parser verglichen wird (`tests/fuzz/`)
 - **THEN** meldet die Prüfung RC-001 in jedem Fall
 
