@@ -45,6 +45,29 @@ class TestRC001Keyword(unittest.TestCase):
         self.assertIn("spec.md:22: RC-001", out)
         self.assertNotIn("Beispiel ohne Priorität", out)
 
+    def test_nested_fences_follow_commonmark(self):
+        # ````-Block mit innerem ``` und «## REMOVED Requirements»: Block endet erst beim ````-Zaun
+        code, out = run(FIX / "fences-nested")
+        self.assertEqual(code, 1)
+        self.assertIn("2 Anforderung(en)", out)
+        self.assertIn("spec.md:18: RC-002", out)
+        self.assertIn("spec.md:19: RC-001", out)
+        self.assertNotIn("Im Code (X)", out)
+
+    def test_fence_with_info_string_does_not_close_block(self):
+        code, out = run(FIX / "fences-info")
+        self.assertEqual(code, 0, out)
+        self.assertIn("1 Anforderung(en)", out)
+
+    def test_inline_code_with_double_backticks_is_mention(self):
+        code, out = run(FIX / "inline-double")
+        self.assertEqual(code, 0, out)
+
+    def test_file_with_bom_is_checked(self):
+        code, out = run(FIX / "bom")
+        self.assertEqual(code, 1)
+        self.assertIn("RC-002: Priorität fehlt", out)
+
     def test_plugin_passes_its_own_check(self):
         code, out = run(ROOT / "openspec" / "specs", ROOT / "openspec" / "changes")
         self.assertEqual(code, 0, out)

@@ -33,7 +33,8 @@ OpenSpec erwartet SHALL/MUST (RFC 2119: SHALL = verbindlich, SHOULD = empfohlen,
 |---|---|
 | Aufruf | `python3 scripts/check-conventions.py [--warn] [--id-pattern REGEX] [PFAD ...]`; ohne Pfad: `openspec/specs openspec/changes` |
 | Eingabe | rekursiv alle `spec.md` unter den Pfaden; nur `openspec/changes/archive/` wird übersprungen, nicht beliebige Ordner namens «archive» |
-| Codeblöcke | eingezäunte Codeblöcke (```` ``` ````, `~~~`) gelten dateiweit als Erwähnung: Überschriften darin sind weder Abschnitte noch Anforderungen, Schlüsselwörter darin keine Verstösse |
+| Codeblöcke | eingezäunte Codeblöcke nach CommonMark (Zaun aus mindestens drei `` ` `` oder `~`, höchstens drei Leerzeichen Einzug; schliessender Zaun aus demselben Zeichen, mindestens gleich lang, ohne Sprachangabe) gelten dateiweit als Erwähnung: Überschriften darin sind weder Abschnitte noch Anforderungen, Schlüsselwörter darin keine Verstösse. Inline-Code mit beliebig vielen Backticks gilt ebenfalls als Erwähnung |
+| Zeichenkodierung | UTF-8, ein Byte-Order-Mark am Dateianfang wird ignoriert |
 | Geprüft | Basis-Specs (`## Requirements`) sowie `## ADDED` und `## MODIFIED Requirements`; `## REMOVED` und `## RENAMED` werden nur für RC-004 gelesen |
 | Basis für RC-004 | `openspec/specs/<capability>/spec.md` relativ zum Projektstamm (Elternordner von `openspec/`) |
 | Ausgabe | eine Zeile je Verstoss: `<datei>:<zeile>: <RC-ID>: <Meldung> – «<Titel>» – siehe docs/de/process-model.md, Abschnitt «Anforderungen in OpenSpec»`; am Ende Zusammenfassung |

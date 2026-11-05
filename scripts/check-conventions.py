@@ -37,8 +37,10 @@ RENAMED_TO_RE = re.compile(r"^\s*-\s*TO:\s*`?###\s+Requirement:\s*(.*?)`?\s*$")
 TITLE_FULL_RE = re.compile(r"^(?P<name>.*\S)\s+\((?P<id>[^,()]+),\s*(?P<prio>[^,()]+)\)$")
 TITLE_ID_ONLY_RE = re.compile(r"^(?P<name>.*\S)\s+\((?P<id>[^,()]+)\)$")
 KEYWORD_RE = re.compile(r"\b(SHOULD|MAY)\b")
-MENTION_RE = re.compile(r"`[^`]*`|«[^»]*»|\"[^\"]*\"|“[^”]*”|„[^“”]*[“”]")
-FENCE_RE = re.compile(r"^\s*(```|~~~)")
+MENTION_RE = re.compile(r"(`+).+?\1|«[^»]*»|\"[^\"]*\"|“[^”]*”|„[^“”]*[“”]")
+# CommonMark: Zaun mit höchstens 3 Leerzeichen Einzug, mindestens 3 gleiche Zeichen
+FENCE_OPEN_RE = re.compile(r"^ {0,3}(?P<fence>`{3,}|~{3,})(?P<info>.*)$")
+FENCE_CLOSE_RE = re.compile(r"^ {0,3}(?P<fence>`{3,}|~{3,})\s*$")
 
 CHECKED = {"requirements", "added requirements", "modified requirements"}
 
@@ -98,25 +100,31 @@ def base_spec_for(path: Path) -> Path | None:
 def fenced_lines(lines: list[str]) -> set[int]:
     """Indizes (0-basiert) aller Zeilen in eingezäunten Codeblöcken, inkl. Zaunzeilen.
 
+    Nach CommonMark: Ein Block öffnet mit mindestens drei ` oder ~ (höchstens drei
+    Leerzeichen Einzug; bei `-Zäunen darf die Sprachangabe kein ` enthalten) und schliesst
+    nur mit einem Zaun aus demselben Zeichen, mindestens gleich lang, ohne Sprachangabe.
+    Ein nicht geschlossener Block reicht bis zum Dateiende.
     Codeblöcke gelten dateiweit als Erwähnung: Überschriften darin sind weder Abschnitte
     noch Anforderungen, Schlüsselwörter darin keine Verstösse.
     """
     fenced: set[int] = set()
-    fence: str | None = None
+    open_fence: str | None = None
     for i, raw in enumerate(lines):
-        m = FENCE_RE.match(raw)
-        if fence is None and m:
-            fence = m.group(1)
+        if open_fence is None:
+            m = FENCE_OPEN_RE.match(raw)
+            if m and not (m.group("fence")[0] == "`" and "`" in m.group("info")):
+                open_fence = m.group("fence")
+                fenced.add(i)
+        else:
             fenced.add(i)
-        elif fence is not None:
-            fenced.add(i)
-            if raw.strip().startswith(fence):
-                fence = None
+            m = FENCE_CLOSE_RE.match(raw)
+            if m and m.group("fence")[0] == open_fence[0] and len(m.group("fence")) >= len(open_fence):
+                open_fence = None
     return fenced
 
 
 def requirement_titles(path: Path) -> list[str]:
-    lines = path.read_text(encoding="utf-8").splitlines()
+    lines = path.read_text(encoding="utf-8-sig").splitlines()
     skip = fenced_lines(lines)
     titles = []
     for i, line in enumerate(lines):
@@ -148,7 +156,7 @@ def renamed_targets(lines: list[str]) -> set[str]:
 
 
 def check_file(path: Path, id_re: re.Pattern) -> tuple[list[Violation], int]:
-    lines = path.read_text(encoding="utf-8").splitlines()
+    lines = path.read_text(encoding="utf-8-sig").splitlines()
     violations: list[Violation] = []
     seen: dict[tuple[str, str], int] = {}
     section = ""

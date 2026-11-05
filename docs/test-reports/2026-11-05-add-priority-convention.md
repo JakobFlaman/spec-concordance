@@ -6,7 +6,7 @@ Datum: 2026-11-05 · Umgebung: Linux, Python 3, OpenSpec 1.16.0 · Ausgeführt v
 
 | Prüfung | Befehl | Ergebnis |
 |---|---|---|
-| Unit-Tests | `python3 -m unittest discover -s tests -v` | 24 von 24 grün (Lauf 3, nach Gate-Lauf 2) |
+| Unit-Tests | `python3 -m unittest discover -s tests -v` | 28 von 28 grün (Lauf 4, nach Gate-Lauf 3) |
 | Konvention, eigene Specs | `python3 scripts/check-conventions.py openspec/specs openspec/changes` | Exit 0, 7 Anforderungen geprüft |
 | OpenSpec | `openspec validate --all --strict` | 1 von 1 gültig |
 | Übersetzungen | `python3 scripts/check-i18n.py` | OK |
@@ -18,7 +18,9 @@ Datum: 2026-11-05 · Umgebung: Linux, Python 3, OpenSpec 1.16.0 · Ausgeführt v
 | RC-001 | Should-Anforderung validiert | indirekt: RC-006 ist Should und besteht `openspec validate --strict` (G0) |
 | RC-001 | Empfehlungs-Schlüsselwort im Anforderungstext | `test_keyword_in_requirement_text_is_violation` |
 | RC-001 | Erwähnung ist kein Verstoss | `test_mentions_in_code_quotes_and_scenarios_are_accepted` (Inline-Code, «…», „…“, Codeblock, Szenario) |
-| RC-001 | Überschriften in Codeblöcken | `test_headings_inside_code_blocks_do_not_break_parsing` |
+| RC-001 | Überschriften in Codeblöcken | `test_headings_inside_code_blocks_do_not_break_parsing`, `test_nested_fences_follow_commonmark`, `test_fence_with_info_string_does_not_close_block` |
+| RC-001 | Inline-Code mit doppelten Backticks | `test_inline_code_with_double_backticks_is_mention` |
+| RC-002 | Datei mit Byte-Order-Mark | `test_file_with_bom_is_checked` |
 | RC-001 | Plugin besteht die eigene Prüfung | `test_plugin_passes_its_own_check` |
 | RC-002 | Korrekter Titel | `test_scenario_title_is_accepted` (Titel aus dem Szenario), `test_valid_titles_incl_could_and_nfr` |
 | RC-002 | Fehlende Priorität | `test_missing_priority` |
@@ -32,7 +34,7 @@ Datum: 2026-11-05 · Umgebung: Linux, Python 3, OpenSpec 1.16.0 · Ausgeführt v
 | RC-004 | Umpriorisieren und ändern im selben Change | `test_renamed_plus_modified_in_same_change_is_accepted` |
 | RC-005 | Textbaustein vollständig | `test_context_snippet_contains_rules`, `test_project_init_references_snippet`, `test_plugin_config_contains_snippet` |
 | RC-005 | Bestehender Kontext (idempotent) | **manuell, ausgeführt:** frisches Projekt mit `openspec init --language German`, Schritt 3 von `project-init` wörtlich zweimal angewendet (vom umsetzenden Agenten): Sprachangabe erhalten (1×), Markierung genau 1×, Lauf 2 byte-identisch zu Lauf 1, YAML gültig |
-| RC-006 | Plugin-CI | CI-Schritt in `.github/workflows/checks.yml`; scannt nur `openspec/` |
+| RC-006 | Plugin-CI | Inspektion: CI-Schritt in `.github/workflows/checks.yml`, scannt nur `openspec/`; Exit 1 lässt den Schritt fehlschlagen (CI-Lauf auf GitHub folgt mit dem Push) |
 | RC-006 | Übergangsmodus | `test_warn_mode_reports_but_exits_zero`; Bedienfehler: `test_missing_path_exit_2`, `test_no_spec_found_exit_2`, `test_invalid_pattern_exit_2` |
 
 ## Praxistest
@@ -46,3 +48,4 @@ Lauf im Übergangsmodus auf `pdf-concordance/openspec/changes`: 15 RC-002-Verst�
 | 1 | 19 | grün | Umsetzung |
 | 2 | 23 | grün | Qualitäts-Gate nicht bestanden (G3 RC-003, RC-005; G7 RC-004 RENAMED+MODIFIED) – behoben; zusätzlich Archiv-Ausschluss präzisiert, Codeblöcke und „…“ als Erwähnung, Tests geschärft |
 | 3 | 24 | grün | Qualitäts-Gate Lauf 2 nicht bestanden (G7: Überschriften in Codeblöcken störten die Abschnittserkennung) – behoben |
+| 4 | 28 | grün | Qualitäts-Gate Lauf 3 nicht bestanden (G7: Codeblöcke nicht nach CommonMark, doppelte Backticks) – Erkennung nach CommonMark neu umgesetzt; BOM |

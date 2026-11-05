@@ -36,3 +36,8 @@ Version: Änderungen werden unter [Unreleased] gesammelt; `plugin.json` wird bei
 
 - [x] 5.1 G7: Codeblöcke dateiweit vor der Abschnitts- und Anforderungserkennung ausblenden; Fixture «fenced-headings» und Test
 - [x] 5.2 Meldung bei ungültiger Titelform präzisiert; `design.md` zu Archiv und Codeblöcken präzisiert
+
+## 6. Nach Qualitäts-Gate (Lauf 3 nicht bestanden)
+
+- [x] 6.1 G7: Codeblock-Erkennung nach CommonMark (gleiches Zeichen, Mindestlänge, keine Sprachangabe beim Schliessen); Inline-Code mit mehreren Backticks; Fixtures und Tests für geschachtelte Zäune, Zaun mit Sprachangabe, doppelte Backticks
+- [x] 6.2 Beobachtung BOM: Dateien mit Byte-Order-Mark werden geprüft statt still bestanden; Fixture und Test
