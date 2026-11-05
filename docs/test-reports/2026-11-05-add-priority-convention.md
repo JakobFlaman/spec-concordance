@@ -2,13 +2,13 @@
 
 Datum: 2026-11-05 · Umgebung: Linux, Python 3, OpenSpec 1.16.0 (auch mit `--ignore-scripts` installiert geprüft) · Ausgeführt von: umsetzender Agent (Nachprüfung im Qualitäts-Gate durch unabhängigen Agenten)
 
-## Ergebnis (Lauf 12, Revision 2)
+## Ergebnis (Lauf 13, Revision 2)
 
 | Prüfung | Befehl | Ergebnis |
 |---|---|---|
-| Unit-Tests mit OpenSpec-CLI | `python3 -m unittest discover -s tests -v` | 44 von 44 grün |
-| Unit-Tests ohne CLI, lokal | `PATH` ohne `openspec` | 10 grün, 34 sichtbar übersprungen |
-| Unit-Tests ohne CLI, CI | `CI=true`, `PATH` ohne `openspec` | 34 Fehlschläge (gewollt: kein trügerisches Grün) |
+| Unit-Tests mit OpenSpec-CLI | `python3 -m unittest discover -s tests -v` | 47 von 47 grün |
+| Unit-Tests ohne CLI, lokal | `PATH` ohne `openspec` | 10 grün, 37 sichtbar übersprungen |
+| Unit-Tests ohne CLI, CI | `CI=true`, `PATH` ohne `openspec` | 37 Fehlschläge (gewollt: kein trügerisches Grün) |
 | Konvention, eigenes Repo | `python3 scripts/check-conventions.py` | Exit 0, 8 Anforderungen |
 | OpenSpec | `openspec validate --all --strict` | gültig |
 | Übersetzungen | `python3 scripts/check-i18n.py` | OK |
@@ -22,7 +22,8 @@ Datum: 2026-11-05 · Umgebung: Linux, Python 3, OpenSpec 1.16.0 (auch mit `--ign
 | RC-001 | Erwähnung ist kein Verstoss | `test_mentions_in_code_quotes_codeblock_and_scenarios_are_accepted`; Codeblöcke mit Überschriften: `test_headings_inside_code_blocks_do_not_hide_violations` |
 | RC-001 | Inline-Code oder Zitat über einen Zeilenumbruch | `test_inline_code_across_line_break_is_checked`, `test_quote_across_paragraph_is_checked` |
 | RC-001 | Maskierte Backticks | `test_escaped_backticks_do_not_hide_keyword` |
-| RC-001 | Backslash am Ende von Inline-Code | `test_backslash_inside_code_span_does_not_hide_keyword` |
+| RC-001 | Mehrdeutige Code-Grenzen | `test_backslash_inside_code_span_does_not_hide_keyword`, `test_mixed_escape_and_backslash_in_code_does_not_hide_keyword`, `test_backtick_in_autolink_does_not_hide_keyword` |
+| RC-001 | Gerade Anführungszeichen | `test_straight_quotes_are_not_mentions` |
 | RC-001 | Unpaarige Backticks | `test_unpaired_backticks_do_not_hide_keyword` |
 | RC-001 | Plugin besteht die eigene Prüfung | `test_plugin_passes_its_own_check` |
 | RC-002 | Korrekter Titel | `test_valid_titles_incl_could_nfr_and_scenario_title` |
@@ -85,3 +86,4 @@ Datum: 2026-11-05 · Umgebung: Linux, Python 3, OpenSpec 1.16.0 (auch mit `--ign
 | 10 | 41 | grün | Gate 9 nicht bestanden (G7: Inline-Code über Zeilenumbruch) – Inline-Code nach CommonMark |
 | 11 | 43 | grün | Gate 10 nicht bestanden (G7: maskierte Backticks, Code über Absatzgrenze) – Entscheid Maintainer «im Zweifel melden»: Erwähnungen nur innerhalb einer Zeile |
 | 12 | 44 | grün | Gate 11 nicht bestanden (G7: Backslash innerhalb von Inline-Code) – beide Lesarten prüfen |
+| 13 | 47 | grün | Gate 12 nicht bestanden (G7: Mischfall maskierter Backtick + Backslash in Code; Autolink/HTML) – Grundregel «mehrdeutige Zeile = keine Erwähnung»; gerade Anführungszeichen kein Zitat |

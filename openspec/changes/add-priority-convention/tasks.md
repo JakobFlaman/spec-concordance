@@ -87,3 +87,9 @@ Version: Änderungen werden unter [Unreleased] gesammelt; `plugin.json` wird bei
 
 - [x] 14.1 G7 / RC-001: Backslash vor Backtick wirkt innerhalb von Code nicht als Maskierung; beide Lesarten prüfen, melden, wenn eine das Schlüsselwort freilegt; Szenario «Backslash am Ende von Inline-Code», Testprojekt `code-span-backslash`, Test
 - [x] 14.2 Beobachtung: RC-001-Meldung nennt die Abhilfe «auf eine Zeile setzen»
+
+## 15. Nach Qualitäts-Gate (Lauf 12 nicht bestanden)
+
+- [x] 15.1 G7 / RC-001: statt Einzelfällen eine Grundregel – in Zeilen mit mehrdeutigen Code-Grenzen (Backslash vor Backtick, Backtick in `<…>`) gilt keine Erwähnung; ersetzt die Prüfung zweier Lesarten aus 14.1
+- [x] 15.2 Beobachtung Zollzeichen: gerade Anführungszeichen zählen nicht mehr als Zitat
+- [x] 15.3 Szenarien «Mehrdeutige Code-Grenzen» (ersetzt «Backslash am Ende von Inline-Code») und «Gerade Anführungszeichen»; Testprojekte `code-span-mixed`, `code-span-autolink`, `straight-quotes`; alle Gegenbeispiele aus Lauf 11 und 12 nachgeprüft

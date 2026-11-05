@@ -80,6 +80,22 @@ class TestRC001Keyword(CliTestCase):
         self.assertIn("spec.md:7: RC-001", out)
         self.assertIn("auf eine Zeile setzen", out)
 
+    def test_mixed_escape_and_backslash_in_code_does_not_hide_keyword(self):
+        # Gate-Lauf 12: mehrdeutige Zeile – keine Erwähnung anerkannt
+        code, out = project("code-span-mixed")
+        self.assertEqual(code, 1)
+        self.assertIn("spec.md:7: RC-001", out)
+
+    def test_backtick_in_autolink_does_not_hide_keyword(self):
+        code, out = project("code-span-autolink")
+        self.assertEqual(code, 1)
+        self.assertIn("spec.md:7: RC-001", out)
+
+    def test_straight_quotes_are_not_mentions(self):
+        code, out = project("straight-quotes")
+        self.assertEqual(code, 1)
+        self.assertIn("spec.md:7: RC-001", out)
+
     def test_escaped_backticks_do_not_hide_keyword(self):
         code, out = project("code-span-escaped")
         self.assertEqual(code, 1)

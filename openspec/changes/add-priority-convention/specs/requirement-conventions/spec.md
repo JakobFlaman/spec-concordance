@@ -5,7 +5,7 @@ Einheitliche Form von Anforderungen in OpenSpec-Spezifikationen von Projekten na
 ## ADDED Requirements
 
 ### Requirement: SHALL unabhängig von der Priorität (RC-001, Must)
-Der Anforderungstext jeder Anforderung SHALL das Schlüsselwort SHALL verwenden und kein anderes RFC-2119-Schlüsselwort für Empfehlung oder Option (`SHOULD`, `MAY`). Als Anforderungstext gilt der Text, den OpenSpec der Anforderung zuordnet (ohne Szenarien und ohne Codeblöcke); als Schlüsselwort gilt nur das grossgeschriebene ganze Wort ausserhalb von Inline-Code (Backticks) und Zitaten («…», "…", „…“). Beides gilt nur innerhalb einer Zeile; im Zweifel wird gemeldet.
+Der Anforderungstext jeder Anforderung SHALL das Schlüsselwort SHALL verwenden und kein anderes RFC-2119-Schlüsselwort für Empfehlung oder Option (`SHOULD`, `MAY`). Als Anforderungstext gilt der Text, den OpenSpec der Anforderung zuordnet (ohne Szenarien und ohne Codeblöcke); als Schlüsselwort gilt nur das grossgeschriebene ganze Wort ausserhalb von Inline-Code (Backticks) und Zitaten («…», “…”, „…“). Beides gilt nur eindeutig und innerhalb einer Zeile; im Zweifel wird gemeldet.
 
 #### Scenario: Should-Anforderung validiert
 - **GIVEN** eine Anforderung mit Priorität Should, formuliert mit SHALL und Priorität im Titel
@@ -32,8 +32,13 @@ Der Anforderungstext jeder Anforderung SHALL das Schlüsselwort SHALL verwenden 
 - **WHEN** `scripts/check-conventions.py` ausgeführt wird
 - **THEN** meldet die Prüfung RC-001
 
-#### Scenario: Backslash am Ende von Inline-Code
-- **GIVEN** eine Anforderung mit Inline-Code, der auf einen Backslash endet, gefolgt von `SHOULD` ausserhalb von Code
+#### Scenario: Mehrdeutige Code-Grenzen
+- **GIVEN** eine Anforderung, in deren Zeile mit `SHOULD` ein Backslash direkt vor einem Backtick steht oder ein Backtick innerhalb von `<…>` (Autolink, HTML)
+- **WHEN** `scripts/check-conventions.py` ausgeführt wird
+- **THEN** meldet die Prüfung RC-001, auch wenn `SHOULD` nach CommonMark in Code stünde
+
+#### Scenario: Gerade Anführungszeichen
+- **GIVEN** eine Anforderung, in der `SHOULD` zwischen geraden Anführungszeichen steht, etwa als Zollzeichen
 - **WHEN** `scripts/check-conventions.py` ausgeführt wird
 - **THEN** meldet die Prüfung RC-001
 

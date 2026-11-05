@@ -46,9 +46,10 @@ TITLE_FULL_RE = re.compile(r"^(?P<name>.*\S)\s+\((?P<id>[^,()]+),\s*(?P<prio>[^,
 TITLE_ID_ONLY_RE = re.compile(r"^(?P<name>.*\S)\s+\((?P<id>[^,()]+)\)$")
 KEYWORD_RE = re.compile(r"\b(SHOULD|MAY)\b")
 BACKTICK_RUN_RE = re.compile(r"`+")
-ESCAPE_RE = re.compile(r"\\[\\`]")       # \\ und \` sind Text, keine Code-Begrenzer
-# Zitate nur innerhalb einer Zeile (wie Inline-Code, siehe strip_mentions)
-QUOTE_RE = re.compile(r"«[^»\n]*»|\"[^\"\n]*\"|“[^”\n]*”|„[^“”\n]*[“”]")
+ESCAPED_BACKTICK_RE = re.compile(r"\\`")
+ANGLE_BACKTICK_RE = re.compile(r"<[^>\n]*`[^\n]*>")
+# Zitate nur innerhalb einer Zeile; gerade Anführungszeichen zählen nicht (auch Zollzeichen)
+QUOTE_RE = re.compile(r"«[^»\n]*»|“[^”\n]*”|„[^“”\n]*[“”]")
 
 # Nur für die Zuordnung der Zeilennummer (RC-008: Struktur kommt aus der CLI).
 HEADING_RE = re.compile(r"^###\s*(?:Requirement:\s*)?(?P<name>.+?)\s*$", re.IGNORECASE)
@@ -301,12 +302,9 @@ def check_title(path: Path, line: int, title: str, id_re: re.Pattern) -> list[Vi
     return out
 
 
-def strip_code_spans(line: str, escapes: bool) -> str:
+def strip_code_spans(line: str) -> str:
     """Inline-Code innerhalb einer Zeile entfernen: ein Backtick-Lauf öffnet, der nächste gleich
-    lange Lauf derselben Zeile schliesst; ein Lauf ohne Gegenstück ist Text. Mit escapes=True
-    begrenzen mit Backslash maskierte Backticks nichts (Lesart ausserhalb von Code)."""
-    if escapes:
-        line = ESCAPE_RE.sub("  ", line)
+    lange Lauf derselben Zeile schliesst; ein Lauf ohne Gegenstück ist Text."""
     runs = list(BACKTICK_RUN_RE.finditer(line))
     keep: list[str] = []
     pos = i = 0
@@ -323,21 +321,22 @@ def strip_code_spans(line: str, escapes: bool) -> str:
     return "".join(keep)
 
 
-def strip_mentions(text: str, escapes: bool) -> str:
-    """Erwähnungen (Inline-Code, Zitate) zählen nur innerhalb einer Zeile. OpenSpec liefert
-    keine Absatzgrenzen; zeilenübergreifende Erwähnungen werden daher bewusst geprüft."""
-    return "\n".join(QUOTE_RE.sub("", strip_code_spans(line, escapes)) for line in text.split("\n"))
+def ambiguous(line: str) -> bool:
+    """Zeilen, in denen die Paarung der Backticks ohne vollständigen CommonMark-Parser nicht
+    sicher ist: ein Backslash direkt vor einem Backtick (Maskierung ausserhalb, nicht innerhalb
+    von Code) oder ein Backtick zwischen < und > (Autolink oder HTML haben Vorrang vor Code)."""
+    return bool(ESCAPED_BACKTICK_RE.search(line) or ANGLE_BACKTICK_RE.search(line))
 
 
-def find_keyword(text: str) -> re.Match | None:
-    """Im Zweifel melden: Ein Backslash vor einem Backtick maskiert ausserhalb von Code, innerhalb
-    eines Code-Spans nicht (CommonMark). Beide Lesarten werden geprüft; legt eine davon ein
-    Schlüsselwort frei, wird gemeldet – selten ein Fehlalarm, nie ein stiller Durchlass."""
-    return KEYWORD_RE.search(strip_mentions(text, True)) or KEYWORD_RE.search(strip_mentions(text, False))
+def strip_mentions(text: str) -> str:
+    """Erwähnungen (Inline-Code, Zitate) zählen nur innerhalb einer Zeile und nur in Zeilen ohne
+    Mehrdeutigkeit. Im Zweifel melden: selten ein Fehlalarm, nie ein stiller Durchlass."""
+    return "\n".join(line if ambiguous(line) else QUOTE_RE.sub("", strip_code_spans(line))
+                     for line in text.split("\n"))
 
 
 def check_text(path: Path, line: int, title: str, text: str) -> list[Violation]:
-    m = find_keyword(text)
+    m = KEYWORD_RE.search(strip_mentions(text))
     if m:
         return [Violation(path, line, "RC-001",
                           f"Schlüsselwort {m.group(1)} im Anforderungstext – SHALL verwenden, Priorität steht im Titel"
