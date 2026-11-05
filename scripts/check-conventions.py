@@ -55,8 +55,6 @@ UNSAFE_CHARS_RE = re.compile(r"[\\<\[|]")   # siehe strip_mentions; | wegen GFM-
 _NOISE = r"(?:<[^>\n]*>|\]\([^)\n]*\)|[*_~\\\[\]\u00ad\u200b-\u200d\u2060\ufeff])*"
 SPLIT_KEYWORD_RE = re.compile(r"(?<![^\W_])(" + "|".join(_NOISE.join(w) for w in ("SHOULD", "MAY")) + r")(?![^\W_])")
 ESCAPE_PAIR_RE = re.compile(r"\\([!-/:-@\[-`{-~])")
-# Codezaun mit 4+ Leerzeichen (oder Tab) Einzug: OpenSpec blendet aus, CommonMark nicht
-INDENTED_FENCE_RE = re.compile(r"^(?: {4,}|[ ]*\t)\s*(?P<fence>`{3,}|~{3,})")
 # Zitate nur innerhalb einer Zeile; gerade Anführungszeichen zählen nicht (auch Zollzeichen)
 QUOTE_CHARS_RE = re.compile(r"[«»“”„]")
 QUOTE_RE = re.compile(r"«[^»\n]*»|“[^”\n]*”|„[^“”\n]*[“”]")
@@ -368,30 +366,49 @@ def find_keyword(text: str) -> re.Match | None:
     return KEYWORD_RE.search(rest) or SPLIT_KEYWORD_RE.search(rendered)
 
 
-def check_indented_fences(path: Path, lines: list[str], owner) -> list[Violation]:
-    """OpenSpec erkennt Zäune bei beliebigem Einzug und blendet den folgenden Text aus; nach
-    CommonMark ist ein Zaun mit 4+ Leerzeichen Einzug normaler Text. Steht im ausgeblendeten
-    Bereich ein Schlüsselwort, wird gemeldet."""
+def fence_blocks(lines: list[str]) -> list[tuple[int, int]]:
+    """Codeblöcke wie OpenSpec (parsers/code-fence.js): (Öffner, Schliesser oder len(lines))."""
+    blocks: list[tuple[int, int]] = []
+    active: str | None = None
+    start = 0
+    for i, raw in enumerate(lines):
+        if active is None:
+            m = FENCE_OPEN_RE.match(raw)
+            if m and not (m.group("fence")[0] == "`" and "`" in m.group("info")):
+                active, start = m.group("fence"), i
+        else:
+            m = FENCE_CLOSE_RE.match(raw)
+            if m and m.group("fence")[0] == active[0] and len(m.group("fence")) >= len(active):
+                blocks.append((start, i))
+                active = None
+    if active is not None:
+        blocks.append((start, len(lines)))
+    return blocks
+
+
+def check_hidden_fences(path: Path, lines: list[str], owner) -> list[Violation]:
+    """OpenSpec blendet jeden Codeblock aus (Zaun bei beliebigem Einzug, in jedem Umfeld). Sicher
+    ist das nur, wenn CommonMark ihn ebenfalls als Codeblock liest – positiv festgelegt:
+    - der Öffner steht ohne Einzug in Spalte 1: dann beendet er jede Liste und jedes Blockzitat
+      und ist nie Fortsetzung eines Absatzes, und
+    - keine frühere Zeile der Datei (auch in Codeblöcken) beginnt mit < oder [: sonst könnte ein
+      HTML-Block oder ein mehrzeiliger Link-Titel den Zaun umschliessen.
+    Den Schliesser erkennt CommonMark nie später als OpenSpec, der ausgeblendete Bereich ist also
+    höchstens kleiner. Steht in einem unsicheren Codeblock SHOULD/MAY, wird gemeldet."""
     out: list[Violation] = []
-    i = 0
-    while i < len(lines):
-        m = INDENTED_FENCE_RE.match(lines[i])
-        if not m:
-            i += 1
+    blocks = fence_blocks(lines)
+    for a, b in blocks:
+        # auch Zeilen in früheren Codeblöcken zählen: OpenSpec und CommonMark könnten sie verschieden lesen
+        risky_before = any(re.match(r"\s*[<\[]", lines[k]) for k in range(a))
+        safe = not lines[a][:1].isspace() and not risky_before
+        if safe or not find_keyword("\n".join(lines[a + 1:b])):
             continue
-        fence = m.group("fence")
-        j = i + 1
-        while j < len(lines):
-            c = FENCE_CLOSE_RE.match(lines[j])
-            if c and c.group("fence")[0] == fence[0] and len(c.group("fence")) >= len(fence):
-                break
-            j += 1
-        if find_keyword("\n".join(lines[i + 1:j])):
-            out.append(Violation(path, i + 1, "RC-001",
-                                 "Codezaun mit 4 oder mehr Leerzeichen Einzug: OpenSpec blendet den Text aus, "
-                                 "CommonMark nicht, und darin steht SHOULD/MAY – Einzug auf höchstens 3 Leerzeichen setzen",
-                                 owner(i + 1)))
-        i = j + 1
+        reason = ("eingerückt (Liste, Einzug)" if lines[a][:1].isspace()
+                  else "nach HTML oder Link-Syntax")
+        out.append(Violation(path, a + 1, "RC-001",
+                             f"Codeblock {reason}: OpenSpec blendet ihn aus, CommonMark liest ihn womöglich als Text, "
+                             "und darin steht SHOULD/MAY – Zaun ohne Einzug und ausserhalb von HTML setzen",
+                             owner(a + 1)))
     return out
 
 
@@ -442,7 +459,7 @@ def check_spec_file(sf: SpecFile, id_re: re.Pattern, base_names: list[str]) -> l
     def owner(ln: int) -> str:
         before = [name for start, name in starts if start <= ln]
         return before[-1] if before else "–"
-    out += check_indented_fences(sf.path, lines, owner)
+    out += check_hidden_fences(sf.path, lines, owner)
     return out
 
 

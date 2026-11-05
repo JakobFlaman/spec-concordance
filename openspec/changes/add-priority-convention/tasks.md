@@ -112,3 +112,9 @@ Version: Änderungen werden unter [Unreleased] gesammelt; `plugin.json` wird bei
 
 - [x] 18.1 G7 / RC-001: sichere Grenzen auch für Zitate – kein `&` im Text, kein Anführungszeichen ohne Gegenstück; Szenario «Unsichere Zitatgrenzen»; Testprojekte `quote-entity`, `quote-crossline`
 - [x] 18.2 Vergleichstest: Zeichenreferenzen für Anführungszeichen und gezielter Baustein für Zitate; Gegenprobe mit dem Stand aus Lauf 15 findet Durchlässe
+
+## 19. Nach Qualitäts-Gate (Lauf 16 nicht bestanden)
+
+- [x] 19.1 G7 / RC-001: Codeblöcke positiv festgelegt – sicher nur mit Öffner in Spalte 1 und ohne frühere Zeile mit `<` oder `[`; ersetzt die Prüfung eingerückter Zäune aus 17.2; Szenario «Unsicherer Codeblock» (ersetzt «Eingerückter Codezaun»); Testprojekte `fence-in-list`, `fence-in-html`
+- [x] 19.2 Vergleichstest auf Blockebene `tests/fuzz/rc001_blocks.py` (ganze Spec-Dateien, Skript mit OpenSpec-CLI) mit Gegenprobe
+- [x] 19.3 Beobachtung: Anführungszeichen in Inline-Code in `design.md` geklärt

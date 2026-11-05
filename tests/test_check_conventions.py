@@ -137,7 +137,7 @@ class TestRC001Keyword(CliTestCase):
         # OpenSpec blendet nach einem Zaun mit 4+ Leerzeichen Einzug aus, CommonMark nicht
         code, out = project("indented-fence")
         self.assertEqual(code, 1)
-        self.assertIn("spec.md:9: RC-001: Codezaun", out)
+        self.assertIn("spec.md:9: RC-001: Codeblock eingerückt", out)
         self.assertIn("Eingerückter Zaun (RC-045, Must)", out)
 
     def test_quote_from_character_reference_does_not_hide_keyword(self):
@@ -150,6 +150,17 @@ class TestRC001Keyword(CliTestCase):
         code, out = project("quote-crossline")
         self.assertEqual(code, 1)
         self.assertIn("spec.md:7: RC-001", out)
+
+    def test_fence_in_list_item_hiding_keyword_is_violation(self):
+        # Gate-Lauf 16: CommonMark beendet den Zaun mit dem Listenpunkt, OpenSpec blendet weiter aus
+        code, out = project("fence-in-list")
+        self.assertEqual(code, 1)
+        self.assertIn("spec.md:10: RC-001: Codeblock eingerückt", out)
+
+    def test_fence_in_html_block_hiding_keyword_is_violation(self):
+        code, out = project("fence-in-html")
+        self.assertEqual(code, 1)
+        self.assertIn("spec.md:10: RC-001: Codeblock nach HTML", out)
 
     def test_escaped_backticks_do_not_hide_keyword(self):
         code, out = project("code-span-escaped")

@@ -2,16 +2,17 @@
 
 Datum: 2026-11-05 · Umgebung: Linux, Python 3, OpenSpec 1.16.0 (auch mit `--ignore-scripts` installiert geprüft) · Ausgeführt von: umsetzender Agent (Nachprüfung im Qualitäts-Gate durch unabhängigen Agenten)
 
-## Ergebnis (Lauf 16, Revision 2)
+## Ergebnis (Lauf 17, Revision 2)
 
 | Prüfung | Befehl | Ergebnis |
 |---|---|---|
-| Unit-Tests mit OpenSpec-CLI | `python3 -m unittest discover -s tests -v` | 57 von 57 grün |
-| Unit-Tests ohne CLI, lokal | `PATH` ohne `openspec` | 10 grün, 47 sichtbar übersprungen |
-| Unit-Tests ohne CLI, CI | `CI=true`, `PATH` ohne `openspec` | 47 Fehlschläge (gewollt: kein trügerisches Grün) |
+| Unit-Tests mit OpenSpec-CLI | `python3 -m unittest discover -s tests -v` | 59 von 59 grün |
+| Unit-Tests ohne CLI, lokal | `PATH` ohne `openspec` | 10 grün, 49 sichtbar übersprungen |
+| Unit-Tests ohne CLI, CI | `CI=true`, `PATH` ohne `openspec` | 49 Fehlschläge (gewollt: kein trügerisches Grün) |
 | Konvention, eigenes Repo | `python3 scripts/check-conventions.py` | Exit 0, 8 Anforderungen |
 | OpenSpec | `openspec validate --all --strict` | gültig |
 | Vergleich RC-001 mit CommonMark | `tests/fuzz/rc001_cases.py <seed> 40000 \| node tests/fuzz/rc001_oracle.js <markdown-it>` (markdown-it 14.2.0; Seeds 71–90 je 40 000, mit gezielten Bausteinen für zerteilte Schlüsselwörter, Zeichenreferenzen und Zitate) | 800 000 Zufallsfälle, 0 stille Durchlässe. Gegenproben: mit der Erkennung vor Lauf 15 214 stille Durchlässe auf 40 000 Fälle, mit dem Stand von Lauf 15 72 – der Vergleich ist also empfindlich |
+| Vergleich RC-001 auf Blockebene | `tests/fuzz/rc001_blocks.py <ordner> <seed> 120` und `node tests/fuzz/rc001_blocks_oracle.js …` (Seeds 4–9) | 720 ganze Spec-Dateien durch Skript und OpenSpec-CLI, 0 stille Durchlässe. Gegenprobe mit dem Stand aus Lauf 16: 6 stille Durchlässe auf 120 Fälle |
 | Übersetzungen | `python3 scripts/check-i18n.py` | OK |
 
 ## Abdeckung der Abnahmekriterien
@@ -26,7 +27,7 @@ Datum: 2026-11-05 · Umgebung: Linux, Python 3, OpenSpec 1.16.0 (auch mit `--ign
 | RC-001 | Unsichere Code-Grenzen (Fortsetzung) | `test_backslash_inside_code_span_does_not_hide_keyword`, `test_mixed_escape_and_backslash_in_code_does_not_hide_keyword`, `test_backtick_in_autolink_does_not_hide_keyword` |
 | RC-001 | Unsichere Zitatgrenzen | `test_quote_from_character_reference_does_not_hide_keyword`, `test_unpaired_quote_on_previous_line_does_not_hide_keyword` |
 | RC-001 | Schlüsselwort erst in der Darstellung | `test_keyword_from_character_reference_is_violation`, `test_keyword_split_by_emphasis_is_violation`, `test_keyword_in_underscore_emphasis_is_violation` |
-| RC-001 | Eingerückter Codezaun | `test_indented_fence_hiding_keyword_is_violation` |
+| RC-001 | Unsicherer Codeblock | `test_indented_fence_hiding_keyword_is_violation`, `test_fence_in_list_item_hiding_keyword_is_violation`, `test_fence_in_html_block_hiding_keyword_is_violation`; Vergleich auf Blockebene |
 | RC-001 | Gerade Anführungszeichen | `test_straight_quotes_are_not_mentions` |
 | RC-001 | Kein stiller Durchlass gegenüber CommonMark | Vergleichstest `tests/fuzz/` (siehe Ergebnis) |
 | RC-001 | Unpaarige Backticks | `test_unpaired_backticks_do_not_hide_keyword` |
@@ -95,3 +96,4 @@ Datum: 2026-11-05 · Umgebung: Linux, Python 3, OpenSpec 1.16.0 (auch mit `--ign
 | 14 | 51 | grün | Gate 13 nicht bestanden (G7: verschobene Paarung über Zeilen, HTML-Attribut, HTML über zwei Zeilen) – Erwähnungen positiv festgelegt, Vergleichstest gegen CommonMark |
 | 15 | 55 | grün | Gate 14 nicht bestanden (G7: Zeichenreferenzen, eingerückter Zaun) – Schlüsselwort in der Darstellung, Zaun-Einzug, `|`; Grenzen dokumentiert |
 | 16 | 57 | grün | Gate 15 nicht bestanden (G7: Anführungszeichen als Zeichenreferenz, offenes Zitat auf der Vorzeile) – sichere Grenzen auch für Zitate |
+| 17 | 59 | grün | Gate 16 nicht bestanden (G7: Zaun unter Listenpunkt, Zaun im HTML-Block) – Codeblöcke positiv festgelegt, Vergleich auf Blockebene |

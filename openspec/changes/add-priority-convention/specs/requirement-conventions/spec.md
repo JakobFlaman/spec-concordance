@@ -42,10 +42,10 @@ Der Anforderungstext jeder Anforderung SHALL das Schlüsselwort SHALL verwenden 
 - **WHEN** `scripts/check-conventions.py` ausgeführt wird
 - **THEN** meldet die Prüfung RC-001
 
-#### Scenario: Eingerückter Codezaun
-- **GIVEN** eine Spec-Datei mit einem Codezaun, der 4 oder mehr Leerzeichen eingerückt ist und nach dem bis zum Schliesser `SHOULD` steht
+#### Scenario: Unsicherer Codeblock
+- **GIVEN** eine Spec-Datei mit einem Codeblock, in dem `SHOULD` steht und dessen Zaun eingerückt ist (z. B. unter einem Listenpunkt) oder dem eine Zeile mit `<` oder `[` am Anfang vorausgeht
 - **WHEN** `scripts/check-conventions.py` ausgeführt wird
-- **THEN** meldet die Prüfung RC-001 auf der Zeile des Zauns, weil OpenSpec den Text ausblendet und CommonMark nicht
+- **THEN** meldet die Prüfung RC-001 auf der Zeile des Zauns, weil OpenSpec den Block ausblendet und CommonMark ihn womöglich als Text liest
 
 #### Scenario: Gerade Anführungszeichen
 - **GIVEN** eine Anforderung, in der `SHOULD` zwischen geraden Anführungszeichen steht, etwa als Zollzeichen
