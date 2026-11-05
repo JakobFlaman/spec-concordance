@@ -3,8 +3,10 @@
 Ausführen: python3 -m unittest discover -s tests -v
 Copyright (c) 2026 Jakob Flaman · SPDX-License-Identifier: MIT
 """
+import shutil
 import subprocess
 import sys
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -28,6 +30,7 @@ class TestRC001Keyword(unittest.TestCase):
         self.assertIn("Darstellungsmodi (LA-F-110, Should)", out)
 
     def test_mentions_in_code_quotes_and_scenarios_are_accepted(self):
+        # Fixture enthält Inline-Code, «…», „…“, einen Codeblock und ein Szenario mit SHOULD
         code, out = run(FIX / "valid")
         self.assertEqual(code, 0, out)
         self.assertNotIn("RC-001", out)
@@ -41,12 +44,18 @@ class TestRC002Title(unittest.TestCase):
     def test_valid_titles_incl_could_and_nfr(self):
         code, out = run(FIX / "valid")
         self.assertEqual(code, 0, out)
-        self.assertIn("4 Anforderung(en)", out)
+        self.assertIn("5 Anforderung(en)", out)
+
+    def test_scenario_title_is_accepted(self):
+        text = (FIX / "valid" / "openspec" / "specs" / "demo" / "spec.md").read_text(encoding="utf-8")
+        self.assertIn("### Requirement: Darstellungsmodi (LA-F-110, Should)", text)
+        code, out = run(FIX / "valid")
+        self.assertEqual(code, 0, out)
 
     def test_missing_priority(self):
         code, out = run(FIX / "missing-priority")
         self.assertEqual(code, 1)
-        self.assertIn("RC-002: Priorität fehlt", out)
+        self.assertIn("missing-priority/spec.md:3: RC-002: Priorität fehlt", out)
         self.assertIn("Seitenleiste (LA-F-104)", out)
 
     def test_unknown_priority(self):
@@ -76,10 +85,22 @@ class TestRC003And007Duplicates(unittest.TestCase):
         self.assertEqual(code, 0, out)
         self.assertIn("1 Datei(en)", out)
 
+    def test_parent_folder_named_archive_is_not_skipped(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            target = Path(tmp) / "archive" / "proj"
+            shutil.copytree(FIX / "valid", target)
+            code, out = run(target)
+            self.assertEqual(code, 0, out)
+            self.assertIn("5 Anforderung(en)", out)
+
 
 class TestRC004Reprioritisation(unittest.TestCase):
     def test_renamed_is_accepted(self):
         code, out = run(FIX / "reprio" / "openspec" / "changes" / "renamed-ok")
+        self.assertEqual(code, 0, out)
+
+    def test_renamed_plus_modified_in_same_change_is_accepted(self):
+        code, out = run(FIX / "reprio" / "openspec" / "changes" / "renamed-and-modified")
         self.assertEqual(code, 0, out)
 
     def test_modified_with_changed_priority_is_violation(self):
@@ -118,6 +139,12 @@ class TestRC005Template(unittest.TestCase):
         self.assertIn(self.MARKER, text)
         for rule in ("RC-001", "RC-002", "RC-003", "RC-004", "RC-007"):
             self.assertIn(rule, text)
+
+    def test_split_rule_and_ask_maintainer(self):
+        snippet = (ROOT / "template-project" / "openspec-context.md").read_text(encoding="utf-8")
+        skill = (ROOT / "skills" / "project-init" / "SKILL.md").read_text(encoding="utf-8")
+        self.assertIn("ask the maintainer instead of guessing", snippet)
+        self.assertIn("beim Maintainer nachfragen", skill)
 
     def test_project_init_references_snippet(self):
         text = (ROOT / "skills" / "project-init" / "SKILL.md").read_text(encoding="utf-8")

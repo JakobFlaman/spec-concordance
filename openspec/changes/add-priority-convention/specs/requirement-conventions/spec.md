@@ -5,7 +5,7 @@ Einheitliche Form von Anforderungen in OpenSpec-Spezifikationen von Projekten na
 ## ADDED Requirements
 
 ### Requirement: SHALL unabhängig von der Priorität (RC-001, Must)
-Der Anforderungstext jeder Anforderung SHALL das Schlüsselwort SHALL verwenden und kein anderes RFC-2119-Schlüsselwort für Empfehlung oder Option (`SHOULD`, `MAY`). Als Anforderungstext gilt der Text zwischen der Zeile `### Requirement:` und dem ersten `#### Scenario:`; als Schlüsselwort gilt nur das grossgeschriebene ganze Wort ausserhalb von Inline-Code (Backticks) und Zitaten («…», "…").
+Der Anforderungstext jeder Anforderung SHALL das Schlüsselwort SHALL verwenden und kein anderes RFC-2119-Schlüsselwort für Empfehlung oder Option (`SHOULD`, `MAY`). Als Anforderungstext gilt der Text zwischen der Zeile `### Requirement:` und dem ersten `#### Scenario:`; als Schlüsselwort gilt nur das grossgeschriebene ganze Wort ausserhalb von Code (Inline-Code in Backticks und eingezäunte Codeblöcke) und Zitaten («…», "…", „…“).
 
 #### Scenario: Should-Anforderung validiert
 - **GIVEN** eine Anforderung mit Priorität Should, formuliert mit SHALL und Priorität im Titel
@@ -18,7 +18,7 @@ Der Anforderungstext jeder Anforderung SHALL das Schlüsselwort SHALL verwenden 
 - **THEN** meldet die Prüfung RC-001 mit Datei, Zeile und Titel und endet mit Exitcode 1
 
 #### Scenario: Erwähnung ist kein Verstoss
-- **GIVEN** eine Anforderung, die `SHOULD` nur in Backticks oder in «…» erwähnt, oder ein Szenario, das das Wort enthält
+- **GIVEN** eine Anforderung, die `SHOULD` nur in Backticks, in einem Codeblock oder in «…» bzw. „…“ erwähnt, oder ein Szenario, das das Wort enthält
 - **WHEN** `scripts/check-conventions.py` ausgeführt wird
 - **THEN** wird die Anforderung akzeptiert
 
@@ -48,9 +48,14 @@ Der Titel jeder Anforderung SHALL die Form `<Titel> (<ID>, <Priorität>)` haben.
 Eine Quellanforderung mit gemischter Priorität (z. B. «Must / Should») SHALL in je eine OpenSpec-Anforderung pro Priorität getrennt werden, die dieselbe ID tragen. Geht aus der Quelle nicht eindeutig hervor, welcher Teil welche Priorität hat, wird die Zuordnung als offener Punkt beim Maintainer erfragt, nicht geraten.
 
 #### Scenario: Must/Should-Quelle
+> Manueller Test: Die Überführung ist eine Arbeitsregel für den Agenten, kein Skriptverhalten. Nachweis anhand eines realen Projekts.
 - **GIVEN** die Quellanforderung LA-F-105 mit Priorität «Must / Should»
 - **WHEN** sie in OpenSpec überführt wird
 - **THEN** entstehen zwei Anforderungen mit den Titeln «… (LA-F-105, Must)» und «… (LA-F-105, Should)»
+
+#### Scenario: Regel im Textbaustein
+- **WHEN** der Test der Plugin-Vorlagen läuft
+- **THEN** enthält `template-project/openspec-context.md` die Trennregel inklusive «ask the maintainer instead of guessing», und `skills/project-init/SKILL.md` enthält die Anweisung, bei unklarer Aufteilung beim Maintainer nachzufragen
 
 ### Requirement: Eindeutigkeit von ID und Priorität (RC-007, Must)
 Innerhalb einer Spec-Datei SHALL jede Kombination aus ID und Priorität nur einmal vorkommen. Geprüft werden Basis-Specs sowie ADDED- und MODIFIED-Abschnitte, nicht REMOVED, RENAMED und `archive/`.
@@ -66,7 +71,7 @@ Innerhalb einer Spec-Datei SHALL jede Kombination aus ID und Priorität nur einm
 - **THEN** werden beide akzeptiert
 
 ### Requirement: Priorität ändern über RENAMED (RC-004, Must)
-Eine Umpriorisierung SHALL als RENAMED-Delta mit FROM/TO erfasst werden, weil der Titel die Anforderung identifiziert. Ein MODIFIED-Abschnitt, dessen Titel in der Basis-Spezifikation nicht existiert, sich von einem bestehenden Titel aber nur in der Priorität unterscheidet, wird von der Prüfung mit Hinweis auf RENAMED gemeldet.
+Eine Umpriorisierung SHALL als RENAMED-Delta mit FROM/TO erfasst werden, weil der Titel die Anforderung identifiziert. Ein MODIFIED-Abschnitt, dessen Titel weder in der Basis-Spezifikation noch als TO-Titel eines RENAMED im selben Change existiert, sich von einem bestehenden Titel aber nur in der Priorität unterscheidet, wird von der Prüfung mit Hinweis auf RENAMED gemeldet. Umpriorisieren und inhaltlich ändern im selben Change ist erlaubt (RENAMED plus MODIFIED auf den neuen Titel).
 
 #### Scenario: Should wird Must
 - **GIVEN** die Basis-Anforderung «Darstellungsmodi (LA-F-110, Should)» in `openspec/specs/<cap>/spec.md`
@@ -77,6 +82,11 @@ Eine Umpriorisierung SHALL als RENAMED-Delta mit FROM/TO erfasst werden, weil de
 - **GIVEN** dieselbe Basis-Anforderung
 - **WHEN** ein Change unter `## MODIFIED Requirements` den Titel «Darstellungsmodi (LA-F-110, Must)» führt
 - **THEN** meldet die Prüfung RC-004 mit dem Hinweis, RENAMED zu verwenden, und endet mit Exitcode 1
+
+#### Scenario: Umpriorisieren und ändern im selben Change
+- **GIVEN** dieselbe Basis-Anforderung
+- **WHEN** ein Change sie per RENAMED auf «Darstellungsmodi (LA-F-110, Must)» umbenennt und unter `## MODIFIED Requirements` denselben neuen Titel inhaltlich ändert
+- **THEN** akzeptiert `scripts/check-conventions.py` den Change
 
 ### Requirement: Regel beim Projektstart verankert (RC-005, Must)
 Der Skill `project-init` SHALL nach `openspec init` den Textbaustein `template-project/openspec-context.md` an den `context` in `openspec/config.yaml` des Projekts anfügen, ohne bestehenden Inhalt zu überschreiben und ohne ihn bei wiederholtem Lauf doppelt einzutragen. Must-, Should- und Could-Anforderungen werden überführt.

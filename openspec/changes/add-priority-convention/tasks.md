@@ -24,3 +24,10 @@ Version: Änderungen werden unter [Unreleased] gesammelt; `plugin.json` wird bei
 - [x] 3.1 CHANGELOG unter [Unreleased]
 - [x] 3.2 Test-Summary `docs/test-reports/2026-11-05-add-priority-convention.md`, inkl. Nachweis «Should validiert» über RC-006 in der eigenen Spec (G0) und manuellem Test RC-005 «Bestehender Kontext» als offen gekennzeichnet
 - [x] 3.3 Folge-Changes notieren: Projekt-CI-Bereitstellung der Prüfung (Plugin); Nachführung der Titel in pdf-concordance
+
+## 4. Nach Qualitäts-Gate (Lauf 1 nicht bestanden)
+
+- [x] 4.1 RC-004: RENAMED plus MODIFIED im selben Change zulassen; Szenario, Fixture, Test, Skript
+- [x] 4.2 RC-003: Szenario «Must/Should-Quelle» als manuell kennzeichnen und Nachweis ausführen; Szenario «Regel im Textbaustein» mit Test
+- [x] 4.3 RC-005: manuellen Idempotenz-Test ausführen und dokumentieren
+- [x] 4.4 Beobachtungen: Archiv-Ausschluss nur `openspec/changes/archive/`; Codeblöcke und „…“ als Erwähnung (RC-001); RC-Nummern im Protokoll; Tests geschärft

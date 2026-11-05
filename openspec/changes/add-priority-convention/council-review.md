@@ -30,9 +30,9 @@ Abdeckung laut Testmanagement: 6 von 8 Abnahmekriterien mit geplantem Test; Test
 | D3 | Schnittstelle des Skripts in `design.md`: Argumente, Ausgabe, Exitcodes 0/1/2, ID-Muster, Delta-Abschnitte; Begründung des Konventionsentscheids (ADR-Ersatz) | major | Arch. (A1, A6), Betr. (B4), Entw. (E3, E5) | eingearbeitet (design.md) |
 | D4 | Bezugsweg für Projekte (siehe W1); Python-Voraussetzung im README | major | Arch. (A4), Betr. (B2) | eingearbeitet (Spec, Tasks) |
 | D5 | Could-Anforderungen: Entscheid, ob in OpenSpec; `project-init` Schritt 3 angleichen | major | Fach (F2) | eingearbeitet (Spec, Tasks) |
-| D6 | Migration bestehender Projekte; RC-004 idempotent und ergänzend statt überschreibend; Warnmodus | major | Betr. (B3), Arch. (A5) | eingearbeitet (Spec, Tasks) |
+| D6 | Migration bestehender Projekte; RC-005 (damals RC-004) idempotent und ergänzend statt überschreibend; Warnmodus | major | Betr. (B3), Arch. (A5) | eingearbeitet (Spec, Tasks) |
 | D7 | Geltungsbereich der Duplikatprüfung (pro Datei, `archive/` ausgenommen, nur Basis/ADDED/MODIFIED) | major | Entw. (E2) | eingearbeitet (Spec) |
-| D8 | Test für RC-004 auf Textbaustein und SKILL.md verlegen; End-to-End als manueller Test | major | Test (T2), Entw. (E6) | eingearbeitet (Spec, Tasks) |
+| D8 | Test für RC-005 (damals RC-004) auf Textbaustein und SKILL.md verlegen; End-to-End als manueller Test | major | Test (T2), Entw. (E6) | eingearbeitet (Spec, Tasks) |
 | D9 | Nur Standardbibliothek (`unittest`), nur lesend, keine Ausführung von Inhalten | minor | Sec. (S1, S2), Entw. (E5) | eingearbeitet (design.md) |
 | D10 | Scan-Umfang der CI auf `openspec/specs/` und `openspec/changes/` begrenzen (Fixtures nicht mitscannen) | minor | Test (T4) | eingearbeitet (Tasks) |
 | D11 | CI-Task für das Skript; eigene `config.yaml` erhält die Regel (Dogfooding); Task 2.4 zuordnen | minor | Entw. (E4) | eingearbeitet (Tasks) |

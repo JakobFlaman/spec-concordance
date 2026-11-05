@@ -31,3 +31,14 @@ Das System SHALL in 2 s starten.
 #### Scenario: Start
 - **WHEN** gestartet wird
 - **THEN** ist das Fenster nach 2 s bedienbar
+
+### Requirement: Darstellungsmodi (LA-F-110, Should)
+Das System SHALL einen Dunkelmodus bieten. Ein deutsches Zitat „MAY“ ist eine Erwähnung.
+
+```text
+Beispiel aus einer Quelle: The system SHOULD support dark mode.
+```
+
+#### Scenario: Dunkel
+- **WHEN** umgeschaltet wird
+- **THEN** ist es dunkel

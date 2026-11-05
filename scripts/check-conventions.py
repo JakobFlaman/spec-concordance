@@ -37,7 +37,8 @@ RENAMED_TO_RE = re.compile(r"^\s*-\s*TO:\s*`?###\s+Requirement:\s*(.*?)`?\s*$")
 TITLE_FULL_RE = re.compile(r"^(?P<name>.*\S)\s+\((?P<id>[^,()]+),\s*(?P<prio>[^,()]+)\)$")
 TITLE_ID_ONLY_RE = re.compile(r"^(?P<name>.*\S)\s+\((?P<id>[^,()]+)\)$")
 KEYWORD_RE = re.compile(r"\b(SHOULD|MAY)\b")
-MENTION_RE = re.compile(r"`[^`]*`|«[^»]*»|\"[^\"]*\"|“[^”]*”")
+MENTION_RE = re.compile(r"`[^`]*`|«[^»]*»|\"[^\"]*\"|“[^”]*”|„[^“”]*[“”]")
+FENCE_RE = re.compile(r"^\s*(```|~~~)")
 
 CHECKED = {"requirements", "added requirements", "modified requirements"}
 
@@ -103,6 +104,22 @@ def requirement_titles(path: Path) -> list[str]:
     return titles
 
 
+def renamed_targets(lines: list[str]) -> set[str]:
+    """TO-Titel aller RENAMED-Einträge der Datei (für RC-004 «RENAMED plus MODIFIED»)."""
+    targets: set[str] = set()
+    section = ""
+    for raw in lines:
+        sm = SECTION_RE.match(raw)
+        if sm:
+            section = sm.group(1).strip().lower()
+            continue
+        if section == "renamed requirements":
+            tm = RENAMED_TO_RE.match(raw)
+            if tm:
+                targets.add(tm.group(1))
+    return targets
+
+
 def check_file(path: Path, id_re: re.Pattern) -> tuple[list[Violation], int]:
     lines = path.read_text(encoding="utf-8").splitlines()
     violations: list[Violation] = []
@@ -110,8 +127,10 @@ def check_file(path: Path, id_re: re.Pattern) -> tuple[list[Violation], int]:
     section = ""
     current: tuple[int, str] | None = None  # (line, title) while reading requirement text
     in_text = False
+    in_fence = False
     count = 0
     base_titles: list[str] | None = None
+    renamed_to = renamed_targets(lines)
 
     for no, raw in enumerate(lines, start=1):
         sm = SECTION_RE.match(raw)
@@ -136,6 +155,7 @@ def check_file(path: Path, id_re: re.Pattern) -> tuple[list[Violation], int]:
             count += 1
             current = (no, title)
             in_text = True
+            in_fence = False
             violations += check_title(path, no, title, id_re)
             name, rid, prio = parse_title(title)
             if rid and prio:
@@ -149,7 +169,7 @@ def check_file(path: Path, id_re: re.Pattern) -> tuple[list[Violation], int]:
                 if base_titles is None:
                     base = base_spec_for(path)
                     base_titles = requirement_titles(base) if base and base.exists() else []
-                if title not in base_titles:
+                if title not in base_titles and title not in renamed_to:
                     for bt in base_titles:
                         bname, bid, bprio = parse_title(bt)
                         if bname == name and bid == rid and bprio != prio:
@@ -163,6 +183,11 @@ def check_file(path: Path, id_re: re.Pattern) -> tuple[list[Violation], int]:
             continue
 
         if in_text and current:
+            if FENCE_RE.match(raw):
+                in_fence = not in_fence
+                continue
+            if in_fence:
+                continue
             stripped = MENTION_RE.sub("", raw)
             km = KEYWORD_RE.search(stripped)
             if km:
@@ -179,8 +204,14 @@ def find_specs(paths: list[Path]) -> list[Path]:
             candidates = [p]
         else:
             candidates = sorted(p.rglob("spec.md"))
-        files += [f for f in candidates if "archive" not in f.parts]
+        files += [f for f in candidates if not is_archived(f)]
     return files
+
+
+def is_archived(path: Path) -> bool:
+    """Nur openspec/changes/archive/ ausschliessen, nicht beliebige Ordner namens «archive»."""
+    parts = path.resolve().parts
+    return any(parts[i] == "changes" and parts[i + 1] == "archive" for i in range(len(parts) - 1))
 
 
 def main(argv: list[str] | None = None) -> int:
