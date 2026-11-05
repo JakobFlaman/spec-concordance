@@ -40,17 +40,19 @@ Revision 2 (nach Gate-Lauf 7): Das Skript parst Markdown nicht mehr selbst, sond
 
 | Aspekt | Festlegung |
 |---|---|
-| Aufruf | `python3 scripts/check-conventions.py [--warn] [--id-pattern REGEX] [STAMM ...]`; STAMM ist ein Projektordner mit `openspec/`, Standard: aktueller Ordner |
-| Quelle der Struktur | `openspec list --specs --json`, `openspec list --json` (aktive Changes, archivierte sind nicht enthalten), `openspec show <spec> --type spec --json`, `openspec show <change> --json --deltas-only`; jeweils im Projektstamm ausgeführt |
+| Aufruf | `python3 scripts/check-conventions.py [--warn] [--id-pattern REGEX] [STAMM ...]`; STAMM ist ein Projektordner mit `openspec/`, Standard: aktueller Ordner. Ein Ordner ohne `openspec/` (z. B. `openspec/specs`) → Exit 2 mit Hinweis «Projektstamm angeben» |
+| Quelle der Struktur | `openspec list --specs --json` (`specs[].id`), `openspec list --json` (`changes[].name`; nur aktive Changes), `openspec show <spec> --type spec --json` (`requirements[].name/.text`), `openspec show <change> --json --deltas-only` (`deltas[].spec/.operation`, bei ADDED/MODIFIED `requirements[]`, bei RENAMED `rename.from/.to`); jeweils im Projektstamm ausgeführt. Fehler: Exitcode ≠ 0 oder `status[]` mit `severity: error` → Exit 2 mit `message`. Fehlt ein erwartetes Feld → Exit 2 mit Spec-/Change-Name |
+| Version | `openspec --version` beim Start; unter 1.16 → Exit 2 mit gefundener und benötigter Version. Getestet mit 1.16.0; die CI installiert genau diese Version |
+| Pfadableitung | Basis: `<STAMM>/openspec/specs/<spec-id>/spec.md`; Delta: `<STAMM>/openspec/changes/<change>/specs/<spec-id>/spec.md`; `<spec-id>` kann verschachtelt sein (`area/cap`). Namen von Specs und Changes müssen `^[A-Za-z0-9][A-Za-z0-9._/-]*$` erfüllen und dürfen kein `..` enthalten (OpenSpec kennt kein `--`); gelesene Dateien müssen nach `resolve()` unter `<STAMM>/openspec/` liegen, sonst Exit 2 |
 | Geprüft | Basis-Anforderungen und ADDED-/MODIFIED-Deltas: RC-001 (Anforderungstext laut OpenSpec), RC-002, RC-007 (pro Spec-Datei); MODIFIED zusätzlich RC-004 gegen die Basis-Spec derselben Capability und die RENAMED-Ziele desselben Changes; RENAMED: Zieltitel auf RC-002; REMOVED wird nicht geprüft |
 | Anforderungstext | so, wie OpenSpec ihn liefert (ohne Szenarien und Codeblöcke); Inline-Code mit beliebig vielen Backticks und Zitate («…», "…", „…“) gelten als Erwähnung |
-| Zeilennummer | wird zur Ausgabe in der Spec-Datei gesucht (erste Kopfzeile ausserhalb von Codeblöcken, die den Namen enthält); nicht gefunden → Zeile 0 |
+| Zeilennummer | wird zur Ausgabe in der Spec-Datei gesucht: Kopfzeilen (`###`) ausserhalb von Codeblöcken, die den Namen enthalten; dem n-ten Vorkommen eines Namens wird die n-te Fundstelle zugeordnet; nicht gefunden → Zeile 0 |
 | Ausgabe | eine Zeile je Verstoss: `<datei>:<zeile>: <RC-ID>: <Meldung> – «<Titel>» – siehe docs/de/process-model.md, Abschnitt «Anforderungen in OpenSpec»`; am Ende Zusammenfassung |
-| Exitcodes | 0 = keine Verstösse (oder `--warn`), 1 = Verstösse, 2 = Bedien-/Eingabefehler (Stamm ohne `openspec/`, OpenSpec-CLI fehlt oder meldet einen Fehler, ungültiges Muster, keine Anforderungen gefunden) |
+| Exitcodes | 0 = keine Verstösse (oder `--warn`), 1 = Verstösse, 2 = Bedien-/Eingabefehler (Stamm ohne `openspec/`, OpenSpec-CLI fehlt, zu alt, Zeitüberschreitung oder Fehler, unerwartete Struktur, ungültiger Name, ungültiges Muster, keine Anforderungen gefunden) |
 | ID-Muster | Standard `[A-Z][A-Z0-9]*(-[A-Z0-9]+)*-[0-9]+` |
-| Abhängigkeiten | Python-Standardbibliothek (≥ 3.10) und OpenSpec-CLI (≥ 1.16, MIT, Node.js) im `PATH` oder über `OPENSPEC_BIN` |
-| Sicherheit | liest nur, schreibt nichts, führt keine Inhalte aus; einziger Fremdaufruf ist die OpenSpec-CLI mit festen Argumenten (Liste, keine Shell), Namen von Specs und Changes stammen aus deren eigener Ausgabe |
+| Abhängigkeiten | Ersetzt Auflage S1: Python-Standardbibliothek (≥ 3.10) und OpenSpec-CLI (MIT, Node.js) ab 1.16; in der CI exakt 1.16.0. Gefunden über `OPENSPEC_BIN` (nur aus der Umgebung, nie aus Repository-Dateien oder Argumenten) oder `openspec` im `PATH` |
+| Sicherheit | liest nur, schreibt nichts, führt keine Inhalte aus; einziger Fremdaufruf ist die OpenSpec-CLI mit festen Argumenten (Liste, keine Shell, Timeout 60 s); Namen geprüft (siehe Pfadableitung); für den Aufruf werden `OPENSPEC_*`-Variablen entfernt, die Verzeichnisse umlenken, und `DO_NOT_TRACK=1` gesetzt |
 
 ## Tests
 
-`python3 -m unittest discover -s tests -v`. Testdaten unter `tests/fixtures/conventions/` sind eigene kleine OpenSpec-Projekte (Ordner mit `openspec/`); die CI prüft nur den Stamm des Plugin-Repositorys. Tests, die die OpenSpec-CLI brauchen, setzen sie voraus (in der CI installiert).
+`python3 -m unittest discover -s tests -v`. Testdaten unter `tests/fixtures/conventions/` sind eigene kleine OpenSpec-Projekte (Ordner mit `openspec/`); jeder Change hat eine minimale `proposal.md`, ausser genau einem Fixture für RC-008. Die CI prüft nur den Stamm des Plugin-Repositorys. Tests, die die OpenSpec-CLI brauchen, werden lokal ohne CLI sichtbar übersprungen; in der CI (`CI=true`) schlagen sie fehl. Fehlende, zu alte oder fehlerhafte CLI werden über `OPENSPEC_BIN` mit einer Attrappe (Python-Skript) getestet.

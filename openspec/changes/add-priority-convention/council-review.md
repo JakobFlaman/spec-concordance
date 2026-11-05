@@ -47,3 +47,39 @@ Hinweis Entwicklung, ausserhalb dieses Changes: Die Pilot-Specs in `pdf-concorda
 ## Einzelvoten
 
 Vollständig in `council-review-votes.md`.
+
+---
+
+# Nachtrags-Review: Revision 2 (Erkennung über OpenSpec-CLI)
+
+Datum: 2026-11-05 · Anlass: Design-Änderung nach sieben Gate-Läufen (Entscheid Maintainer: «OpenSpec als Parser») · Ergebnis: **freigegeben mit Auflagen**
+
+Geprüft von den fünf betroffenen Rollen. Fachbereich nicht beteiligt: Die Konvention für Nutzer ändert sich nicht, nur die interne Prüfung.
+
+| Rolle | Votum | major | minor |
+|---|---|---|---|
+| Security | Zustimmung mit Auflagen | 1 | 3 |
+| Architektur | Zustimmung mit Auflagen | 2 | 2 |
+| Support/Betrieb | Zustimmung mit Auflagen | 2 | 2 |
+| Entwicklung (Aufwand M) | Zustimmung mit Auflagen | 2 | 2 |
+| Testmanagement | Zustimmung mit Auflagen | 3 | 1 |
+
+Alle Rollen bestätigen den Entscheid; Architektur, Entwicklung und Testmanagement haben das JSON von OpenSpec 1.16.0 selbst gegengeprüft.
+
+## Entscheidungsliste Revision 2
+
+| Nr. | Auflage | Schweregrad | Rolle(n) | Status |
+|---|---|---|---|---|
+| N1 | CI: `actions/setup-node` und OpenSpec in exakt fixierter Version (1.16.0); `permissions: contents: read`; nur `pull_request`; Telemetrie aus (`DO_NOT_TRACK=1`) | major | Sec. (S3, S4), Betr. (B1), Entw. (E2), Arch. (A2) | offen |
+| N2 | Aufrufer auf Projektstamm umstellen (CI, CLAUDE.md, process-model DE/EN, Test-Summary); Pfad ohne `openspec/` → Exit 2 mit klarer Meldung und Test | major | Arch. (A1), Entw. (E2), Test (T1), Betr. (B3) | offen |
+| N3 | Version beim Start prüfen (`openspec --version` < 1.16 → Exit 2 mit gefundener und benötigter Version); fehlende JSON-Felder → Exit 2, nie still bestehen; Szenarien und Vertragstest | major | Betr. (B2), Arch. (A3), Entw. (E3) | offen |
+| N4 | Fixtures als OpenSpec-Projekte mit minimaler `proposal.md` (genau eines ohne, für RC-008); Zuordnung alte → neue Tests in der Test-Summary | major | Test (T2) | offen |
+| N5 | Tests: in der CI kein stilles Überspringen bei fehlender CLI; «OpenSpec fehlt» über `OPENSPEC_BIN`; Attrappe für «zu alt» und Fehlermeldung | major | Test (T3), Betr. (B4) | offen |
+| N6 | Tasks-Abschnitt 10 «Revision 2» mit Rückverfolgung auf RC-008/RC-001 | major | Entw. (E1), Arch. (A1) | offen |
+| N7 | S1 in design.md ersetzen: Standardbibliothek + OpenSpec-CLI in fixierter Version (MIT) | major | Sec. (S3) | offen |
+| N8 | Fehler von OpenSpec erkennen: Exitcode ≠ 0 oder `status[]` mit `severity: error`; `message` weitergeben | minor | Entw. (E3) | offen |
+| N9 | Namen von Specs und Changes gegen festes Muster prüfen (OpenSpec kennt kein `--`); gelesene Dateien nach `resolve()` unter `<STAMM>/openspec/`; Fixture | minor | Sec. (S5) | offen |
+| N10 | `OPENSPEC_BIN` nur aus der Umgebung; Unterprozess mit Timeout; OpenSpec-Umgebungsvariablen, die Verzeichnisse umlenken, für den Aufruf entfernen | minor | Sec. (S6) | offen |
+| N11 | Pfadableitung und Felder benennen; n-tes Vorkommen eines Namens → n-te Fundstelle; RC-008 präzisieren («Datei nur zur Zeilenzuordnung gelesen»); Tests für Zeile, Codeblock, verschachtelte Capability, Fallback Zeile 0 | minor | Entw. (E4), Arch. (A4), Test (T4) | offen |
+| N12 | Doku: OpenSpec als Voraussetzung im README, Aufruf, `OPENSPEC_BIN`, Exit-2-Ursachen mit Handlungsempfehlung | minor | Betr. (B3) | offen |
+| N13 | ADR «OpenSpec-CLI als Parser» nachtragen, sobald `docs/adr/` existiert | minor | Arch. | Folge-Change |

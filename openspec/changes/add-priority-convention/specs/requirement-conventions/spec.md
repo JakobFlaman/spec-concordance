@@ -115,7 +115,7 @@ Das Plugin-Repository SHALL `scripts/check-conventions.py` in seiner CI ausführ
 - **THEN** meldet sie alle Verstösse, endet aber mit Exitcode 0
 
 ### Requirement: Erkennung über OpenSpec (RC-008, Must)
-Die Prüfung SHALL Anforderungen, ihre Namen und Texte ausschliesslich über die OpenSpec-CLI (ab Version 1.16) ermitteln, damit sie dieselben Anforderungen sieht wie OpenSpec. Fehlt die CLI oder meldet sie einen Fehler, endet die Prüfung mit Exitcode 2 und gibt die Meldung von OpenSpec weiter.
+Die Prüfung SHALL Struktur, Namen und Texte von Anforderungen ausschliesslich über die OpenSpec-CLI (ab Version 1.16) ermitteln, damit sie dieselben Anforderungen sieht wie OpenSpec; die Spec-Datei wird nur zur Zuordnung der Zeilennummer gelesen. Fehlt die CLI, ist sie zu alt, meldet sie einen Fehler oder liefert sie eine unerwartete Struktur, endet die Prüfung mit Exitcode 2 und einer Meldung mit Handlungsempfehlung.
 
 #### Scenario: Verschachtelte Capability
 - **GIVEN** eine Basis-Anforderung «Darstellungsmodi (LA-F-110, Should)» unter `openspec/specs/area/cap/spec.md`
@@ -136,3 +136,17 @@ Die Prüfung SHALL Anforderungen, ihre Namen und Texte ausschliesslich über die
 - **GIVEN** ein Change ohne `proposal.md`
 - **WHEN** die Prüfung ausgeführt wird
 - **THEN** endet sie mit Exitcode 2 und gibt die Fehlermeldung von OpenSpec mit dem Namen des Changes aus
+
+#### Scenario: OpenSpec zu alt
+- **GIVEN** eine OpenSpec-CLI, die eine Version unter 1.16 meldet
+- **WHEN** die Prüfung ausgeführt wird
+- **THEN** endet sie mit Exitcode 2 und nennt die gefundene und die benötigte Version
+
+#### Scenario: Unerwartete Struktur
+- **GIVEN** eine OpenSpec-CLI, deren JSON-Ausgabe ein erwartetes Feld nicht enthält
+- **WHEN** die Prüfung ausgeführt wird
+- **THEN** endet sie mit Exitcode 2 und nennt das betroffene Spec oder den Change, statt «OK» zu melden
+
+#### Scenario: Ordner ohne openspec/
+- **WHEN** die Prüfung mit `openspec/specs` statt mit dem Projektstamm aufgerufen wird
+- **THEN** endet sie mit Exitcode 2 und dem Hinweis, den Projektstamm anzugeben

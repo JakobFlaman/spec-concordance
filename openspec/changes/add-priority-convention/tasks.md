@@ -56,3 +56,13 @@ Version: Änderungen werden unter [Unreleased] gesammelt; `plugin.json` wird bei
 ## 9. Nach Qualitäts-Gate (Lauf 6 nicht bestanden)
 
 - [x] 9.1 G7: Zaun-Erkennung wörtlich wie OpenSpec `parsers/code-fence.js` (beliebiger Einzug); Fixtures für eingerückten Öffner und Schliesser; Gegenprobe mit `openspec show --json` (beide sehen dieselben Anforderungen); design.md nachgeführt
+
+## 10. Revision 2 – Erkennung über OpenSpec (Entscheid Maintainer nach Gate-Lauf 7; Nachtrags-Review N1–N12)
+
+- [ ] 10.1 `scripts/check-conventions.py` auf OpenSpec-CLI umbauen: Struktur aus `list`/`show --json`, eigener Markdown-Parser entfällt bis auf Zeilenzuordnung (RC-001, RC-002, RC-004, RC-007, RC-008; N8, N11)
+- [ ] 10.2 Versionsprüfung, Fehler- und Strukturprüfung, Namensprüfung, Pfadprüfung, Timeout, Umgebung (RC-008; N3, N9, N10)
+- [ ] 10.3 Fixtures als OpenSpec-Projekte mit `proposal.md`; Attrappe für `OPENSPEC_BIN` (RC-008; N4, N5)
+- [ ] 10.4 Tests umbauen und ergänzen (RC-008-Szenarien, Zeilennummern, Stamm-Fehler, kein stilles Überspringen in der CI) (RC-001–RC-008; N2, N5, N11)
+- [ ] 10.5 CI: Node, OpenSpec 1.16.0, `permissions: contents: read`, `DO_NOT_TRACK=1`, neuer Aufruf (RC-006; N1, N2)
+- [ ] 10.6 Aufrufe und Doku nachführen: CLAUDE.md, process-model DE/EN, README DE/EN, Textbaustein (N2, N12)
+- [ ] 10.7 Test-Summary: Lauf 8, Zuordnung alte → neue Tests, getestete OpenSpec-Version; CHANGELOG (N4)
