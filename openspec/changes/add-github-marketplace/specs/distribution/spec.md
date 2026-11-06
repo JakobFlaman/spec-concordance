@@ -64,11 +64,11 @@ Die CI des Plugins SHALL bei jedem Push auf `main` und bei jedem Pull Request di
 > Nachweis: Run-ID eines grünen CI-Laufs in der Test-Summary.
 
 ### Requirement: Aktualisierung über Releases (DI-005, Must)
-Die Version SHALL nur in `.claude-plugin/plugin.json` stehen, und das README (de und en) SHALL beschreiben, dass Nutzer neue Stände nur mit einem Release (Versionssprung) erhalten, mit welchem Befehl sie aktualisieren und wie sie die automatische Aktualisierung einschalten.
+Die Version SHALL nur in `.claude-plugin/plugin.json` stehen, und das README (de und en) SHALL beschreiben, dass Nutzer neue Stände nur mit einem Release (Versionssprung) erhalten, mit welchen Befehlen sie Katalog und Plugin aktualisieren, dass das Update nach einem Neustart wirkt, und wie sie die automatische Aktualisierung einschalten.
 
 #### Scenario: Update-Anleitung
 - **WHEN** README.md und README.en.md gelesen werden
-- **THEN** enthalten beide `/plugin marketplace update spec-concordance` und den Hinweis, dass Neues nur mit einem Release kommt
+- **THEN** enthalten beide `/plugin marketplace update spec-concordance`, `/plugin update spec-concordance@spec-concordance`, den Hinweis auf den Neustart und den Hinweis, dass Neues nur mit einem Release kommt
 
 ### Requirement: Geschützter Verteilkanal (DI-006, Must)
 Änderungen an `main` SHALL nur über Pull Requests mit grüner CI erfolgen. CLAUDE.md SHALL diese Arbeitsweise und die Einstellungen für den Branch-Schutz in GitHub beschreiben.

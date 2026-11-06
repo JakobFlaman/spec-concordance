@@ -19,10 +19,17 @@
 ## 3. Abschluss
 
 - [x] 3.1 CHANGELOG unter [Unreleased]
-- [ ] 3.2 Test-Summary `docs/test-reports/2026-11-06-add-github-marketplace.md` mit CI-Run-ID und Ausgabe von `claude plugin validate .` (D11)
+- [x] 3.2 Test-Summary `docs/test-reports/2026-11-06-add-github-marketplace.md` mit CI-Run-ID und Ausgabe von `claude plugin validate .` (D11)
 - [x] 3.3 Folge-Change notieren: `source-hash` für README.en.md bzw. READMEs in `check-i18n.py` (D16)
 
 ## 4. Manueller Nachweis (im Qualitäts-Gate, nach dem Push des Branches)
 
 - [x] 4.1 Installationstest nach Protokoll: Claude-Code-Version und Commit-SHA notieren; Art des Git-Zugangs; zwei saubere Umgebungen (je eigenes `HOME`); Einschritt-Befehl bzw. Zwei-Schritt-Variante mit `#<branch>` des Pull Requests; Ausgabe `claude plugin list`; im Installationsverzeichnis `templates/de/`, `template-project/`, `scripts/check-conventions.py` vorhanden; Prüfskript aus dem Installationsverzeichnis auf ein Testprojekt angewendet (DI-002, DI-003; D5)
 - [ ] 4.2 Branch-Schutz abfragen, sobald eingerichtet (DI-006)
+
+## 5. Nach Qualitäts-Gate (Lauf 1 nicht bestanden)
+
+- [x] 5.1 G6: Status D1–D16 in `council-review.md` nachgeführt
+- [x] 5.2 G7 / DI-005: Update-Anleitung um `/plugin update spec-concordance@spec-concordance` und Neustart ergänzt (Katalog-Update allein hebt die Version nicht); Spec, Design, README de/en, Test
+- [x] 5.3 Beobachtungen: Versionsangabe in den Voraussetzungen widerspruchsfrei; `check-marketplace.py` verlangt genau `./`; Nachweis `${CLAUDE_PLUGIN_ROOT}` aus dem Gate in die Test-Summary; CI-Läufe nachgeführt
+

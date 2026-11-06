@@ -65,6 +65,7 @@ class TestDI001Marketplace(unittest.TestCase):
             "zwei Einträge": dict(self.mp, plugins=self.mp["plugins"] * 2),
             "Version im Eintrag": dict(self.mp, plugins=[dict(self.mp["plugins"][0], version="1.0.0")]),
             "andere Quelle": dict(self.mp, plugins=[dict(self.mp["plugins"][0], source="./plugins/x")]),
+            "Quelle . statt ./": dict(self.mp, plugins=[dict(self.mp["plugins"][0], source=".")]),
             "E-Mail im owner": dict(self.mp, owner={"name": "X", "email": "x@example.org"}),
             "owner ohne Name": dict(self.mp, owner={}),
             "ohne Beschreibung": {k: v for k, v in self.mp.items() if k != "description"},
@@ -125,8 +126,11 @@ class TestDI004CI(unittest.TestCase):
 class TestDI005Update(unittest.TestCase):
     def test_update_instructions(self):
         for path in READMES:
-            with self.subTest(file=path.name):
-                self.assertIn("/plugin marketplace update spec-concordance", path.read_text(encoding="utf-8"))
+            text = path.read_text(encoding="utf-8")
+            for cmd in ("/plugin marketplace update spec-concordance", "/plugin update spec-concordance@spec-concordance",
+                        "claude plugin update spec-concordance@spec-concordance"):
+                with self.subTest(file=path.name, cmd=cmd):
+                    self.assertIn(cmd, text)
 
     def test_version_only_in_plugin_json(self):
         self.assertTrue(load(ROOT / ".claude-plugin" / "plugin.json").get("version"))

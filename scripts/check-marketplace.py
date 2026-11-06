@@ -36,7 +36,7 @@ def check(marketplace: dict, manifest: dict) -> list[str]:
         return errors + ["Marktplatz: Eintrag ist kein Objekt"]
     if entry.get("name") != manifest.get("name"):
         errors.append(f"Eintrag «{entry.get('name')}» heisst anders als plugin.json «{manifest.get('name')}»")
-    if entry.get("source") not in ("./", "."):
+    if entry.get("source") != "./":
         errors.append(f"Eintrag: «source» muss «./» sein, nicht «{entry.get('source')}»")
     if "version" in entry:
         errors.append("Eintrag: keine «version» – die Version steht nur in plugin.json")

@@ -37,7 +37,7 @@ scripts/              Helper scripts (e.g. stale-translation check)
 
 ## Quick start
 
-Requirements: [Claude Code](https://code.claude.com/docs) 2.1.275 or later, Node.js 20+, Git, Python 3.10+ (for the check scripts) and the OpenSpec CLI 1.16 or later.
+Requirements: [Claude Code](https://code.claude.com/docs) (one-step installation from version 2.1.275), Node.js 20+, Git, Python 3.10+ (for the check scripts) and the OpenSpec CLI 1.16 or later.
 
 ### 1. Install OpenSpec
 
@@ -83,11 +83,14 @@ To run the check scripts by hand, use the plugin's install directory; `claude pl
 
 ### Update
 
-New versions arrive only with a release, i.e. a higher version in `plugin.json` (see [CHANGELOG](CHANGELOG.md)). To update in Claude Code:
+New versions arrive only with a release, i.e. a higher version in `plugin.json` (see [CHANGELOG](CHANGELOG.md)). Update in two steps – first reload the catalogue, then the plugin:
 
 ```
 /plugin marketplace update spec-concordance
+/plugin update spec-concordance@spec-concordance
 ```
+
+In a terminal: `claude plugin marketplace update spec-concordance`, then `claude plugin update spec-concordance@spec-concordance`. The update takes effect after restarting Claude Code.
 
 Automatically: in `/plugin`, under *Marketplaces*, select `spec-concordance` and turn on *Enable auto-update*.
 

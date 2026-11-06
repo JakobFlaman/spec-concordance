@@ -2,7 +2,7 @@
 
 Datum: 2026-11-06 · Umgebung: Linux, Python 3, OpenSpec 1.16.0, Claude Code 2.1.318 · Ausgeführt von: umsetzender Agent (Nachprüfung im Qualitäts-Gate durch unabhängigen Agenten)
 
-## Ergebnis (Lauf 1)
+## Ergebnis (Lauf 2)
 
 | Prüfung | Befehl | Ergebnis |
 |---|---|---|
@@ -26,7 +26,7 @@ Datum: 2026-11-06 · Umgebung: Linux, Python 3, OpenSpec 1.16.0, Claude Code 2.1
 | DI-003 | project-init nutzt das Installationsverzeichnis | `test_project_init_uses_plugin_root` |
 | DI-003 | Dateien im installierten Plugin | **manuell, ausgeführt** (Protokoll unten) |
 | DI-004 | CI-Lauf | `test_ci_runs_on_push_and_pull_request`; Run-ID siehe Abschnitt CI |
-| DI-005 | Update-Anleitung | `test_update_instructions`, `test_version_only_in_plugin_json` |
+| DI-005 | Update-Anleitung | `test_update_instructions` (Katalog- und Plugin-Update, Slash- und Shell-Form), `test_version_only_in_plugin_json`; Verhalten nachgestellt (Protokoll) |
 | DI-006 | Regel in CLAUDE.md | `test_claude_md_describes_pr_workflow` |
 | DI-006 | Branch-Schutz aktiv | **offen:** wartet auf die Einrichtung durch den Maintainer (Stand 2026-11-06: `main` nicht geschützt) |
 
@@ -41,8 +41,17 @@ Datum: 2026-11-06 · Umgebung: Linux, Python 3, OpenSpec 1.16.0, Claude Code 2.1
 - `claude plugin details spec-concordance`: 4 Skills, 6 Agenten
 - Installationsverzeichnis (`installPath` aus `claude plugin list --json`): `templates/de/`, `template-project/` und `scripts/check-conventions.py` vorhanden
 - Prüfskript aus dem Installationsverzeichnis: Testprojekt `valid` → Exit 0, «5 Anforderung(en)»; Testprojekt `missing-priority` → 1 Verstoss gemeldet
-- Nicht geprüft: die Slash-Befehle in einer interaktiven Sitzung (`/plugin install …`) und ein vollständiger Lauf von `/spec-concordance:project-init`; die Shell-Form nutzt dieselbe Installationslogik (Claude-Code-Doku), `${CLAUDE_PLUGIN_ROOT}` belegt die Doku «Skills»
+- `${CLAUDE_PLUGIN_ROOT}`: vom Gate-Prüfer in Lauf 1 in sauberer Umgebung nachgewiesen – der Skill `project-init` wurde mit `claude -p` geladen, die Variable war durch den `installPath` ersetzt
+- Aktualisieren (vom Gate-Prüfer in Lauf 1 mit lokaler Kopie nachgestellt): Version 0.1.0 installiert, `plugin.json` auf 0.1.1 gehoben; `claude plugin marketplace update` allein lässt das Plugin auf 0.1.0, erst `claude plugin update spec-concordance@spec-concordance` hebt auf 0.1.1 («Restart to apply changes») – deshalb nennt das README beide Schritte
+- Nicht geprüft: die Slash-Befehle in einer interaktiven Sitzung (`/plugin …` ist in `claude -p` nicht verfügbar), ein vollständiger Dialog-Lauf von `/spec-concordance:project-init` und der SSH-Zugang für ein privates Repository
 
 ## CI
 
-Pull Request #2: Lauf 42252101375 zu Commit `fb99f48` und Lauf 42252407934 zu Commit `e878959` – beide success (Tests inkl. `tests/test_distribution.py`, Konvention, OpenSpec, Übersetzungen, Manifest).
+Pull Request #2: Lauf 42252101375 zu Commit `fb99f48` und Lauf 42252407934 zu Commit `e878959` – beide success (Tests inkl. `tests/test_distribution.py`, Konvention, OpenSpec, Übersetzungen, Manifest). Weitere grüne Läufe zu PR #2: 42253457333 (`e30f4fb`); der Lauf zum Stand dieses Berichts steht im Pull Request.
+
+## Vergleich mit Vorlauf
+
+| Lauf | Tests | Ergebnis | Anlass |
+|---|---|---|---|
+| 1 | 73 | grün | Umsetzung; Gate 1 nicht bestanden (G1 Tasks 3.2/4.2, G6 Status offen, G7 Update-Befehl hebt das Plugin nicht) |
+| 2 | 73 | grün | behoben (tasks.md Abschnitt 5); 4.2 wartet auf den Branch-Schutz |

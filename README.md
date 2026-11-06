@@ -37,7 +37,7 @@ scripts/              Hilfsskripte (z. B. Prüfung veralteter Übersetzungen)
 
 ## Schnellstart
 
-Voraussetzungen: [Claude Code](https://code.claude.com/docs) ab Version 2.1.275, Node.js 20+, Git, Python 3.10+ (für die Prüfskripte) und die OpenSpec-CLI ab 1.16.
+Voraussetzungen: [Claude Code](https://code.claude.com/docs) (Einschritt-Installation ab Version 2.1.275), Node.js 20+, Git, Python 3.10+ (für die Prüfskripte) und die OpenSpec-CLI ab 1.16.
 
 ### 1. OpenSpec installieren
 
@@ -83,11 +83,14 @@ Von Hand aufrufen lassen sich die Prüfskripte im Installationsverzeichnis des P
 
 ### Aktualisieren
 
-Neue Stände kommen nur mit einem Release, also mit einer höheren Version in `plugin.json` (siehe [CHANGELOG](CHANGELOG.md)). Aktualisieren in Claude Code:
+Neue Stände kommen nur mit einem Release, also mit einer höheren Version in `plugin.json` (siehe [CHANGELOG](CHANGELOG.md)). Aktualisieren in zwei Schritten – zuerst den Katalog neu laden, dann das Plugin:
 
 ```
 /plugin marketplace update spec-concordance
+/plugin update spec-concordance@spec-concordance
 ```
+
+Im Terminal: `claude plugin marketplace update spec-concordance`, danach `claude plugin update spec-concordance@spec-concordance`. Wirksam wird das Update nach einem Neustart von Claude Code.
 
 Automatisch: in `/plugin` unter *Marketplaces* den Marktplatz `spec-concordance` wählen und *Enable auto-update* einschalten.
 
