@@ -12,7 +12,7 @@ OpenSpec-Change: `openspec/changes/<id>/` · Issue: #<nr>
 - [ ] G4 Regressionstest (bei Bug)
 - [ ] G5 Council-Review liegt vor
 - [ ] G6 Auflagen blocker/major erledigt
-- [ ] G7 Spezifikation nachgeführt
+- [ ] G7 Spezifikation nachgeführt und stimmt mit dem Verhalten überein
 - [ ] G8 Doku nachgeführt
 - [ ] G9 CHANGELOG-Eintrag
 - [ ] G10 Test-Summary abgelegt
