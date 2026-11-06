@@ -23,3 +23,10 @@
 
 - [x] 4.1 CHANGELOG unter [Unreleased]
 - [x] 4.2 Test-Summary `docs/test-reports/2026-11-06-define-gate-standard.md`
+
+## 5. Nach Qualitäts-Gate (Lauf 1 nicht bestanden)
+
+- [x] 5.1 G6: Status D1–D12 in `council-review.md` nachgeführt
+- [x] 5.2 G7 / CP-004: «selten» in Skill und Design gestrichen (Spec und Skill angeglichen); Test
+- [x] 5.3 Beobachtungen: Antwort des Maintainers setzt die Eskalationszählung zurück (CP-007, Skill, Test); Status n.a. im Ablauf; Vorgehensmodell de/en präzisiert; nachträglicher Grenz-Hinweis gekennzeichnet; Eingaben der Probe abgelegt; Reihenfolge im Proposal
+

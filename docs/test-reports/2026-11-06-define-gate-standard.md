@@ -2,7 +2,7 @@
 
 Datum: 2026-11-06 · Umgebung: Linux, Python 3, OpenSpec 1.16.0 · Ausgeführt von: umsetzender Agent (Nachprüfung im Qualitäts-Gate durch unabhängigen Agenten)
 
-## Ergebnis (Lauf 1)
+## Ergebnis (Lauf 2)
 
 | Prüfung | Befehl | Ergebnis |
 |---|---|---|
@@ -30,12 +30,12 @@ Datum: 2026-11-06 · Umgebung: Linux, Python 3, OpenSpec 1.16.0 · Ausgeführt v
 
 ## Manuelle Probe (Task 3.1)
 
-Ein unabhängiger Agent erhielt nur die eingefrorenen neuen Regeldateien (Skills `quality-gate`, `change-proposal`, Rolle Testmanagement) und vier Fälle, ohne die erwarteten Ergebnisse. Er sollte die Regeln wörtlich anwenden und die Regelstelle zitieren.
+Eingaben und Auftrag liegen in `docs/test-reports/2026-11-06-define-gate-standard-probe/`. Ein unabhängiger Agent erhielt nur die eingefrorenen neuen Regeldateien (Skills `quality-gate`, `change-proposal`, Rolle Testmanagement) und vier Fälle, ohne die erwarteten Ergebnisse. Er sollte die Regeln wörtlich anwenden und die Regelstelle zitieren.
 
 | Fall | Inhalt | Erwartet | Ergebnis |
 |---|---|---|---|
 | 1 | Befund Gate-Lauf 17 von `add-priority-convention` (versetzte Codezäune nach eingerücktem Schliesser) | realistisch, G7 ❌ | realistisch, G7 ❌ – zitiert Definition «realistisch» und «Ohne festgehaltenen Entscheid bleibt ein realistischer Befund ❌» |
-| 2 | Befund Gate-Lauf 18 (`SH<!-- > -->OULD`), Grenze stand beim Review in design.md | konstruiert, Beobachtung | konstruiert und innerhalb gültiger Grenze, Beobachtung; prüft ausdrücklich, dass kein Sicherheitszweck vorliegt |
+| 2 | Befund Gate-Lauf 18 (`SH<!-- > -->OULD`); vereinfacht: Grenze als beim Review vorhanden angenommen (im Trockenlauf vom Maintainer nach Lauf 18 bestätigt – nach CP-003 ebenfalls gültig) | konstruiert, Beobachtung | konstruiert und innerhalb gültiger Grenze, Beobachtung; prüft ausdrücklich, dass kein Sicherheitszweck vorliegt |
 | 3 | Synthetischer Change «Prüfung auf Geheimnisse» ohne Abschnitt «Grenzen», mit absoluter Zusage | Rolle Testmanagement: Befund `major` | Befunde T1 `major` (Grenzen fehlen) und T2 `major` (absolute Zusage ohne Vergleichsmassstab), zitiert Prüffrage 7 |
 | 4 | Synthetisches Gate-Protokoll, drei Läufe in Folge G7 zu RC-001 | zuerst Frage an den Maintainer, kein Lauf | fragt zuerst den Maintainer; erklärt, dass «behoben» die Zählung nicht zurücksetzt |
 
@@ -46,3 +46,10 @@ Vom Prüfer zusätzlich genannt (Folge-Change, nicht Teil dieses Changes):
 ## CI
 
 Pull Request #3: Lauf 42253026135 zu Commit `9b06a98` – success (Tests, Konvention, OpenSpec, Übersetzungen, Manifest).
+
+## Vergleich mit Vorlauf
+
+| Lauf | Tests | Ergebnis | Anlass |
+|---|---|---|---|
+| 1 | 67 | grün | Umsetzung; Gate 1 nicht bestanden (G6 Status offen, G7 CP-004 «selten») |
+| 2 | 68 | grün | behoben (tasks.md Abschnitt 5) |

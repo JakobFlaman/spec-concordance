@@ -39,7 +39,7 @@ GATE_PHRASES = {
                "Ohne festgehaltenen Entscheid bleibt ein realistischer Befund ❌"],
     "CP-006": ["`openspec/changes/<id>/gate-log.md`", "**Gate-Protokoll lesen**", "| Lauf | Datum | Ergebnis |"],
     "CP-007": ["**drei aufeinanderfolgenden Läufen**", "bei G3 und G7 zusätzlich zur selben Anforderung",
-               "setzt die Zählung zurück"],
+               "setzt die Zählung zurück", "die festgehaltene Antwort des Maintainers setzt die Zählung zurück"],
 }
 PROPOSAL_PHRASES = ["Abschnitt «Grenzen»", "automatische Prüfung, Erkennung oder Entscheidung",
                     "entscheidet das Council; im Zweifel gilt die Pflicht", "**Absolute Zusagen**",
@@ -62,6 +62,14 @@ class TestGateSkill(unittest.TestCase):
         for rid, phrases in GATE_PHRASES.items():
             with self.subTest(rid):
                 self.assertEqual(missing(gate, phrases), [])
+
+
+class TestNoOpenCriterion(unittest.TestCase):
+    def test_deferral_has_no_rarity_criterion(self):  # CP-004, Gate-Lauf 1
+        for path in (GATE, ROOT / "openspec" / "changes" / "define-gate-standard" / "design.md"):
+            if path.exists():
+                with self.subTest(path.name):
+                    self.assertNotIn("seltenen Befund", text(path))
 
 
 class TestProposalAndRole(unittest.TestCase):
