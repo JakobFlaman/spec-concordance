@@ -22,7 +22,7 @@ Keine zwischen den Rollen. Gemeinsam gefunden: Pfad zum Plugin ohne Klon (A1, E1
 
 - **Updates nur über Releases:** `version` bleibt in `plugin.json`; Nutzer erhalten Neues erst bei einem Versionssprung. Nach diesem und dem Change `define-gate-standard` folgt Release 0.2.0 als eigener Schritt.
 - **main mit PR-Pflicht und grüner CI:** Änderungen nur über Pull Requests; die Freigabe G11 ist das Mergen. Den Branch-Schutz richtet der Maintainer in GitHub ein.
-- Hinweis bei der Prüfung: Das Repository ist zurzeit öffentlich (nicht privat, wie die Changes annahmen). Die Doku beschreibt den Zugriff für beide Fälle.
+- **Repository öffentlich:** Bei der Prüfung fiel auf, dass das Repository öffentlich ist, nicht privat, wie die Changes annahmen. Der Maintainer bestätigt (2026-11-06): öffentlich ist gewollt. Die Doku beschreibt den Zugriff trotzdem auch für ein privates Repository, falls sich das ändert.
 
 ## Entscheidungsliste
 

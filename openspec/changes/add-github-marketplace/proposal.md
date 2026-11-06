@@ -27,7 +27,7 @@ Nach dem Council-Review überarbeitet (Entscheidungsliste D1–D16 in `council-r
 
 ## Out of Scope
 
-- Veröffentlichung im Plugin-Verzeichnis von Anthropic oder Umstellung auf ein öffentliches Repository.
+- Veröffentlichung im Plugin-Verzeichnis von Anthropic. (Das Repository ist öffentlich – Entscheid des Maintainers vom 2026-11-06.)
 - Release 0.2.0 (Versionssprung in `plugin.json` und CHANGELOG) – eigener Schritt nach diesem Change und `define-gate-standard`. Bis dahin trägt jede Installation die Version 0.1.0, auch wenn sie einen anderen Stand von `main` enthält; installierte Kopien werden erst mit dem Versionssprung aktualisiert.
 - Einrichten des Branch-Schutzes in GitHub – macht der Maintainer; dieser Change beschreibt die Einstellungen.
 - `source-hash`-Kopf für README.en.md und Prüfung der READMEs durch `check-i18n.py` – Folge-Change (D16).
