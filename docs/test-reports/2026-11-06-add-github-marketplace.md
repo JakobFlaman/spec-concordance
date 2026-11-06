@@ -11,7 +11,7 @@ Datum: 2026-11-06 · Umgebung: Linux, Python 3, OpenSpec 1.16.0, Claude Code 2.1
 | Marktplatz | `python3 scripts/check-marketplace.py` | Exit 0 |
 | Claude Code | `claude plugin validate .` (2.1.318) | «Validation passed with warnings»: `CLAUDE.md` im Stamm wird nicht als Kontext geladen (Grenze in design.md), kein Icon (nur für das Anthropic-Verzeichnis relevant) |
 | Konvention, OpenSpec, Übersetzungen | `check-conventions.py`, `openspec validate --all --strict`, `check-i18n.py` | Exit 0, gültig, OK |
-| CI | Pull Request #2 | siehe Abschnitt CI |
+| CI | Pull Request #2 | success, siehe Abschnitt CI |
 
 ## Abdeckung der Abnahmekriterien
 
@@ -45,4 +45,4 @@ Datum: 2026-11-06 · Umgebung: Linux, Python 3, OpenSpec 1.16.0, Claude Code 2.1
 
 ## CI
 
-Run-ID wird nach dem Lauf zu diesem Pull Request eingetragen.
+Pull Request #2: Lauf 42252101375 zu Commit `fb99f48` und Lauf 42252407934 zu Commit `e878959` – beide success (Tests inkl. `tests/test_distribution.py`, Konvention, OpenSpec, Übersetzungen, Manifest).
