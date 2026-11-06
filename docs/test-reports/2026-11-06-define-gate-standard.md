@@ -6,7 +6,7 @@ Datum: 2026-11-06 · Umgebung: Linux, Python 3, OpenSpec 1.16.0 · Ausgeführt v
 
 | Prüfung | Befehl | Ergebnis |
 |---|---|---|
-| Unit-Tests | `python3 -m unittest discover -s tests -v` | 67 von 67 grün (davon 6 neu in `tests/test_skills.py`) |
+| Unit-Tests | `python3 -m unittest discover -s tests -v` | 68 von 68 grün (davon 7 neu in `tests/test_skills.py`) |
 | Gegenprobe gegen den Stand von `main` vor dem Change | `tests/test_skills.py` auf alte Skills, Rolle, PR-Vorlage | 10 Fehlschläge (gewollt) |
 | Konvention, OpenSpec, Übersetzungen | `check-conventions.py`, `openspec validate --all --strict`, `check-i18n.py` | Exit 0, gültig, OK (Hash der englischen Fassung nachgeführt) |
 
@@ -19,7 +19,7 @@ Datum: 2026-11-06 · Umgebung: Linux, Python 3, OpenSpec 1.16.0 · Ausgeführt v
 | CP-002 | Pflicht im Skill | `test_gate_phrases_per_requirement` (CP-002) |
 | CP-002 | Konstruierter Fall | **manuell, ausgeführt** (Probe Fall 2) |
 | CP-003 | Regel im Skill | `test_gate_phrases_per_requirement` (CP-003) |
-| CP-004 | Regel im Skill | `test_gate_phrases_per_requirement` (CP-004) |
+| CP-004 | Regel im Skill | `test_gate_phrases_per_requirement` (CP-004), `test_deferral_has_no_rarity_criterion` |
 | CP-005 | Regel im Skill | `test_proposal_requires_limits` |
 | CP-005 | Prüffrage der Rolle Testmanagement | `test_role_asks_for_limits_as_major` |
 | CP-005 | Change ohne Grenzen | **manuell, ausgeführt** (Probe Fall 3) |
@@ -45,11 +45,11 @@ Vom Prüfer zusätzlich genannt (Folge-Change, nicht Teil dieses Changes):
 
 ## CI
 
-Pull Request #3: Lauf 42253026135 zu Commit `9b06a98` – success (Tests, Konvention, OpenSpec, Übersetzungen, Manifest).
+Pull Request #3: Lauf 42253026135 zu Commit `9b06a98` und Lauf 42254170178 zu Commit `04a1e2b` – beide success (Tests, Konvention, OpenSpec, Übersetzungen, Manifest). Gate-Lauf 2 (unabhängiger Prüfer) auf `04a1e2b`: bestanden.
 
 ## Vergleich mit Vorlauf
 
 | Lauf | Tests | Ergebnis | Anlass |
 |---|---|---|---|
 | 1 | 67 | grün | Umsetzung; Gate 1 nicht bestanden (G6 Status offen, G7 CP-004 «selten») |
-| 2 | 68 | grün | behoben (tasks.md Abschnitt 5) |
+| 2 | 68 | grün | behoben (tasks.md Abschnitt 5); Gate 2 bestanden |

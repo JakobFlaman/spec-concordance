@@ -16,7 +16,7 @@ Einzelvoten: `council-review-votes.md` (gemeinsamer Lauf mit `add-github-marketp
 
 ## Widersprüche
 
-Fachbereich F1 hält den Befund B1 aus Gate-Lauf 19 (Zeilentrennung bei U+2028) für realistisch; der Prüfer von Lauf 19 hatte ihn als konstruiert eingeordnet. Aufgelöst über D3: realistische, aber seltene Fälle sind ❌, ausser der Maintainer verschiebt sie mit Begründung in einen Folge-Change; der Entscheid steht im Gate-Protokoll.
+Fachbereich F1 hält den Befund B1 aus Gate-Lauf 19 (Zeilentrennung bei U+2028) für realistisch; der Prüfer von Lauf 19 hatte ihn als konstruiert eingeordnet. Aufgelöst über D3: realistische Fälle sind ❌, ausser der Maintainer verschiebt sie mit Begründung in einen Folge-Change; der Entscheid steht im Gate-Protokoll. (Ursprünglich «realistische, aber seltene Fälle»; «selten» nach Gate-Lauf 1 gestrichen, weil ohne Kriterium.)
 
 ## Entscheidungsliste
 
