@@ -72,7 +72,7 @@ Jeder Gate-Lauf SHALL in `openspec/changes/<id>/gate-log.md` festgehalten werden
 - **THEN** verlangt er das Gate-Protokoll mit diesen Feldern und das Lesen vor jedem Lauf
 
 ### Requirement: Eskalation bei wiederholtem Scheitern (CP-007, Should)
-Ist in drei aufeinanderfolgenden Gate-Läufen derselbe Gate-Punkt ❌ – bei G3 und G7 zusätzlich zur selben Anforderung –, SHALL vor dem nächsten Lauf der Maintainer gefragt werden, ob der Massstab gilt, angepasst wird oder Befunde als Grenze bestätigt werden; die Antwort SHALL im Gate-Protokoll stehen.
+Ist in drei aufeinanderfolgenden Gate-Läufen derselbe Gate-Punkt ❌ – bei G3 und G7 zusätzlich zur selben Anforderung –, SHALL vor dem nächsten Lauf der Maintainer gefragt werden, ob der Massstab gilt, angepasst wird oder Befunde als Grenze bestätigt werden; die Antwort SHALL im Gate-Protokoll stehen und setzt die Zählung zurück.
 
 #### Scenario: Regel im Skill
 - **WHEN** `skills/quality-gate/SKILL.md` gelesen wird

@@ -33,7 +33,7 @@ Das Gate ist eine Checkliste mit hartem Ergebnis: **bestanden** oder **nicht bes
 - Ein realistischer Befund macht G7 ❌. Ein konstruierter Befund und ein Befund innerhalb einer gültigen Grenze ist eine **Beobachtung**: Er hat keinen Schweregrad, wird im Ergebnis aufgeführt und macht G7 nicht ❌.
 - **Gültige Grenzen** sind nur solche, die beim Council-Review bereits im Abschnitt «Grenzen» von `design.md` standen, oder die der Maintainer später ausdrücklich als Grenze bestätigt hat (festgehalten im Gate-Protokoll). Eine nach dem Befund nachgetragene Grenze ohne diesen Entscheid zählt nicht.
 - **Sicherheitszweck:** Bei Anforderungen mit Sicherheitszweck (Klassifikation `security` oder Befund der Rolle Security) gilt ein konstruierter Fall als realistisch, ausser er ist als Grenze dokumentiert und die Rolle Security hat ihr im Council zugestimmt.
-- **Entscheide des Maintainers:** Nur der Maintainer kann eine Einordnung umstufen oder einen realistischen, seltenen Befund mit Begründung in einen Folge-Change verschieben. Jeder solche Entscheid steht mit Begründung im Gate-Protokoll. Ohne festgehaltenen Entscheid bleibt ein realistischer Befund ❌.
+- **Entscheide des Maintainers:** Nur der Maintainer kann eine Einordnung umstufen oder einen realistischen Befund mit Begründung in einen Folge-Change verschieben. Jeder solche Entscheid steht mit Begründung im Gate-Protokoll. Ohne festgehaltenen Entscheid bleibt ein realistischer Befund ❌.
 
 ## Gate-Protokoll
 
@@ -58,7 +58,7 @@ Jeder Lauf wird in `openspec/changes/<id>/gate-log.md` festgehalten, damit auch 
 
 1. **Gate-Protokoll lesen**, falls vorhanden. Eskalation prüfen (siehe unten); greift sie, zuerst den Maintainer fragen und keinen Lauf starten.
 2. Prüfpunkte G0–G10 selbst prüfen. G2 wird **ausgeführt**, nicht aus früheren Ausgaben übernommen.
-3. Ergebnis als Tabelle ausgeben: Prüfpunkt, Status (✅/❌), Nachweis. G7-Befunde mit Einordnung, Beobachtungen getrennt aufführen.
+3. Ergebnis als Tabelle ausgeben: Prüfpunkt, Status (✅/❌/n.a.), Nachweis. G7-Befunde mit Einordnung, Beobachtungen getrennt aufführen.
 4. Lauf im Gate-Protokoll nachtragen.
 5. Ist ein Punkt ❌ → **nicht bestanden**, mit Liste der fehlenden Punkte. Kein Archivieren.
 6. Sind G0–G10 ✅ → Maintainer um Freigabe (G11) bitten.
@@ -66,7 +66,7 @@ Jeder Lauf wird in `openspec/changes/<id>/gate-log.md` festgehalten, damit auch 
 
 ## Eskalation
 
-Ist in **drei aufeinanderfolgenden Läufen** derselbe Gate-Punkt ❌ – bei G3 und G7 zusätzlich zur selben Anforderung –, wird vor dem nächsten Lauf der Maintainer gefragt, ob der Massstab gilt, angepasst wird oder Befunde als Grenze bestätigt werden. Die Antwort steht im Gate-Protokoll unter «Entscheide des Maintainers». Ein bestandener Lauf oder ein Lauf, in dem dieser Punkt ✅ ist, setzt die Zählung zurück.
+Ist in **drei aufeinanderfolgenden Läufen** derselbe Gate-Punkt ❌ – bei G3 und G7 zusätzlich zur selben Anforderung –, wird vor dem nächsten Lauf der Maintainer gefragt, ob der Massstab gilt, angepasst wird oder Befunde als Grenze bestätigt werden. Die Antwort steht im Gate-Protokoll unter «Entscheide des Maintainers». Ein bestandener Lauf, ein Lauf, in dem dieser Punkt ✅ ist, oder die festgehaltene Antwort des Maintainers setzt die Zählung zurück.
 
 ## Regeln
 

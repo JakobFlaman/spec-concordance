@@ -56,7 +56,7 @@ Meldung ─▶ change-proposal ─▶ council-review ─▶ Umsetzung ─▶ qua
 
 **Massstab des Qualitäts-Gates.** Gate-Punkt G7 prüft, ob die Spezifikation nachgeführt ist und mit dem Verhalten übereinstimmt. Nicht erfüllt ist er bei einer gebrochenen ausdrücklichen Zusage oder einem Verstoss, der *realistisch* (kann bei der normalen Arbeit entstehen) und still durchgeht. *Konstruierte* Fälle (absichtliche Verschleierung) und Fälle innerhalb gültiger Grenzen sind Beobachtungen; im Zweifel gilt «realistisch». Bei Anforderungen mit Sicherheitszweck zählen auch konstruierte Fälle, ausser Security hat der Grenze zugestimmt.
 
-**Gate-Protokoll und Eskalation.** Jeder Gate-Lauf steht in `gate-log.md` im Change, ebenso jeder Entscheid des Maintainers (Umstufen, Verschieben in einen Folge-Change, Bestätigen einer Grenze). Scheitert das Gate dreimal in Folge am selben Punkt, wird vor dem nächsten Lauf der Maintainer zum Massstab gefragt. Hintergrund: Im Trockenlauf am Plugin brauchte das Gate ohne festen Massstab 19 Läufe (`docs/de/pilot-blattwerk.md`, T1–T8).
+**Gate-Protokoll und Eskalation.** Jeder Gate-Lauf steht in `gate-log.md` im Change, ebenso jeder Entscheid des Maintainers (Umstufen, Verschieben in einen Folge-Change, Bestätigen einer Grenze). Scheitert das Gate dreimal in Folge am selben Punkt – bei G3 und G7 zur selben Anforderung –, wird vor dem nächsten Lauf der Maintainer zum Massstab gefragt. Hintergrund: Im Trockenlauf am Plugin brauchte das Gate ohne festen Massstab 19 Läufe (`docs/de/pilot-blattwerk.md`, T1–T8).
 
 ## 5. Anforderungen in OpenSpec
 
