@@ -39,6 +39,20 @@ python3 scripts/check-i18n.py
 openspec validate --all --strict
 ```
 
+## Arbeitsweise mit Git
+
+`main` ist der Verteilkanal: Wer das Plugin aus GitHub installiert, erhält den Stand von `main`. Deshalb gilt (Entscheid Maintainer, ADR 0001):
+
+- **Keine direkten Commits auf `main`.** Jeder Change entsteht auf einem eigenen Branch (`change/<change-id>`) und kommt über einen Pull Request nach `main`.
+- **Grüne CI ist Pflicht.** Ein Pull Request wird erst gemergt, wenn der Status-Check `checks` bestanden ist.
+- **Freigabe G11 = Mergen.** Der Maintainer gibt einen Change frei, indem er den Pull Request mergt. Nach bestandenem Qualitäts-Gate kommt das Archivieren (`openspec archive`) als letzter Commit in den Pull Request; wirksam wird es erst mit dem Mergen.
+
+Einstellungen für den Branch-Schutz in GitHub (*Settings → Branches → Add branch ruleset* bzw. *Branch protection rule* für `main`):
+
+- *Require a pull request before merging* (ohne Pflicht-Approvals, solange der Maintainer allein ist)
+- *Require status checks to pass* mit dem Check `checks`
+- *Block force pushes* und *Restrict deletions*
+
 ## Versionierung
 
 Semantic Versioning. Version in `.claude-plugin/plugin.json` und `CHANGELOG.md` immer gemeinsam ändern.

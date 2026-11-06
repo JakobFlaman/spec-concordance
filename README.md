@@ -23,35 +23,82 @@ KI-Agenten erzeugen schnell plausiblen Code. Ohne Spezifikation driftet er von d
 ## Aufbau
 
 ```
-.claude-plugin/       Plugin-Manifest für Claude Code
+.claude-plugin/       Plugin-Manifest und Marktplatz-Datei für Claude Code
 agents/               Council-Rollen (je eine Datei pro Rolle)
 skills/               Arbeitsabläufe: Projekt-Start, Council-Review, Change, Qualitäts-Gate
 templates/de/         Vorlagen für die elf Projekt-Artefakte (Deutsch = Quelle)
 templates/en/         Englische Übersetzungen (aus der deutschen Quelle erzeugt)
 template-project/     Startvorlage für ein neues Projekt
 docs/de/              Vorgehensmodell im Detail
+docs/adr/             Architekturentscheide
 docs/en/              English documentation
 scripts/              Hilfsskripte (z. B. Prüfung veralteter Übersetzungen)
 ```
 
 ## Schnellstart
 
-Voraussetzungen: [Claude Code](https://docs.claude.com/en/docs/claude-code/overview), Node.js 20+, Git, Python 3.10+ (für die Prüfskripte; die Konventionsprüfung nutzt zusätzlich die OpenSpec-CLI ab 1.16).
+Voraussetzungen: [Claude Code](https://code.claude.com/docs) (Einschritt-Installation ab Version 2.1.275), Node.js 20+, Git, Python 3.10+ (für die Prüfskripte) und die OpenSpec-CLI ab 1.16.
+
+### 1. OpenSpec installieren
 
 ```bash
-# 1. OpenSpec installieren
 npm install -g @fission-ai/openspec@1.16.0
-
-# 2. Plugin in Claude Code einbinden (lokaler Klon)
-git clone https://github.com/<owner>/spec-concordance.git
-# in Claude Code: /plugin → lokales Plugin aus ./spec-concordance hinzufügen
-
-# 3. Neues Projekt aus der Startvorlage
-cp -r spec-concordance/template-project mein-projekt
-cd mein-projekt && git init && openspec init
 ```
 
-Danach in Claude Code:
+### 2. Plugin direkt aus GitHub installieren
+
+Dieses Repository ist zugleich ein *Marktplatz* – ein Plugin-Katalog, aus dem Claude Code Plugins installiert. Ein Klon ist nicht nötig. In Claude Code eingeben:
+
+```
+/plugin install spec-concordance --marketplace JakobFlaman/spec-concordance
+```
+
+Claude Code fragt nach einer Bestätigung und zeigt die Details des Plugins; dort die Installation bestätigen.
+
+Ältere Claude-Code-Versionen (vor 2.1.275) brauchen zwei Schritte:
+
+```
+/plugin marketplace add JakobFlaman/spec-concordance
+/plugin install spec-concordance@spec-concordance
+```
+
+Im Terminal statt in Claude Code: `claude plugin marketplace add JakobFlaman/spec-concordance`, danach `claude plugin install spec-concordance@spec-concordance`.
+
+**Zugriff.** Solange das Repository öffentlich ist, braucht es nichts weiter. Ist es privat, verwendet Claude Code die Git-Zugangsdaten dieses Rechners und fragt nicht nach:
+
+- **SSH** (wird zuerst versucht): ein Schlüssel ohne Passwortabfrage, zum Beispiel im `ssh-agent` geladen.
+- **HTTPS:** ein im Credential-Helper gespeicherter Zugang. Mit minimalen Rechten über einen feingranularen GitHub-Token, der nur dieses Repository lesen darf. `CLAUDE_CODE_PLUGIN_PREFER_HTTPS=1` überspringt den SSH-Versuch.
+
+Tokens nie in eine URL oder in eine Projektdatei schreiben. Ohne Lesezugriff: Zugriff beim Maintainer anfragen.
+
+### 3. Neues Projekt starten
+
+```bash
+mkdir mein-projekt && cd mein-projekt && git init
+```
+
+Danach in Claude Code `/spec-concordance:project-init` aufrufen. Der Skill holt Vorlagen und Startvorlage aus dem installierten Plugin, richtet OpenSpec ein und ruft die Konventionsprüfung selbst auf.
+
+Von Hand aufrufen lassen sich die Prüfskripte im Installationsverzeichnis des Plugins; `claude plugin list --json` nennt es im Feld `installPath`, zum Beispiel `python3 <installPath>/scripts/check-conventions.py` im Projektstamm.
+
+### Aktualisieren
+
+Neue Stände kommen nur mit einem Release, also mit einer höheren Version in `plugin.json` (siehe [CHANGELOG](CHANGELOG.md)). Aktualisieren in zwei Schritten – zuerst den Katalog neu laden, dann das Plugin:
+
+```
+/plugin marketplace update spec-concordance
+/plugin update spec-concordance@spec-concordance
+```
+
+Im Terminal: `claude plugin marketplace update spec-concordance`, danach `claude plugin update spec-concordance@spec-concordance`. Wirksam wird das Update nach einem Neustart von Claude Code.
+
+Automatisch: in `/plugin` unter *Marketplaces* den Marktplatz `spec-concordance` wählen und *Enable auto-update* einschalten.
+
+### Umstieg von der Klon-Installation
+
+Wer das Plugin bisher aus einem lokalen Klon eingebunden hat, entfernt dieses lokale Plugin in `/plugin` und installiert danach wie oben aus GitHub. Den Klon braucht es nur noch, um am Plugin mitzuentwickeln.
+
+### Befehle
 
 | Befehl | Zweck |
 |---|---|
