@@ -79,6 +79,8 @@ mkdir mein-projekt && cd mein-projekt && git init
 
 Danach in Claude Code `/spec-concordance:project-init` aufrufen. Der Skill holt Vorlagen und Startvorlage aus dem installierten Plugin, richtet OpenSpec ein und ruft die Konventionsprüfung selbst auf.
 
+Von Hand aufrufen lassen sich die Prüfskripte im Installationsverzeichnis des Plugins; `claude plugin list --json` nennt es im Feld `installPath`, zum Beispiel `python3 <installPath>/scripts/check-conventions.py` im Projektstamm.
+
 ### Aktualisieren
 
 Neue Stände kommen nur mit einem Release, also mit einer höheren Version in `plugin.json` (siehe [CHANGELOG](CHANGELOG.md)). Aktualisieren in Claude Code:

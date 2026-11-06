@@ -79,6 +79,8 @@ mkdir my-project && cd my-project && git init
 
 Then run `/spec-concordance:project-init` in Claude Code. The skill takes the templates and the starter from the installed plugin, sets up OpenSpec and runs the convention check itself.
 
+To run the check scripts by hand, use the plugin's install directory; `claude plugin list --json` shows it as `installPath`, e.g. `python3 <installPath>/scripts/check-conventions.py` in the project root.
+
 ### Update
 
 New versions arrive only with a release, i.e. a higher version in `plugin.json` (see [CHANGELOG](CHANGELOG.md)). To update in Claude Code:

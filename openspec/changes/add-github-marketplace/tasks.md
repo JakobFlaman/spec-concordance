@@ -24,5 +24,5 @@
 
 ## 4. Manueller Nachweis (im Qualitäts-Gate, nach dem Push des Branches)
 
-- [ ] 4.1 Installationstest nach Protokoll: Claude-Code-Version und Commit-SHA notieren; Art des Git-Zugangs; zwei saubere Umgebungen (je eigenes `HOME`); Einschritt-Befehl bzw. Zwei-Schritt-Variante mit `#<branch>` des Pull Requests; Ausgabe `claude plugin list`; im Installationsverzeichnis `templates/de/`, `template-project/`, `scripts/check-conventions.py` vorhanden; Prüfskript aus dem Installationsverzeichnis auf ein Testprojekt angewendet (DI-002, DI-003; D5)
+- [x] 4.1 Installationstest nach Protokoll: Claude-Code-Version und Commit-SHA notieren; Art des Git-Zugangs; zwei saubere Umgebungen (je eigenes `HOME`); Einschritt-Befehl bzw. Zwei-Schritt-Variante mit `#<branch>` des Pull Requests; Ausgabe `claude plugin list`; im Installationsverzeichnis `templates/de/`, `template-project/`, `scripts/check-conventions.py` vorhanden; Prüfskript aus dem Installationsverzeichnis auf ein Testprojekt angewendet (DI-002, DI-003; D5)
 - [ ] 4.2 Branch-Schutz abfragen, sobald eingerichtet (DI-006)
