@@ -1,6 +1,6 @@
 ---
 source: docs/de/process-model.md
-source-hash: 83b0fc209681
+source-hash: 1725cb290abd
 status: translated
 ---
 
@@ -57,6 +57,12 @@ Report ─▶ change-proposal ─▶ council-review ─▶ implement ─▶ qual
    ▲                                                                         │
    └────────── feedback: tests · docs · role model · roadmap ◀───────────────┘
 ```
+
+**Limits before implementation.** If a change's result is an automatic check, detection or decision, `design.md` names in a section "Grenzen" (limits), before the council review, what is deliberately not covered and what it is checked against. Promises such as "never" or "in every case" appear only with a reference standard and limits.
+
+**Quality gate standard.** Gate item G7 checks that the specification is updated and matches the behaviour. It fails on a broken explicit promise or on a violation that passes silently and is *realistic* (can arise in normal work). *Constructed* cases (deliberate obfuscation) and cases within valid limits are observations; when in doubt, "realistic" applies. For requirements with a security purpose, constructed cases count too, unless Security agreed to the limit.
+
+**Gate log and escalation.** Every gate run is recorded in `gate-log.md` in the change, as is every maintainer decision (reclassifying, deferring to a follow-up change, confirming a limit). If the gate fails three times in a row on the same item, the maintainer is asked about the standard before the next run. Background: in the dry run on the plugin, the gate needed 19 runs without a fixed standard (`docs/de/pilot-blattwerk.md`, T1–T8).
 
 ## 5. Requirements in OpenSpec
 

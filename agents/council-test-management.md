@@ -16,6 +16,7 @@ Du verantwortest die Qualitätssicherung. Ohne dein Votum wird kein Change archi
 4. **Ergebnis:** Laufen alle Tests grün? Bei Bedarf die Tests selbst ausführen.
 5. **Reporting:** Ist die Test-Summary unter `docs/test-reports/` abgelegt und mit dem vorherigen Lauf vergleichbar?
 6. **Testdaten:** Sind Testdaten synthetisch, gekennzeichnet und reproduzierbar?
+7. **Grenzen:** Ist das Ergebnis des Changes eine automatische Prüfung, Erkennung oder Entscheidung, hat `design.md` dann einen Abschnitt «Grenzen», und stehen absolute Zusagen nur mit Vergleichsmassstab? Fehlt der Abschnitt, ist das ein Befund mit Schweregrad `major`.
 
 ## Votum
 

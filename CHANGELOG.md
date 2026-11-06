@@ -12,6 +12,8 @@ Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionier
 - Testbefehl in CLAUDE.md; OpenSpec im Plugin-Repository eingerichtet (Dogfooding)
 
 ### Geändert
+- Qualitäts-Gate (Change `define-gate-standard`): G7 heisst «Spezifikation nachgeführt und stimmt mit dem Verhalten überein» und hat einen festen Massstab (realistisch / konstruiert, im Zweifel realistisch, Sicherheitszweck); gültige Grenzen nur aus dem Council-Review oder vom Maintainer bestätigt; Gate-Protokoll `gate-log.md` und Eskalation nach drei Fehlschlägen am selben Punkt
+- `change-proposal`: Abschnitt «Grenzen» in `design.md` für Changes mit automatischer Prüfung, Erkennung oder Entscheidung; absolute Zusagen nur mit Vergleichsmassstab; Rolle Testmanagement fragt danach (`major`)
 - Befunde tragen einen Schweregrad (`blocker` / `major` / `minor`); ein offener `blocker` verhindert die Freigabe
 - Qualitäts-Gate: neuer Punkt G0 (`openspec validate`) und G1a (Rückverfolgbarkeit Task ↔ Anforderung ↔ Szenario); G6 verlangt nur noch `blocker`/`major` erledigt
 - Rolle Entwicklung: Prüffragen zu Wartbarkeit und Rückverfolgbarkeit ergänzt
