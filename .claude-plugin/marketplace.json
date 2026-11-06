@@ -1,0 +1,14 @@
+{
+  "name": "spec-concordance",
+  "description": "Marktplatz für das Plugin spec-concordance: Vorgehensmodell für spezifikationsgetriebene KI-Entwicklung auf Basis von OpenSpec.",
+  "owner": {
+    "name": "Jakob Flaman"
+  },
+  "plugins": [
+    {
+      "name": "spec-concordance",
+      "source": "./",
+      "description": "Phasen, Council-Rollen, Qualitäts-Gates und Vorlagen für spezifikationsgetriebene Entwicklung mit OpenSpec."
+    }
+  ]
+}

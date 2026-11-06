@@ -5,6 +5,7 @@ Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionier
 ## [Unreleased]
 
 ### Hinzugefügt
+- Installation direkt aus GitHub (Change `add-github-marketplace`): Das Repository ist zugleich Marktplatz (`.claude-plugin/marketplace.json`); README de/en mit Einschritt-Befehl, Zugriff, Aktualisieren über Releases und Umstieg von der Klon-Installation; Prüfskript `scripts/check-marketplace.py` mit Tests; ADR 0001
 - Anforderungskonvention RC-001 bis RC-007 (Change `add-priority-convention`): immer SHALL, MoSCoW-Priorität und ID im Titel, gemischte Prioritäten getrennt, Umpriorisierung als RENAMED; gilt für funktionale und nicht-funktionale Anforderungen
 - Prüfskript `scripts/check-conventions.py` (Exitcodes 0/1/2, Übergangsmodus `--warn`) mit 61 Tests und Vergleichstests gegen CommonMark (Inline- und Blockebene); liest die Struktur über die OpenSpec-CLI (ab 1.16), damit es dieselben Anforderungen sieht wie OpenSpec; Ausführung in der CI mit fixierter OpenSpec-Version 1.16.0 und minimalen Token-Rechten
 - Textbaustein `template-project/openspec-context.md`; `project-init` trägt ihn idempotent in `openspec/config.yaml` ein und überführt jetzt Must, Should und Could
@@ -12,6 +13,8 @@ Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionier
 - Testbefehl in CLAUDE.md; OpenSpec im Plugin-Repository eingerichtet (Dogfooding)
 
 ### Geändert
+- `project-init` bezieht alle Plugin-Dateien über `${CLAUDE_PLUGIN_ROOT}`; ein neues Projekt braucht keinen Klon mehr
+- `main` nur noch über Pull Requests mit grüner CI; Freigabe G11 = Mergen (CLAUDE.md)
 - Befunde tragen einen Schweregrad (`blocker` / `major` / `minor`); ein offener `blocker` verhindert die Freigabe
 - Qualitäts-Gate: neuer Punkt G0 (`openspec validate`) und G1a (Rückverfolgbarkeit Task ↔ Anforderung ↔ Szenario); G6 verlangt nur noch `blocker`/`major` erledigt
 - Rolle Entwicklung: Prüffragen zu Wartbarkeit und Rückverfolgbarkeit ergänzt

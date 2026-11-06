@@ -37,7 +37,7 @@ Das README (de und en) SHALL die Installation direkt aus dem GitHub-Repository b
 > Manueller Test nach festem Protokoll (`tasks.md` 4.1); Ergebnis in der Test-Summary.
 
 ### Requirement: Neues Projekt ohne Klon (DI-003, Must)
-Der Schnellstart im README (de und en) SHALL ein neues Projekt in einem leeren Ordner mit `/spec-concordance:project-init` beginnen. Der Skill `project-init` SHALL jede Datei des Plugins (Vorlagen, `template-project/`, Prüfskript) über `${CLAUDE_PLUGIN_ROOT}` ansprechen.
+Der Schnellstart im README (de und en) SHALL ein neues Projekt in einem leeren Ordner mit `/spec-concordance:project-init` beginnen. Der Skill `project-init` SHALL jede Datei des Plugins (Vorlagen, `template-project/`, Prüfskript, Doku) über `${CLAUDE_PLUGIN_ROOT}` ansprechen.
 
 #### Scenario: Kein Kopieren aus dem Klon
 - **WHEN** der Abschnitt Schnellstart in README.md und README.en.md gelesen wird
@@ -45,7 +45,7 @@ Der Schnellstart im README (de und en) SHALL ein neues Projekt in einem leeren O
 
 #### Scenario: project-init nutzt das Installationsverzeichnis
 - **WHEN** `skills/project-init/SKILL.md` gelesen wird
-- **THEN** beginnt jede Pfadangabe zu `templates/`, `template-project/` und `scripts/` mit `${CLAUDE_PLUGIN_ROOT}/`
+- **THEN** beginnt jede Pfadangabe zu `templates/`, `template-project/`, `scripts/` und `docs/` mit `${CLAUDE_PLUGIN_ROOT}/`
 
 #### Scenario: Dateien im installierten Plugin
 - **GIVEN** ein aus GitHub installiertes Plugin
