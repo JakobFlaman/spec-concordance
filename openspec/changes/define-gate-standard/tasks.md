@@ -17,9 +17,9 @@
 
 ## 3. Manueller Nachweis
 
-- [ ] 3.1 Probe mit unabhängigem Agenten nach den neuen Skills: Einordnung Lauf 17 (erwartet realistisch, ❌) und Lauf 18 (erwartet konstruiert, Beobachtung); Probe-Review Testmanagement auf synthetischen Change ohne «Grenzen» (erwartet `major`); synthetisches Gate-Protokoll mit drei Fehlschlägen (erwartet Frage an den Maintainer) (CP-001, CP-002, CP-005, CP-007; D8)
+- [x] 3.1 Probe mit unabhängigem Agenten nach den neuen Skills: Einordnung Lauf 17 (erwartet realistisch, ❌) und Lauf 18 (erwartet konstruiert, Beobachtung); Probe-Review Testmanagement auf synthetischen Change ohne «Grenzen» (erwartet `major`); synthetisches Gate-Protokoll mit drei Fehlschlägen (erwartet Frage an den Maintainer) (CP-001, CP-002, CP-005, CP-007; D8)
 
 ## 4. Abschluss
 
 - [x] 4.1 CHANGELOG unter [Unreleased]
-- [ ] 4.2 Test-Summary `docs/test-reports/2026-11-06-define-gate-standard.md`
+- [x] 4.2 Test-Summary `docs/test-reports/2026-11-06-define-gate-standard.md`

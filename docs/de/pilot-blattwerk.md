@@ -52,3 +52,4 @@ Der erste vollständige Zyklus (Change `add-priority-convention`: Proposal → C
 | add-priority-convention, Praxistest | 15 Anforderungstitel nach RC-002 umstellen (RENAMED bzw. vor dem Archivieren direkt im Change) | pdf-concordance |
 | add-priority-convention, Gate-Lauf 9 | GitHub-Actions in der CI per Commit-SHA statt Major-Tag fixieren (S3) | spec-concordance |
 | add-priority-convention, Gate-Lauf 19 (B1) | Zeilen in `check-conventions.py` mit `split("\n")` statt `splitlines()` trennen (U+2028, U+0085, `\f`), wie OpenSpec und CommonMark | spec-concordance |
+| define-gate-standard, manuelle Probe | Rollendateien: Zuordnung Schweregrad → Votum festlegen; Sicherheitszweck auch ohne Klassifikation `security` erkennen | spec-concordance |
