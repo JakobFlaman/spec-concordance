@@ -45,4 +45,4 @@ Vom Prüfer zusätzlich genannt (Folge-Change, nicht Teil dieses Changes):
 
 ## CI
 
-Run-ID wird nach dem Lauf zum Pull Request eingetragen.
+Pull Request #3: Lauf 42253026135 zu Commit `9b06a98` – success (Tests, Konvention, OpenSpec, Übersetzungen, Manifest).
